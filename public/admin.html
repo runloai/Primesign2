@@ -76,6 +76,7 @@ canvas{display:none}
     <div class="tab" onclick="switchTab('portfolio')">🖼️ Portfolio</div>
     <div class="tab" onclick="switchTab('hero')">🎯 Hero</div>
     <div class="tab" onclick="switchTab('colors')">🎨 Colors</div>
+    <div class="tab" onclick="switchTab('settings')">⚙️ Settings</div>
   </div>
 
   <div id="tab-contact" class="tab-content active"></div>
@@ -83,6 +84,7 @@ canvas{display:none}
   <div id="tab-portfolio" class="tab-content"></div>
   <div id="tab-hero" class="tab-content"></div>
   <div id="tab-colors" class="tab-content"></div>
+  <div id="tab-settings" class="tab-content"></div>
 
   <div class="save-bar">
     <span style="color:var(--muted);font-size:13px">Auto-saves to browser storage</span>
@@ -172,7 +174,7 @@ function switchTab(name) {
   renderTab(name);
 }
 
-function renderAll() { ["contact","services","portfolio","hero","colors"].forEach(renderTab); }
+function renderAll() { ["contact","services","portfolio","hero","colors","settings"].forEach(renderTab); }
 
 function renderTab(name) {
   const el = document.getElementById("tab-" + name);
@@ -182,6 +184,7 @@ function renderTab(name) {
   if (name === "portfolio") renderPortfolio(el);
   if (name === "hero") renderHero(el);
   if (name === "colors") renderColors(el);
+  if (name === "settings") renderSettings(el);
 }
 
 function renderContact(el) {
@@ -268,6 +271,24 @@ function renderColors(el) {
 function setColorScheme(name) {
   localStorage.setItem("primesign-scheme", name);
   renderTab("colors");
+}
+
+function renderSettings(el) {
+  const logoType = localStorage.getItem("primesign-logo") || "image";
+  el.innerHTML = `<div class="card">
+    <h3>⚙️ Site Settings</h3>
+    <label>Logo Type</label>
+    <div style="display:flex;gap:12px;margin-top:8px">
+      <button class="btn ${logoType==='image'?'btn-gold':'btn-outline'}" onclick="setLogoType('image')">🖼️ Image Logo</button>
+      <button class="btn ${logoType==='text'?'btn-gold':'btn-outline'}" onclick="setLogoType('text')">✏️ Text Logo</button>
+    </div>
+    <p style="color:var(--muted);font-size:12px;margin-top:12px">Changes take effect on page refresh</p>
+  </div>`;
+}
+
+function setLogoType(type) {
+  localStorage.setItem("primesign-logo", type);
+  renderTab("settings");
 }
 
 function field(label, path, value, textarea) {

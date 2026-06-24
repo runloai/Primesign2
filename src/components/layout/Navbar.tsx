@@ -27,6 +27,7 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scheme, setScheme] = useState(() => localStorage.getItem("primesign-scheme") || "Obsidian Gold");
+  const [useTextLogo, setUseTextLogo] = useState(() => localStorage.getItem("primesign-logo") === "text");
   const [location] = useLocation();
 
   useEffect(() => {
@@ -46,6 +47,15 @@ export default function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [isMobileMenuOpen]);
 
   const navLinks = [
     { name: "Services", href: "/#services" },
@@ -74,9 +84,13 @@ export default function Navbar() {
     >
       <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 z-50 relative">
-          <span className="text-2xl md:text-3xl font-display font-black tracking-tight">
-            <span className="text-primary">PRIME</span><span className="text-foreground">SIGN</span>
-          </span>
+          {useTextLogo ? (
+            <span className="text-2xl md:text-3xl font-display font-black tracking-tight">
+              <span className="text-primary">PRIME</span><span className="text-foreground">SIGN</span>
+            </span>
+          ) : (
+            <img src={LOGO_URL} alt="Primesign Logo" className="h-8 md:h-10 w-auto object-contain" />
+          )}
         </Link>
 
         {/* Desktop Nav */}

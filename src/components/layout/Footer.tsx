@@ -1,18 +1,25 @@
 import { Link } from "wouter";
 import { SiWhatsapp, SiYoutube, SiGooglemaps } from "react-icons/si";
 import { Mail, MapPin, Phone } from "lucide-react";
+import { useState, useEffect } from "react";
 const LOGO_URL = "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/logo/logo.webp";
 
 export default function Footer() {
+  const [useTextLogo] = useState(() => typeof window !== "undefined" && localStorage.getItem("primesign-logo") === "text");
+
   return (
     <footer className="bg-black border-t border-white/10 pt-20 pb-10">
       <div className="container mx-auto px-4 md:px-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           {/* Brand */}
           <div className="space-y-6">
-            <span className="text-2xl font-display font-black tracking-tight">
-            <span className="text-primary">PRIME</span><span className="text-foreground">SIGN</span>
-          </span>
+            {useTextLogo ? (
+              <span className="text-2xl font-display font-black tracking-tight">
+                <span className="text-primary">PRIME</span><span className="text-foreground">SIGN</span>
+              </span>
+            ) : (
+              <img src={LOGO_URL} alt="Primesign" className="h-10 w-auto" />
+            )}
             <p className="text-muted-foreground font-light leading-relaxed max-w-xs">
               Bangalore's premier signage and branding studio. We build bold, high-impact visual communication that makes your business unforgettable.
             </p>
