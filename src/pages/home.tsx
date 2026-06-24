@@ -5,6 +5,23 @@ import { ArrowRight, CheckCircle2, ChevronRight, PhoneCall, Star } from "lucide-
 import { Button } from "@/components/ui/button";
 import { useQuoteModal } from "@/context/QuoteModalContext";
 
+// Helper function to read admin config from localStorage
+function getAdminConfig(): { portfolio?: any[]; hero?: any } | null {
+  try {
+    const stored = localStorage.getItem("primesign-config");
+    if (stored) {
+      const config = JSON.parse(stored);
+      return {
+        portfolio: config.portfolio,
+        hero: config.hero,
+      };
+    }
+  } catch (e) {
+    console.error("Error reading primesign-config from localStorage:", e);
+  }
+  return null;
+}
+
 const BASE = "https://raw.githubusercontent.com/runloai/PrimeSign/main/data";
 
 const HERO_SLIDES = [
@@ -173,6 +190,36 @@ export default function Home() {
   const { open: openQuote } = useQuoteModal();
   const [heroIndex, setHeroIndex] = useState(0);
   const [portfolioFilter, setPortfolioFilter] = useState<string | null>(null);
+  const [adminConfig, setAdminConfig] = useState<{ portfolio?: any[]; hero?: any } | null>(null);
+
+  // Load admin config from localStorage on mount
+  useEffect(() => {
+    const config = getAdminConfig();
+    if (config) {
+      setAdminConfig(config);
+    }
+  }, []);
+
+  // Get hero data from config or fallback to hardcoded
+  const heroBgImage = adminConfig?.hero?.bgImage || IMAGES.portfolio[0];
+  const heroBadgeText = adminConfig?.hero?.badge || "Bangalore's Premier Signage Studio";
+
+  // Get portfolio items from config or fallback to hardcoded
+  const getPortfolioItems = () => {
+    if (adminConfig?.portfolio && adminConfig.portfolio.length > 0) {
+      // Convert config portfolio items to the format expected by the grid
+      return adminConfig.portfolio
+        .filter((item: any) => item.url)
+        .map((item: any) => ({
+          img: item.url,
+          label: item.label || "Installation",
+          cat: item.category || "led",
+        }));
+    }
+    return null;
+  };
+
+  const dynamicPortfolioItems = getPortfolioItems();
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -201,7 +248,7 @@ export default function Home() {
         {/* Full-bleed static background */}
         <div className="absolute inset-0 z-0">
           <img
-            src={IMAGES.portfolio[0]}
+            src={heroBgImage}
             alt="Primesign signage"
             className="absolute inset-0 w-full h-full object-cover"
           />
@@ -223,7 +270,7 @@ export default function Home() {
               className="inline-block border border-primary/30 bg-primary/10 px-4 py-1.5 rounded-full mb-6 backdrop-blur-sm"
             >
               <span className="text-primary font-bold text-sm tracking-wider uppercase">
-                Bangalore's Premier Signage Studio
+                {heroBadgeText}
               </span>
             </motion.div>
             <motion.h1
@@ -421,72 +468,136 @@ export default function Home() {
             ))}
           </div>
 
-          {/* Main masonry-style grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
-            {/* Big featured item */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              className="col-span-2 row-span-2 aspect-square rounded-2xl overflow-hidden relative group"
-              data-testid="img-portfolio-featured"
-              data-pf-cat="led"
-            >
-              <img src={IMAGES.portfolio[0]} alt="Featured installation" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                <span className="text-white font-display font-bold uppercase tracking-widest text-lg">Storefront LED Branding</span>
+          {/* Main masonry-style grid — use dynamic data if available, fallback to hardcoded */}
+          {dynamicPortfolioItems && dynamicPortfolioItems.length >= 9 ? (
+            // Dynamic portfolio grid using admin config
+            <>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
+                {/* Big featured item */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  className="col-span-2 row-span-2 aspect-square rounded-2xl overflow-hidden relative group"
+                  data-testid="img-portfolio-featured"
+                  data-pf-cat={dynamicPortfolioItems[0]?.cat || "led"}
+                >
+                  <img src={dynamicPortfolioItems[0]?.img} alt={dynamicPortfolioItems[0]?.label || "Featured installation"} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                    <span className="text-white font-display font-bold uppercase tracking-widest text-lg">{dynamicPortfolioItems[0]?.label || "Storefront LED Branding"}</span>
+                  </div>
+                </motion.div>
+
+                {dynamicPortfolioItems.slice(1, 5).map((item: any, i: number) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: (i + 1) * 0.08 }}
+                    className="aspect-square rounded-2xl overflow-hidden relative group"
+                    data-testid={`img-portfolio-${i}`}
+                    data-pf-cat={item.cat}
+                  >
+                    <img src={item.img} alt={item.label} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                      <span className="text-white font-bold uppercase tracking-widest text-sm">{item.label}</span>
+                    </div>
+                  </motion.div>
+                ))}
               </div>
-            </motion.div>
 
-            {[
-              { img: IMAGES.glow[3], label: "Glow Sign", cat: "glow" },
-              { img: IMAGES.square[10], label: "LED Channel", cat: "led" },
-              { img: IMAGES.vehicle[2], label: "Vehicle Wrap", cat: "vehicle" },
-              { img: IMAGES.wall[3], label: "Wall Branding", cat: "wall" },
-            ].map((item, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: (i + 1) * 0.08 }}
-                className="aspect-square rounded-2xl overflow-hidden relative group"
-                data-testid={`img-portfolio-${i}`}
-                data-pf-cat={item.cat}
-              >
-                <img src={item.img} alt={item.label} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                  <span className="text-white font-bold uppercase tracking-widest text-sm">{item.label}</span>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+              {/* Second row */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
+                {dynamicPortfolioItems.slice(5, 9).map((item: any, i: number) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.08 }}
+                    className="aspect-[4/3] rounded-2xl overflow-hidden relative group"
+                    data-testid={`img-portfolio-row2-${i}`}
+                    data-pf-cat={item.cat}
+                  >
+                    <img src={item.img} alt={item.label} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                      <span className="text-white font-bold uppercase tracking-widest text-sm">{item.label}</span>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </>
+          ) : (
+            // Fallback to original hardcoded grid
+            <>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
+                {/* Big featured item */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  className="col-span-2 row-span-2 aspect-square rounded-2xl overflow-hidden relative group"
+                  data-testid="img-portfolio-featured"
+                  data-pf-cat="led"
+                >
+                  <img src={IMAGES.portfolio[0]} alt="Featured installation" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                    <span className="text-white font-display font-bold uppercase tracking-widest text-lg">Storefront LED Branding</span>
+                  </div>
+                </motion.div>
 
-          {/* Second row — exactly 4 items to fill the 4-col grid cleanly */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
-            {[
-              { img: IMAGES.portfolio[2], label: "Retail Signage", cat: "led" },
-              { img: IMAGES.acrylic[1], label: "Acrylic Letters", cat: "acrylic" },
-              { img: IMAGES.glow[4], label: "Neon Glow", cat: "glow" },
-              { img: IMAGES.portfolio[5], label: "Corporate Lobby", cat: "acrylic" },
-            ].map((item, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.08 }}
-                className="aspect-[4/3] rounded-2xl overflow-hidden relative group"
-                data-testid={`img-portfolio-row2-${i}`}
-                data-pf-cat={item.cat}
-              >
-                <img src={item.img} alt={item.label} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                  <span className="text-white font-bold uppercase tracking-widest text-sm">{item.label}</span>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+                {[
+                  { img: IMAGES.glow[3], label: "Glow Sign", cat: "glow" },
+                  { img: IMAGES.square[10], label: "LED Channel", cat: "led" },
+                  { img: IMAGES.vehicle[2], label: "Vehicle Wrap", cat: "vehicle" },
+                  { img: IMAGES.wall[3], label: "Wall Branding", cat: "wall" },
+                ].map((item, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: (i + 1) * 0.08 }}
+                    className="aspect-square rounded-2xl overflow-hidden relative group"
+                    data-testid={`img-portfolio-${i}`}
+                    data-pf-cat={item.cat}
+                  >
+                    <img src={item.img} alt={item.label} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                      <span className="text-white font-bold uppercase tracking-widest text-sm">{item.label}</span>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Second row — exactly 4 items to fill the 4-col grid cleanly */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
+                {[
+                  { img: IMAGES.portfolio[2], label: "Retail Signage", cat: "led" },
+                  { img: IMAGES.acrylic[1], label: "Acrylic Letters", cat: "acrylic" },
+                  { img: IMAGES.glow[4], label: "Neon Glow", cat: "glow" },
+                  { img: IMAGES.portfolio[5], label: "Corporate Lobby", cat: "acrylic" },
+                ].map((item, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.08 }}
+                    className="aspect-[4/3] rounded-2xl overflow-hidden relative group"
+                    data-testid={`img-portfolio-row2-${i}`}
+                    data-pf-cat={item.cat}
+                  >
+                    <img src={item.img} alt={item.label} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                      <span className="text-white font-bold uppercase tracking-widest text-sm">{item.label}</span>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </>
+          )}
 
           {/* Third row — vehicle wrap showcase */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">

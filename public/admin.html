@@ -2296,7 +2296,7 @@
               <label class="field-label">Phone ${index + 1}</label>
               <input type="text" class="field-input phone-input" data-index="${index}" placeholder="+91 6366525253" value="${phone}">
             </div>
-            <button class="btn btn-danger btn-sm" style="margin-top: 20px;" onclick="removePhone(${index})" title="Remove">✕</button>
+            <button class="btn-icon-only" style="color:var(--error);width:28px;height:28px;padding:0;border-radius:50%;background:transparent;border:1px solid rgba(239,68,68,0.3);font-size:14px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center" onclick="removePhone(${index})" title="Remove">✕</button>
           `;
           phonesContainer.appendChild(div);
         });
@@ -2324,7 +2324,7 @@
               <label class="field-label">Email ${index + 1}</label>
               <input type="text" class="field-input email-input" data-index="${index}" placeholder="primesign2021@gmail.com" value="${email}">
             </div>
-            <button class="btn btn-danger btn-sm" style="margin-top: 20px;" onclick="removeEmail(${index})" title="Remove">✕</button>
+            <button class="btn-icon-only" style="color:var(--error);width:28px;height:28px;padding:0;border-radius:50%;background:transparent;border:1px solid rgba(239,68,68,0.3);font-size:14px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center" onclick="removeEmail(${index})" title="Remove">✕</button>
           `;
           emailsContainer.appendChild(div);
         });
@@ -2710,7 +2710,7 @@
         const [serviceId, imageIdx] = currentCropItem.split('-');
         const service = config.services.find(s => s.id == serviceId);
         if (service && service.images[imageIdx]) {
-          service.images[imageIdx] = croppedDataUrl;
+          service.images[imageIdx] = { url: croppedDataUrl, label: service.images[imageIdx].label || "Image" };
           renderServices();
         }
       }
@@ -2747,7 +2747,7 @@
           <div class="service-header" onclick="toggleService(${service.id})">
             <div class="service-thumb">
               ${service.images && service.images[0]
-                ? `<img src="${service.images[0]}" alt="">`
+                ? `<img src="${service.images[0].url || service.images[0]}" alt="">`
                 : '📷'}
             </div>
             <div class="service-info">
