@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrimeSign Admin Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a25;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0c0;
+            --accent-gold: #d4af37;
+            --accent-purple: #8b5cf6;
+            --border-color: #2a2a3a;
+            --input-bg: #161622;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        /* Login Screen */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+        }
+
+        .login-box {
+            background: var(--bg-secondary);
+            padding: 3rem;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .login-box h1 {
+            text-align: center;
+            margin-bottom: 0.5rem;
+            font-size: 1.75rem;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .login-box .subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--accent-gold), #b8941f);
+            border: none;
+            border-radius: 8px;
+            color: #000;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .error-message {
+            color: #ef4444;
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.875rem;
+            display: none;
+        }
+
+        /* Dashboard */
+        .dashboard {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.25rem;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .sidebar-header .version {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+        }
+
+        .nav-tabs {
+            list-style: none;
+        }
+
+        .nav-tabs li {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-tabs button {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .nav-tabs button:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .nav-tabs button.active {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(139, 92, 246, 0.15));
+            color: var(--accent-gold);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .nav-tabs button::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .logout-btn {
+            width: 100%;
+            padding: 0.75rem;
+            margin-top: 2rem;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .content-header {
+            margin-bottom: 2rem;
+        }
+
+        .content-header h1 {
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .content-header p {
+            color: var(--text-secondary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card h3 {
+            margin-bottom: 1.25rem;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .form-group-full {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group-full label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .form-group-full input,
+        .form-group-full textarea,
+        .form-group-full select {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+            font-family: inherit;
+        }
+
+        .form-group-full textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-group-full input:focus,
+        .form-group-full textarea:focus,
+        .form-group-full select:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+        }
+
+        .save-btn {
+            padding: 0.875rem 2rem;
+            background: linear-gradient(135deg, var(--accent-gold), #b8941f);
+            border: none;
+            border-radius: 8px;
+            color: #000;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-top: 1rem;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .success-toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #10b981;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .success-toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Color Schemes */
+        .scheme-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .scheme-card {
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .scheme-card:hover {
+            border-color: var(--accent-gold);
+            transform: translateY(-4px);
+        }
+
+        .scheme-card.selected {
+            border-color: var(--accent-gold);
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(139, 92, 246, 0.1));
+        }
+
+        .scheme-preview {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            border: 2px solid var(--border-color);
+        }
+
+        .scheme-name {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        /* Service Item */
+        .service-item {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .service-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .service-item h4 {
+            color: var(--accent-gold);
+        }
+
+        .remove-btn {
+            background: transparent;
+            border: 1px solid #ef4444;
+            color: #ef4444;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .remove-btn:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .add-btn {
+            background: transparent;
+            border: 1px dashed var(--accent-gold);
+            color: var(--accent-gold);
+            padding: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .add-btn:hover {
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        /* Portfolio Grid */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .portfolio-item {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .portfolio-item-image {
+            height: 150px;
+            background: var(--input-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .portfolio-item-content {
+            padding: 1rem;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-gold);
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div class="login-container" id="loginScreen">
+        <div class="login-box">
+            <h1>PrimeSign Admin</h1>
+            <p class="subtitle">Secure Administration Panel</p>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="Enter username" autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Enter password" autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn">Sign In</button>
+                <p class="error-message" id="loginError">Invalid credentials</p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="dashboard" id="dashboard">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>PrimeSign</h2>
+                <div class="version">Admin Panel v2.0</div>
+            </div>
+            <nav>
+                <ul class="nav-tabs">
+                    <li><button class="tab-btn active" data-tab="contact">Contact Info</button></li>
+                    <li><button class="tab-btn" data-tab="services">Services</button></li>
+                    <li><button class="tab-btn" data-tab="portfolio">Portfolio</button></li>
+                    <li><button class="tab-btn" data-tab="hero">Hero</button></li>
+                    <li><button class="tab-btn" data-tab="colors">Color Schemes</button></li>
+                </ul>
+            </nav>
+            <button class="logout-btn" id="logoutBtn">Logout</button>
+        </aside>
+
+        <main class="main-content">
+            <!-- Contact Info Tab -->
+            <div class="tab-content active" id="contact">
+                <div class="content-header">
+                    <h1>Contact Information</h1>
+                    <p>Manage your business contact details displayed on the website.</p>
+                </div>
+                <div class="card">
+                    <h3>Contact Details</h3>
+                    <div class="form-row">
+                        <div class="form-group-full">
+                            <label for="companyName">Company Name</label>
+                            <input type="text" id="companyName" placeholder="PrimeSign">
+                        </div>
+                        <div class="form-group-full">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" placeholder="contact@primesign.com">
+                        </div>
+                        <div class="form-group-full">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" placeholder="+1 234 567 890">
+                        </div>
+                        <div class="form-group-full">
+                            <label for="address">Business Address</label>
+                            <textarea id="address" placeholder="Enter full address"></textarea>
+                        </div>
+                        <div class="form-group-full">
+                            <label for="whatsapp">WhatsApp Number</label>
+                            <input type="tel" id="whatsapp" placeholder="+1 234 567 890">
+                        </div>
+                    </div>
+                    <button class="save-btn" onclick="saveContactInfo()">Save Changes</button>
+                </div>
+            </div>
+
+            <!-- Services Tab -->
+            <div class="tab-content" id="services">
+                <div class="content-header">
+                    <h1>Services</h1>
+                    <p>Manage your service offerings displayed on the website.</p>
+                </div>
+                <div class="card">
+                    <h3>Service List</h3>
+                    <div id="servicesList">
+                        <!-- Services will be dynamically added here -->
+                    </div>
+                    <button class="add-btn" onclick="addNewService()">+ Add New Service</button>
+                    <button class="save-btn" onclick="saveServices()">Save Services</button>
+                </div>
+            </div>
+
+            <!-- Portfolio Tab -->
+            <div class="tab-content" id="portfolio">
+                <div class="content-header">
+                    <h1>Portfolio</h1>
+                    <p>Manage your portfolio items and projects.</p>
+                </div>
+                <div class="card">
+                    <h3>Portfolio Items</h3>
+                    <div id="portfolioList" class="portfolio-grid">
+                        <!-- Portfolio items will be dynamically added here -->
+                    </div>
+                    <br>
+                    <button class="add-btn" onclick="addNewPortfolioItem()">+ Add New Portfolio Item</button>
+                    <button class="save-btn" onclick="savePortfolio()">Save Portfolio</button>
+                </div>
+            </div>
+
+            <!-- Hero Tab -->
+            <div class="tab-content" id="hero">
+                <div class="content-header">
+                    <h1>Hero Section</h1>
+                    <p>Customize your website's hero banner and tagline.</p>
+                </div>
+                <div class="card">
+                    <h3>Hero Content</h3>
+                    <div class="form-row">
+                        <div class="form-group-full">
+                            <label for="heroHeadline">Headline</label>
+                            <input type="text" id="heroHeadline" placeholder="Your main headline">
+                        </div>
+                        <div class="form-group-full">
+                            <label for="heroSubheadline">Subheadline</label>
+                            <textarea id="heroSubheadline" placeholder="Your subheadline or tagline"></textarea>
+                        </div>
+                        <div class="form-group-full">
+                            <label for="heroCtaText">CTA Button Text</label>
+                            <input type="text" id="heroCtaText" placeholder="Get Started">
+                        </div>
+                        <div class="form-group-full">
+                            <label for="heroCtaLink">CTA Button Link</label>
+                            <input type="text" id="heroCtaLink" placeholder="#contact">
+                        </div>
+                    </div>
+                    <button class="save-btn" onclick="saveHero()">Save Hero Section</button>
+                </div>
+            </div>
+
+            <!-- Color Schemes Tab -->
+            <div class="tab-content" id="colors">
+                <div class="content-header">
+                    <h1>Color Schemes</h1>
+                    <p>Choose a color theme for your website.</p>
+                </div>
+                <div class="card">
+                    <h3>Select Color Scheme</h3>
+                    <div class="scheme-grid" id="schemeGrid">
+                        <!-- Schemes will be dynamically generated -->
+                    </div>
+                    <p style="margin-top: 1rem; color: var(--text-secondary); font-size: 0.85rem;">
+                        Current scheme: <span id="currentSchemeName" style="color: var(--accent-gold);">None</span>
+                    </p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="success-toast" id="toast">Saved successfully!</div>
+
+    <script>
+        // Configuration
+        const ADMIN_USERNAME = 'ADMIN';
+        const ADMIN_PASSWORD = 'PRIMESIGNBangalore@2026*#@!2112';
+        const CONFIG_KEY = 'primesign-admin-config';
+        const SCHEME_KEY = 'primesign-scheme';
+
+        // Color schemes with their accent colors
+        const COLOR_SCHEMES = [
+            { name: 'Obsidian Gold', primary: '#d4af37', secondary: '#8b5cf6' },
+            { name: 'Plasma Purple', primary: '#9333ea', secondary: '#ec4899' },
+            { name: 'Electric Blue', primary: '#06b6d4', secondary: '#3b82f6' },
+            { name: 'Crimson Noir', primary: '#dc2626', secondary: '#7c2d12' },
+            { name: 'Emerald Glow', primary: '#10b981', secondary: '#059669' },
+            { name: 'Neon Nights', primary: '#84cc16', secondary: '#a855f7' },
+            { name: 'Arctic White', primary: '#f8fafc', secondary: '#94a3b8' },
+            { name: 'Sandstone', primary: '#d4a574', secondary: '#a0522d' },
+            { name: 'Royal Velvet', primary: '#7c3aed', secondary: '#c026d3' },
+            { name: 'Thunderbolt', primary: '#f59e0b', secondary: '#ef4444' },
+            { name: 'Midnight Copper', primary: '#b87333', secondary: '#1a1a2e' }
+        ];
+
+        // Default config
+        const defaultConfig = {
+            contact: {
+                companyName: 'PrimeSign',
+                email: 'contact@primesign.com',
+                phone: '',
+                address: '',
+                whatsapp: ''
+            },
+            services: [
+                { name: 'Signage Solutions', description: 'Custom business signage', icon: 'sign' },
+                { name: 'Digital Printing', description: 'High-quality print services', icon: 'print' }
+            ],
+            portfolio: [],
+            hero: {
+                headline: 'Welcome to PrimeSign',
+                subheadline: 'Your trusted partner for premium signage solutions',
+                ctaText: 'Get Quote',
+                ctaLink: '#contact'
+            }
+        };
+
+        // State
+        let currentConfig = { ...defaultConfig };
+        let currentTab = 'contact';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadConfig();
+            setupEventListeners();
+            renderColorSchemes();
+            populateForms();
+        });
+
+        // Event Listeners
+        function setupEventListeners() {
+            // Login form
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+
+            // Tab navigation
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => switchTab(e.target.dataset.tab));
+            });
+
+            // Logout
+            document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+        }
+
+        // Login Handler
+        function handleLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+
+            if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                populateForms();
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+            }
+        }
+
+        // Logout Handler
+        function handleLogout() {
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('loginForm').reset();
+            document.getElementById('loginError').style.display = 'none';
+        }
+
+        // Tab Switching
+        function switchTab(tabName) {
+            currentTab = tabName;
+
+            // Update buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.tab === tabName);
+            });
+
+            // Update content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.toggle('active', content.id === tabName);
+            });
+
+            // Refresh specific content
+            if (tabName === 'services') renderServices();
+            if (tabName === 'portfolio') renderPortfolio();
+        }
+
+        // Config Management
+        function loadConfig() {
+            const saved = localStorage.getItem(CONFIG_KEY);
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    currentConfig = { ...defaultConfig, ...parsed };
+                } catch (e) {
+                    console.error('Failed to parse config:', e);
+                }
+            }
+        }
+
+        function saveConfig() {
+            localStorage.setItem(CONFIG_KEY, JSON.stringify(currentConfig));
+            showToast('Saved successfully!');
+        }
+
+        // Populate Forms
+        function populateForms() {
+            // Contact
+            if (currentConfig.contact) {
+                document.getElementById('companyName').value = currentConfig.contact.companyName || '';
+                document.getElementById('email').value = currentConfig.contact.email || '';
+                document.getElementById('phone').value = currentConfig.contact.phone || '';
+                document.getElementById('address').value = currentConfig.contact.address || '';
+                document.getElementById('whatsapp').value = currentConfig.contact.whatsapp || '';
+            }
+
+            // Services
+            renderServices();
+
+            // Portfolio
+            renderPortfolio();
+
+            // Hero
+            if (currentConfig.hero) {
+                document.getElementById('heroHeadline').value = currentConfig.hero.headline || '';
+                document.getElementById('heroSubheadline').value = currentConfig.hero.subheadline || '';
+                document.getElementById('heroCtaText').value = currentConfig.hero.ctaText || '';
+                document.getElementById('heroCtaLink').value = currentConfig.hero.ctaLink || '';
+            }
+
+            // Update current scheme display
+            const currentScheme = localStorage.getItem(SCHEME_KEY) || 'Obsidian Gold';
+            document.getElementById('currentSchemeName').textContent = currentScheme;
+            updateSchemeSelection(currentScheme);
+        }
+
+        // Contact Info
+        function saveContactInfo() {
+            currentConfig.contact = {
+                companyName: document.getElementById('companyName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                address: document.getElementById('address').value,
+                whatsapp: document.getElementById('whatsapp').value
+            };
+            saveConfig();
+        }
+
+        // Services Management
+        function renderServices() {
+            const container = document.getElementById('servicesList');
+            container.innerHTML = '';
+
+            if (!currentConfig.services || currentConfig.services.length === 0) {
+                currentConfig.services = [];
+            }
+
+            currentConfig.services.forEach((service, index) => {
+                const serviceEl = document.createElement('div');
+                serviceEl.className = 'service-item';
+                serviceEl.innerHTML = `
+                    <div class="service-item-header">
+                        <h4>Service #${index + 1}</h4>
+                        <button class="remove-btn" onclick="removeService(${index})">Remove</button>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group-full">
+                            <label>Service Name</label>
+                            <input type="text" class="service-name" value="${service.name || ''}" data-index="${index}">
+                        </div>
+                        <div class="form-group-full">
+                            <label>Service Description</label>
+                            <input type="text" class="service-desc" value="${service.description || ''}" data-index="${index}">
+                        </div>
+                    </div>
+                `;
+                container.appendChild(serviceEl);
+            });
+        }
+
+        function addNewService() {
+            if (!currentConfig.services) currentConfig.services = [];
+            currentConfig.services.push({ name: '', description: '', icon: 'default' });
+            renderServices();
+        }
+
+        function removeService(index) {
+            currentConfig.services.splice(index, 1);
+            renderServices();
+        }
+
+        function saveServices() {
+            const names = document.querySelectorAll('.service-name');
+            const descs = document.querySelectorAll('.service-desc');
+
+            currentConfig.services = Array.from(names).map((nameInput, i) => ({
+                name: nameInput.value,
+                description: descs[i] ? descs[i].value : '',
+                icon: 'default'
+            }));
+
+            saveConfig();
+        }
+
+        // Portfolio Management
+        function renderPortfolio() {
+            const container = document.getElementById('portfolioList');
+            container.innerHTML = '';
+
+            if (!currentConfig.portfolio || currentConfig.portfolio.length === 0) {
+                currentConfig.portfolio = [];
+                container.innerHTML = '<p style="color: var(--text-secondary); grid-column: 1/-1;">No portfolio items yet. Add your first project!</p>';
+                return;
+            }
+
+            currentConfig.portfolio.forEach((item, index) => {
+                const portfolioEl = document.createElement('div');
+                portfolioEl.className = 'portfolio-item';
+                portfolioEl.innerHTML = `
+                    <div class="portfolio-item-image">
+                        <span>Image Preview</span>
+                    </div>
+                    <div class="portfolio-item-content">
+                        <div class="form-group-full" style="margin-bottom: 0.75rem;">
+                            <label style="font-size: 0.75rem;">Project Name</label>
+                            <input type="text" class="portfolio-name" value="${item.name || ''}" data-index="${index}">
+                        </div>
+                        <div class="form-group-full">
+                            <label style="font-size: 0.75rem;">Description</label>
+                            <input type="text" class="portfolio-desc" value="${item.description || ''}" data-index="${index}">
+                        </div>
+                        <button class="remove-btn" style="margin-top: 0.75rem; width: 100%;" onclick="removePortfolioItem(${index})">Remove</button>
+                    </div>
+                `;
+                container.appendChild(portfolioEl);
+            });
+        }
+
+        function addNewPortfolioItem() {
+            if (!currentConfig.portfolio) currentConfig.portfolio = [];
+            currentConfig.portfolio.push({ name: '', description: '', image: '' });
+            renderPortfolio();
+        }
+
+        function removePortfolioItem(index) {
+            currentConfig.portfolio.splice(index, 1);
+            renderPortfolio();
+        }
+
+        function savePortfolio() {
+            const names = document.querySelectorAll('.portfolio-name');
+            const descs = document.querySelectorAll('.portfolio-desc');
+
+            currentConfig.portfolio = Array.from(names).map((nameInput, i) => ({
+                name: nameInput.value,
+                description: descs[i] ? descs[i].value : '',
+                image: ''
+            }));
+
+            saveConfig();
+        }
+
+        // Hero Section
+        function saveHero() {
+            currentConfig.hero = {
+                headline: document.getElementById('heroHeadline').value,
+                subheadline: document.getElementById('heroSubheadline').value,
+                ctaText: document.getElementById('heroCtaText').value,
+                ctaLink: document.getElementById('heroCtaLink').value
+            };
+            saveConfig();
+        }
+
+        // Color Schemes
+        function renderColorSchemes() {
+            const container = document.getElementById('schemeGrid');
+            container.innerHTML = '';
+
+            COLOR_SCHEMES.forEach(scheme => {
+                const card = document.createElement('div');
+                card.className = 'scheme-card';
+                card.dataset.scheme = scheme.name;
+                card.innerHTML = `
+                    <div class="scheme-preview" style="background: linear-gradient(135deg, ${scheme.primary}, ${scheme.secondary});"></div>
+                    <div class="scheme-name">${scheme.name}</div>
+                `;
+                card.addEventListener('click', () => selectScheme(scheme.name));
+                container.appendChild(card);
+            });
+        }
+
+        function selectScheme(schemeName) {
+            localStorage.setItem(SCHEME_KEY, schemeName);
+            document.getElementById('currentSchemeName').textContent = schemeName;
+            updateSchemeSelection(schemeName);
+            showToast(`Color scheme set to ${schemeName}`);
+        }
+
+        function updateSchemeSelection(selectedName) {
+            document.querySelectorAll('.scheme-card').forEach(card => {
+                card.classList.toggle('selected', card.dataset.scheme === selectedName);
+            });
+        }
+
+        // Toast Notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+    </script>
+</body>
+</html>

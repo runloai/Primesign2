@@ -5,18 +5,24 @@ import { useQuoteModal } from "@/context/QuoteModalContext";
 const LOGO_URL = "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/logo/logo.webp";
 
 const COLOR_SCHEMES = {
-  "Gold Premium": { p: "38 95% 55%", s: "190 100% 55%", b: "220 15% 6%", f: "0 0% 98%" },
-  "Electric Cyan": { p: "190 100% 55%", s: "280 80% 60%", b: "220 15% 6%", f: "0 0% 98%" },
-  "Neon Green": { p: "142 100% 50%", s: "190 100% 55%", b: "0 0% 5%", f: "0 0% 98%" },
-  "Clean White": { p: "38 95% 45%", s: "220 15% 40%", b: "0 0% 98%", f: "0 0% 10%" },
-  "Royal Blue": { p: "220 90% 55%", s: "38 95% 55%", b: "222 47% 11%", f: "0 0% 98%" },
+  "Obsidian Gold": { p: "38 95% 55%", s: "190 100% 55%", b: "220 15% 6%", f: "0 0% 98%" },
+  "Plasma Purple": { p: "280 95% 60%", s: "45 100% 55%", b: "270 25% 5%", f: "0 0% 98%" },
+  "Electric Blue": { p: "210 100% 55%", s: "38 95% 55%", b: "222 30% 8%", f: "0 0% 98%" },
+  "Crimson Noir": { p: "350 90% 55%", s: "45 100% 55%", b: "0 0% 6%", f: "0 0% 98%" },
+  "Emerald Glow": { p: "160 90% 50%", s: "38 95% 55%", b: "170 20% 6%", f: "0 0% 98%" },
+  "Neon Nights": { p: "320 100% 55%", s: "180 100% 55%", b: "260 20% 5%", f: "0 0% 98%" },
+  "Arctic White": { p: "210 90% 45%", s: "215 25% 30%", b: "0 0% 98%", f: "220 15% 10%" },
+  "Sandstone": { p: "30 80% 50%", s: "200 60% 40%", b: "35 50% 97%", f: "30 15% 15%" },
+  "Royal Velvet": { p: "270 90% 55%", s: "45 100% 55%", b: "260 30% 6%", f: "0 0% 98%" },
+  "Thunderbolt": { p: "195 100% 55%", s: "45 100% 55%", b: "220 15% 5%", f: "0 0% 98%" },
+  "Midnight Copper": { p: "20 90% 55%", s: "200 90% 50%", b: "222 40% 5%", f: "0 0% 98%" },
 };
 
 export default function Navbar() {
   const { open } = useQuoteModal();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [scheme, setScheme] = useState(() => localStorage.getItem("primesign-scheme") || "Gold Premium");
+  const [scheme, setScheme] = useState(() => localStorage.getItem("primesign-scheme") || "Obsidian Gold");
   const [location] = useLocation();
 
   useEffect(() => {
