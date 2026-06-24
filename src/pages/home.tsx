@@ -186,7 +186,7 @@ export default function Home() {
             className="absolute inset-0 w-full h-full object-cover"
           />
           {/* Layered overlay — light enough to show the image, dark enough to read text */}
-          <div className="absolute inset-0 bg-background/45" />
+          <div className="absolute inset-0 bg-black/45" />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-r from-background/70 via-transparent to-transparent" />
         </div>
@@ -238,7 +238,7 @@ export default function Home() {
                 <Button
                   variant="outline"
                   size="lg"
-                  className="h-12 sm:h-14 px-6 sm:px-8 rounded-full text-sm sm:text-lg font-bold uppercase tracking-wide bg-foreground/5 border-foreground/20 hover:bg-foreground/10 w-full sm:w-auto"
+                  className="h-12 sm:h-14 px-6 sm:px-8 rounded-full text-sm sm:text-lg font-bold uppercase tracking-wide bg-white/5 border-white/20 hover:bg-white/10 w-full sm:w-auto"
                   data-testid="button-hero-portfolio"
                 >
                   View Our Work
@@ -250,7 +250,7 @@ export default function Home() {
 
         {/* Slide dots */}
         {/* Stat strip */}
-        <div className="absolute bottom-0 left-0 right-0 bg-background/50 border-t border-foreground/10 backdrop-blur-sm py-3 z-10">
+        <div className="absolute bottom-0 left-0 right-0 bg-black/40 border-t border-white/10 backdrop-blur-sm py-3 z-10">
           <div className="container mx-auto px-4 flex flex-wrap justify-center md:justify-between gap-6 text-center">
             {[["500+", "Projects"], ["5+", "Years"], ["100%", "Satisfaction"], ["Bangalore", "Based"]].map(([val, label]) => (
               <div key={label}>
@@ -337,7 +337,7 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="group relative bg-card rounded-2xl overflow-hidden border border-border/50 hover:border-primary/50 transition-all duration-500"
+                className="group relative bg-card rounded-2xl overflow-hidden border border-white/5 hover:border-primary/50 transition-all duration-500"
                 data-testid={`card-service-${index}`}
               >
                 {service.tag && (
@@ -363,7 +363,7 @@ export default function Home() {
                     href="https://wa.me/c/916366525253"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center text-sm font-bold uppercase tracking-wider text-foreground hover:text-primary transition-colors"
+                    className="inline-flex items-center text-sm font-bold uppercase tracking-wider text-white hover:text-primary transition-colors"
                   >
                     Explore Catalogue <ChevronRight className="ml-1 w-4 h-4" />
                   </a>
@@ -375,7 +375,7 @@ export default function Home() {
       </section>
 
       {/* PORTFOLIO */}
-      <section id="portfolio" className="py-24 bg-background relative border-t border-foreground/5">
+      <section id="portfolio" className="py-24 bg-background relative border-t border-white/5">
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
             <div className="max-w-2xl">
@@ -383,7 +383,7 @@ export default function Home() {
               <h3 className="text-4xl md:text-5xl font-display font-bold leading-tight">REAL INSTALLATIONS</h3>
             </div>
             <a href="https://www.youtube.com/@PrimesignBangalore" target="_blank" rel="noopener noreferrer">
-              <Button variant="outline" className="rounded-full border-foreground/20 uppercase tracking-widest font-bold">
+              <Button variant="outline" className="rounded-full border-white/20 uppercase tracking-widest font-bold">
                 Watch on YouTube
               </Button>
             </a>
@@ -400,8 +400,8 @@ export default function Home() {
               data-testid="img-portfolio-featured"
             >
               <img src={IMAGES.portfolio[0]} alt="Featured installation" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-              <div className="absolute inset-0 bg-background/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                <span className="text-foreground font-display font-bold uppercase tracking-widest text-lg">Storefront LED Branding</span>
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                <span className="text-white font-display font-bold uppercase tracking-widest text-lg">Storefront LED Branding</span>
               </div>
             </motion.div>
 
@@ -421,8 +421,8 @@ export default function Home() {
                 data-testid={`img-portfolio-${i}`}
               >
                 <img src={item.img} alt={item.label} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                <div className="absolute inset-0 bg-background/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                  <span className="text-foreground font-bold uppercase tracking-widest text-sm">{item.label}</span>
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                  <span className="text-white font-bold uppercase tracking-widest text-sm">{item.label}</span>
                 </div>
               </motion.div>
             ))}
@@ -446,8 +446,8 @@ export default function Home() {
                 data-testid={`img-portfolio-row2-${i}`}
               >
                 <img src={item.img} alt={item.label} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                <div className="absolute inset-0 bg-background/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                  <span className="text-foreground font-bold uppercase tracking-widest text-sm">{item.label}</span>
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                  <span className="text-white font-bold uppercase tracking-widest text-sm">{item.label}</span>
                 </div>
               </motion.div>
             ))}
@@ -466,8 +466,8 @@ export default function Home() {
                 data-testid={`img-portfolio-vehicle-${i}`}
               >
                 <img src={img} alt={`Vehicle wrap ${i + 1}`} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                <div className="absolute inset-0 bg-background/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                  <span className="text-foreground font-bold uppercase tracking-widest text-sm">Vehicle Wrap</span>
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                  <span className="text-white font-bold uppercase tracking-widest text-sm">Vehicle Wrap</span>
                 </div>
               </motion.div>
             ))}
@@ -476,7 +476,7 @@ export default function Home() {
       </section>
 
       {/* CLIENTS STRIP */}
-      <section className="py-16 bg-card border-t border-foreground/5">
+      <section className="py-16 bg-card border-t border-white/5">
         <div className="container mx-auto px-4 md:px-6">
           <div className="text-center mb-12">
             <h2 className="text-sm text-primary font-bold tracking-widest uppercase mb-2">Trusted By</h2>
@@ -506,15 +506,15 @@ export default function Home() {
 
       {/* WHY CHOOSE US */}
       <section id="why-us" className="py-24 bg-card text-card-foreground relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-foreground/20 via-transparent to-transparent opacity-50" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-white/20 via-transparent to-transparent opacity-50" />
         <div className="container mx-auto px-4 md:px-6 relative z-10">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
-              <h2 className="text-sm font-bold tracking-widest uppercase mb-4 text-foreground/80">The Primesign Advantage</h2>
+              <h2 className="text-sm font-bold tracking-widest uppercase mb-4 text-white/80">The Primesign Advantage</h2>
               <h3 className="text-4xl md:text-6xl font-display font-bold leading-tight mb-8">
                 ENGINEERED FOR EXCELLENCE.
               </h3>
-              <p className="text-xl font-light leading-relaxed mb-10 text-foreground/90">
+              <p className="text-xl font-light leading-relaxed mb-10 text-white/90">
                 In a crowded city like Bangalore, standing out requires more than just a bright light.
                 It requires structural integrity, flawless design, and reliable execution.
               </p>
@@ -565,7 +565,7 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.2 }}
-                className="bg-background p-8 rounded-2xl border border-foreground/5 relative"
+                className="bg-background p-8 rounded-2xl border border-white/5 relative"
                 data-testid={`card-testimonial-${i}`}
               >
                 <div className="text-primary text-6xl font-serif leading-none absolute top-4 left-6 opacity-20">"</div>
@@ -588,7 +588,7 @@ export default function Home() {
       {/* CTA */}
       <section className="py-24 relative">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="bg-gradient-to-br from-card to-background border border-foreground/10 rounded-3xl p-8 md:p-16 lg:p-20 text-center relative overflow-hidden">
+          <div className="bg-gradient-to-br from-card to-background border border-white/10 rounded-3xl p-8 md:p-16 lg:p-20 text-center relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 blur-[100px]" />
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-secondary/20 blur-[100px]" />
 
@@ -609,11 +609,11 @@ export default function Home() {
                   Contact Us Now
                 </Button>
               </Link>
-              <a href="tel:+916****5253">
+              <a href="tel:+916366525253">
                 <Button
                   variant="outline"
                   size="lg"
-                  className="h-14 px-8 rounded-full text-lg font-bold uppercase tracking-wide border-foreground/20 hover:bg-foreground/10 w-full sm:w-auto group"
+                  className="h-14 px-8 rounded-full text-lg font-bold uppercase tracking-wide border-white/20 hover:bg-white/10 w-full sm:w-auto group"
                   data-testid="button-cta-call"
                 >
                   <PhoneCall className="mr-2 w-5 h-5 text-primary group-hover:animate-bounce" />

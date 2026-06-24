@@ -5,7 +5,7 @@ const LOGO_URL = "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/
 
 export default function Footer() {
   return (
-    <footer className="bg-background border-t border-foreground/10 pt-20 pb-10">
+    <footer className="bg-black border-t border-white/10 pt-20 pb-10">
       <div className="container mx-auto px-4 md:px-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           {/* Brand */}
@@ -15,13 +15,13 @@ export default function Footer() {
               Bangalore's premier signage and branding studio. We build bold, high-impact visual communication that makes your business unforgettable.
             </p>
             <div className="flex gap-4">
-              <a href="https://wa.me/916366525253" target="_blank" rel="noopener noreferrer" className="h-10 w-10 rounded-full bg-foreground/5 flex items-center justify-center text-foreground hover:bg-primary hover:text-primary-foreground transition-all">
+              <a href="https://wa.me/916366525253" target="_blank" rel="noopener noreferrer" className="h-10 w-10 rounded-full bg-white/5 flex items-center justify-center text-foreground hover:bg-primary hover:text-primary-foreground transition-all">
                 <SiWhatsapp size={20} />
               </a>
-              <a href="https://www.youtube.com/@PrimesignBangalore" target="_blank" rel="noopener noreferrer" className="h-10 w-10 rounded-full bg-foreground/5 flex items-center justify-center text-foreground hover:bg-primary hover:text-primary-foreground transition-all">
+              <a href="https://www.youtube.com/@PrimesignBangalore" target="_blank" rel="noopener noreferrer" className="h-10 w-10 rounded-full bg-white/5 flex items-center justify-center text-foreground hover:bg-primary hover:text-primary-foreground transition-all">
                 <SiYoutube size={20} />
               </a>
-              <a href="https://g.co/kgs/Usqtga" target="_blank" rel="noopener noreferrer" className="h-10 w-10 rounded-full bg-foreground/5 flex items-center justify-center text-foreground hover:bg-primary hover:text-primary-foreground transition-all">
+              <a href="https://g.co/kgs/Usqtga" target="_blank" rel="noopener noreferrer" className="h-10 w-10 rounded-full bg-white/5 flex items-center justify-center text-foreground hover:bg-primary hover:text-primary-foreground transition-all">
                 <SiGooglemaps size={18} />
               </a>
             </div>
@@ -81,7 +81,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="pt-8 border-t border-foreground/10 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-muted-foreground">
             &copy; {new Date().getFullYear()} Primesign Private Limited. All rights reserved.
           </p>

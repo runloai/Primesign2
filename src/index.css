@@ -147,10 +147,6 @@
   --destructive-border: hsl(var(--destructive));
   --sidebar-primary-border: hsl(var(--sidebar-primary));
   --sidebar-accent-border: hsl(var(--sidebar-accent));
-  
-  /* Overlay colors for transparency in Tailwind classes */
-  --overlay-light: 0 0% 100%;
-  --overlay-dark: 220 15% 6%;
 }
 
 .dark {

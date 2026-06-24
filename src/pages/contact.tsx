@@ -86,22 +86,22 @@ export default function ContactPage() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="space-y-10"
           >
-            <div className="bg-card border border-foreground/5 rounded-3xl p-8 md:p-10 shadow-xl">
+            <div className="bg-card border border-white/5 rounded-3xl p-8 md:p-10 shadow-xl">
               <h2 className="text-2xl font-display font-bold uppercase tracking-wider mb-8">Send an Enquiry</h2>
-              <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); }}>
+              <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
                 <div className="grid sm:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Name</label>
-                    <Input placeholder="John Doe" className="h-12 bg-background border-foreground/10" />
+                    <Input placeholder="John Doe" className="h-12 bg-background border-white/10" />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Phone Number</label>
-                    <Input placeholder="+91 00000 00000" className="h-12 bg-background border-foreground/10" />
+                    <Input placeholder="+91 00000 00000" className="h-12 bg-background border-white/10" />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Service Required</label>
-                  <select className="flex h-12 w-full items-center justify-between rounded-md border border-foreground/10 bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+                  <select className="flex h-12 w-full items-center justify-between rounded-md border border-white/10 bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
                     <option value="" disabled selected hidden>Select a service</option>
                     <option value="led">LED Signs</option>
                     <option value="3d">3D Channel Letters</option>
@@ -114,7 +114,7 @@ export default function ContactPage() {
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Project Details</label>
-                  <Textarea placeholder="Tell us about your requirements..." className="min-h-[120px] bg-background border-foreground/10 resize-none" />
+                  <Textarea placeholder="Tell us about your requirements..." className="min-h-[120px] bg-background border-white/10 resize-none" />
                 </div>
                 <Button type="submit" size="lg" className="w-full h-14 rounded-full font-bold uppercase tracking-wide text-lg box-glow">
                   Submit Enquiry <Send className="ml-2 w-5 h-5" />
@@ -123,13 +123,13 @@ export default function ContactPage() {
             </div>
             
             {/* Embedded Map Visual Placeholder */}
-            <div className="rounded-3xl overflow-hidden border border-foreground/10 aspect-[2/1] relative group bg-muted flex items-center justify-center">
+            <div className="rounded-3xl overflow-hidden border border-white/10 aspect-[2/1] relative group bg-muted flex items-center justify-center">
                <div className="text-center p-6 z-10">
                  <MapPin className="w-10 h-10 text-primary mx-auto mb-4" />
                  <h3 className="font-display font-bold text-xl mb-2">View on Google Maps</h3>
-                 <a href="https://g.co/kgs/Usqtga" target="_blank" rel="noopener noreferrer" className="text-sm uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors underline">Click to open map</a>
+                 <a href="https://g.co/kgs/Usqtga" target="_blank" rel="noopener noreferrer" className="text-sm uppercase tracking-wider text-muted-foreground hover:text-white transition-colors underline">Click to open map</a>
                </div>
-               <div className="absolute inset-0 bg-background/60 group-hover:bg-background/40 transition-colors pointer-events-none"></div>
+               <div className="absolute inset-0 bg-black/60 group-hover:bg-black/40 transition-colors pointer-events-none"></div>
             </div>
 
           </motion.div>
