@@ -1,0 +1,443 @@
+/**
+ * PRIMESIGN COLOR PALETTES
+ * Professional color schemes for signage/LED business website
+ * All values in HSL format
+ * 
+ * Usage: Import into your theme system and apply CSS variables
+ * Format: --variable: hue saturation% lightness%
+ */
+
+export const COLOR_PALETTES = {
+  // ============================================================================
+  // DARK PREMIUM THEMES (Best for signage - high contrast, LED-like vibrancy)
+  // ============================================================================
+
+  /**
+   * THEME 1: Obsidian Gold
+   * Vibe: Luxury, Premium, Classic signage aesthetic
+   * Best for: High-end signage businesses, premium branding
+   */
+  "Obsidian Gold": {
+    primary: "38 95% 55%",           // Warm gold
+    secondary: "190 100% 55%",       // Electric cyan
+    background: "220 15% 6%",       // Deep obsidian
+    foreground: "0 0% 98%",          // Almost white
+    card: "220 15% 9%",              // Dark card
+    cardForeground: "0 0% 98%",      // White text on cards
+    muted: "220 15% 15%",            // Subtle dark
+    mutedForeground: "220 10% 65%",  // Muted text
+    accent: "220 15% 18%",           // Subtle accent
+    accentForeground: "0 0% 98%",    // White on accent
+    border: "220 15% 20%",           // Border color
+    input: "220 15% 15%",            // Input background
+    ring: "38 95% 55%",              // Gold ring
+    popover: "220 15% 9%",           // Popover dark
+    popoverForeground: "0 0% 98%",   // White on popover
+  },
+
+  /**
+   * THEME 2: Plasma Purple
+   * Vibe: Modern, Tech-forward, Mysterious
+   * Best for: LED tech companies, innovative signage
+   */
+  "Plasma Purple": {
+    primary: "280 95% 60%",          // Vivid purple
+    secondary: "45 100% 55%",        // Amber gold
+    background: "270 25% 5%",        // Deep purple-black
+    foreground: "0 0% 98%",          // White
+    card: "270 25% 10%",             // Purple-tinted card
+    cardForeground: "0 0% 98%",      // White text
+    muted: "270 20% 18%",            // Subtle purple
+    mutedForeground: "270 15% 65%",  // Muted purple text
+    accent: "270 25% 22%",           // Purple accent
+    accentForeground: "0 0% 98%",    // White on accent
+    border: "270 20% 22%",           // Purple border
+    input: "270 20% 18%",            // Input purple
+    ring: "280 95% 60%",             // Purple ring
+    popover: "270 25% 10%",          // Popover purple
+    popoverForeground: "0 0% 98%",   // White on popover
+  },
+
+  /**
+   * THEME 3: Electric Blue
+   * Vibe: Corporate, Trustworthy, Professional
+   * Best for: B2B signage, corporate branding
+   */
+  "Electric Blue": {
+    primary: "210 100% 55%",         // Electric blue
+    secondary: "180 90% 50%",        // Teal accent
+    background: "220 30% 5%",        // Deep navy black
+    foreground: "0 0% 98%",          // White
+    card: "220 30% 8%",              // Navy card
+    cardForeground: "0 0% 98%",      // White text
+    muted: "220 25% 18%",            // Muted navy
+    mutedForeground: "220 20% 65%",  // Muted blue text
+    accent: "220 30% 15%",           // Navy accent
+    accentForeground: "0 0% 98%",    // White on accent
+    border: "220 25% 22%",           // Navy border
+    input: "220 25% 18%",            // Input navy
+    ring: "210 100% 55%",            // Blue ring
+    popover: "220 30% 8%",           // Popover navy
+    popoverForeground: "0 0% 98%",     // White on popover
+  },
+
+  /**
+   * THEME 4: Crimson Noir
+   * Vibe: Bold, Energetic, Attention-grabbing
+   * Best for: Dynamic signage, retail, bold brands
+   */
+  "Crimson Noir": {
+    primary: "350 95% 55%",          // Crimson red
+    secondary: "45 100% 55%",        // Gold accent
+    background: "350 20% 5%",        // Deep red-black
+    foreground: "0 0% 98%",          // White
+    card: "350 20% 10%",             // Red-tinted card
+    cardForeground: "0 0% 98%",      // White text
+    muted: "350 15% 18%",            // Muted red
+    mutedForeground: "350 15% 65%",  // Muted red text
+    accent: "350 20% 15%",           // Red accent
+    accentForeground: "0 0% 98%",    // White on accent
+    border: "350 15% 22%",           // Red border
+    input: "350 15% 18%",            // Input red
+    ring: "350 95% 55%",             // Crimson ring
+    popover: "350 20% 10%",          // Popover red
+    popoverForeground: "0 0% 98%",   // White on popover
+  },
+
+  /**
+   * THEME 5: Emerald Glow
+   * Vibe: Natural, Fresh, Sustainable
+   * Best for: Eco-friendly signage, green energy LED
+   */
+  "Emerald Glow": {
+    primary: "145 90% 50%",          // Emerald green
+    secondary: "45 95% 55%",           // Warm amber
+    background: "145 20% 5%",        // Deep forest black
+    foreground: "0 0% 98%",          // White
+    card: "145 20% 8%",              // Green-tinted card
+    cardForeground: "0 0% 98%",      // White text
+    muted: "145 15% 15%",            // Muted green
+    mutedForeground: "145 15% 65%",  // Muted green text
+    accent: "145 20% 15%",           // Green accent
+    accentForeground: "0 0% 98%",    // White on accent
+    border: "145 15% 20%",           // Green border
+    input: "145 15% 15%",            // Input green
+    ring: "145 90% 50%",             // Emerald ring
+    popover: "145 20% 8%",           // Popover green
+    popoverForeground: "0 0% 98%",   // White on popover
+  },
+
+  /**
+   * THEME 6: Neon Nights
+   * Vibe: Vibrant, Youthful, Retro-futuristic
+   * Best for: Modern urban signage, nightlife, creative brands
+   */
+  "Neon Nights": {
+    primary: "320 100% 60%",         // Hot pink
+    secondary: "170 100% 50%",         // Neon cyan
+    background: "260 30% 5%",        // Deep purple-black
+    foreground: "0 0% 98%",          // White
+    card: "260 30% 10%",             // Purple-tinted card
+    cardForeground: "0 0% 98%",      // White text
+    muted: "260 25% 18%",            // Muted purple
+    mutedForeground: "260 20% 65%",  // Muted purple text
+    accent: "260 30% 15%",           // Purple accent
+    accentForeground: "0 0% 98%",    // White on accent
+    border: "260 25% 22%",           // Purple border
+    input: "260 25% 18%",            // Input purple
+    ring: "320 100% 60%",            // Pink ring
+    popover: "260 30% 10%",          // Popover purple
+    popoverForeground: "0 0% 98%",   // White on popover
+  },
+
+  // ============================================================================
+  // LIGHT/WHITE THEMES (Clean, professional contrast options)
+  // ============================================================================
+
+  /**
+   * THEME 7: Arctic White
+   * Vibe: Clean, Professional, Corporate
+   * Best for: Corporate websites, minimalist design
+   */
+  "Arctic White": {
+    primary: "210 90% 45%",          // Deep blue
+    secondary: "210 40% 60%",        // Soft blue
+    background: "0 0% 98%",          // Off-white
+    foreground: "220 20% 10%",         // Near black
+    card: "0 0% 100%",               // Pure white
+    cardForeground: "220 20% 10%",     // Dark text
+    muted: "220 15% 92%",            // Light gray
+    mutedForeground: "220 15% 45%",  // Medium gray text
+    accent: "210 40% 96%",           // Very light blue
+    accentForeground: "220 20% 10%",   // Dark on accent
+    border: "220 15% 88%",           // Light border
+    input: "220 15% 92%",            // Light input
+    ring: "210 90% 45%",             // Blue ring
+    popover: "0 0% 100%",            // White popover
+    popoverForeground: "220 20% 10%", // Dark on popover
+  },
+
+  /**
+   * THEME 8: Sandstone
+   * Vibe: Warm, Inviting, Natural
+   * Best for: Friendly business, approachable brand
+   */
+  "Sandstone": {
+    primary: "25 90% 45%",           // Warm orange-brown
+    secondary: "35 70% 55%",           // Golden tan
+    background: "40 30% 96%",        // Warm off-white
+    foreground: "30 20% 15%",          // Warm dark
+    card: "40 30% 98%",              // Cream white
+    cardForeground: "30 20% 15%",      // Warm dark text
+    muted: "40 20% 88%",             // Warm gray
+    mutedForeground: "40 15% 45%",     // Warm muted text
+    accent: "40 30% 92%",            // Light cream accent
+    accentForeground: "30 20% 15%",    // Warm dark on accent
+    border: "40 20% 85%",            // Warm border
+    input: "40 20% 88%",             // Warm input
+    ring: "25 90% 45%",              // Orange ring
+    popover: "40 30% 98%",             // Cream popover
+    popoverForeground: "30 20% 15%",   // Warm dark on popover
+  },
+
+  /**
+   * THEME 9: Cloud Gray
+   * Vibe: Sophisticated, Neutral, Modern
+   * Best for: Tech companies, minimal design
+   */
+  "Cloud Gray": {
+    primary: "220 60% 45%",          // Steel blue
+    secondary: "220 30% 55%",        // Soft gray-blue
+    background: "220 10% 96%",         // Light gray-white
+    foreground: "220 20% 12%",         // Dark gray
+    card: "0 0% 100%",               // Pure white
+    cardForeground: "220 20% 12%",       // Dark text
+    muted: "220 15% 90%",            // Light gray
+    mutedForeground: "220 15% 45%",    // Medium gray text
+    accent: "220 20% 94%",           // Very light gray
+    accentForeground: "220 20% 12%",   // Dark on accent
+    border: "220 15% 88%",           // Light border
+    input: "220 15% 90%",            // Light input
+    ring: "220 60% 45%",             // Steel blue ring
+    popover: "0 0% 100%",              // White popover
+    popoverForeground: "220 20% 12%",  // Dark on popover
+  },
+
+  // ============================================================================
+  // UNIQUE COMBINATIONS (Signature, memorable palettes)
+  // ============================================================================
+
+  /**
+   * THEME 10: Royal Velvet
+   * Vibe: Opulent, Regal, High-end
+   * Best for: Luxury brands, premium signage
+   * Unique combo: Deep purple + Gold
+   */
+  "Royal Velvet": {
+    primary: "270 80% 55%",          // Royal purple
+    secondary: "45 95% 55%",           // Rich gold
+    background: "270 30% 5%",          // Deep velvet black
+    foreground: "0 0% 98%",            // White
+    card: "270 30% 10%",               // Velvet card
+    cardForeground: "0 0% 98%",        // White text
+    muted: "270 25% 18%",              // Subtle velvet
+    mutedForeground: "270 20% 65%",    // Muted purple text
+    accent: "270 30% 15%",             // Velvet accent
+    accentForeground: "0 0% 98%",      // White on accent
+    border: "270 25% 22%",             // Velvet border
+    input: "270 25% 18%",              // Input velvet
+    ring: "45 95% 55%",                // Gold ring
+    popover: "270 30% 10%",            // Popover velvet
+    popoverForeground: "0 0% 98%",     // White on popover
+  },
+
+  /**
+   * THEME 11: Thunderbolt
+   * Vibe: Dynamic, Electric, Powerful
+   * Best for: High-energy brands, automotive signage
+   * Unique combo: Electric blue + White lightning
+   */
+  "Thunderbolt": {
+    primary: "195 100% 55%",           // Lightning cyan
+    secondary: "220 15% 95%",          // Bright white
+    background: "210 40% 4%",          // Storm black
+    foreground: "0 0% 98%",            // White
+    card: "210 40% 8%",                // Storm card
+    cardForeground: "0 0% 98%",        // White text
+    muted: "210 30% 18%",              // Storm muted
+    mutedForeground: "210 25% 65%",    // Storm muted text
+    accent: "210 40% 15%",             // Storm accent
+    accentForeground: "0 0% 98%",      // White on accent
+    border: "210 30% 25%",             // Storm border
+    input: "210 30% 18%",              // Storm input
+    ring: "195 100% 55%",              // Lightning ring
+    popover: "210 40% 8%",             // Popover storm
+    popoverForeground: "0 0% 98%",     // White on popover
+  },
+
+  /**
+   * THEME 12: Forest Ember
+   * Vibe: Earthy, Warm, Balanced
+   * Best for: Natural brands, organic signage
+   * Unique combo: Forest green + Amber
+   */
+  "Forest Ember": {
+    primary: "140 80% 40%",            // Forest green
+    secondary: "30 95% 55%",             // Warm amber
+    background: "140 20% 5%",            // Deep forest black
+    foreground: "0 0% 98%",              // White
+    card: "140 20% 9%",                // Forest card
+    cardForeground: "0 0% 98%",          // White text
+    muted: "140 15% 18%",              // Forest muted
+    mutedForeground: "140 15% 65%",    // Forest muted text
+    accent: "140 20% 15%",             // Forest accent
+    accentForeground: "0 0% 98%",      // White on accent
+    border: "140 15% 22%",             // Forest border
+    input: "140 15% 18%",              // Forest input
+    ring: "30 95% 55%",                // Amber ring
+    popover: "140 20% 9%",             // Popover forest
+    popoverForeground: "0 0% 98%",     // White on popover
+  },
+
+  /**
+   * THEME 13: Monolith
+   * Vibe: Sleek, Minimal, Professional
+   * Best for: Architecture firms, industrial signage
+   * Unique combo: Monochrome grays with subtle warm tint
+   */
+  "Monolith": {
+    primary: "0 0% 75%",               // Light gray
+    secondary: "0 0% 55%",             // Medium gray
+    background: "0 0% 6%",             // Near black
+    foreground: "0 0% 98%",            // White
+    card: "0 0% 10%",                  // Dark gray card
+    cardForeground: "0 0% 98%",       // White text
+    muted: "0 0% 20%",                 // Gray muted
+    mutedForeground: "0 0% 65%",       // Muted gray text
+    accent: "0 0% 15%",                // Gray accent
+    accentForeground: "0 0% 98%",        // White on accent
+    border: "0 0% 25%",                // Gray border
+    input: "0 0% 20%",                 // Gray input
+    ring: "0 0% 75%",                  // Light gray ring
+    popover: "0 0% 10%",               // Popover gray
+    popoverForeground: "0 0% 98%",     // White on popover
+  },
+
+  /**
+   * THEME 14: Sunset Boulevard
+   * Vibe: Creative, Warm, California cool
+   * Best for: Creative agencies, artistic signage
+   * Unique combo: Coral + Deep slate
+   */
+  "Sunset Boulevard": {
+    primary: "15 95% 60%",             // Sunset coral
+    secondary: "210 25% 35%",          // Deep slate
+    background: "210 25% 6%",          // Dark slate black
+    foreground: "0 0% 98%",            // White
+    card: "210 25% 10%",               // Slate card
+    cardForeground: "0 0% 98%",          // White text
+    muted: "210 20% 18%",              // Slate muted
+    mutedForeground: "210 15% 65%",    // Slate muted text
+    accent: "210 25% 15%",             // Slate accent
+    accentForeground: "0 0% 98%",      // White on accent
+    border: "210 20% 22%",             // Slate border
+    input: "210 20% 18%",              // Slate input
+    ring: "15 95% 60%",                // Coral ring
+    popover: "210 25% 10%",            // Popover slate
+    popoverForeground: "0 0% 98%",     // White on popover
+  },
+
+  /**
+   * THEME 15: Cyberpunk
+   * Vibe: Futuristic, Edgy, Urban
+   * Best for: Tech signage, gaming, modern retail
+   * Unique combo: Magenta + Neon yellow
+   */
+  "Cyberpunk": {
+    primary: "320 100% 55%",           // Cyber magenta
+    secondary: "60 100% 55%",          // Neon yellow
+    background: "280 30% 5%",          // Dark cyber black
+    foreground: "0 0% 98%",            // White
+    card: "280 30% 9%",                // Cyber card
+    cardForeground: "0 0% 98%",        // White text
+    muted: "280 25% 18%",              // Cyber muted
+    mutedForeground: "280 20% 65%",    // Cyber muted text
+    accent: "280 30% 15%",             // Cyber accent
+    accentForeground: "0 0% 98%",      // White on accent
+    border: "280 25% 25%",             // Cyber border
+    input: "280 25% 18%",              // Cyber input
+    ring: "320 100% 55%",              // Magenta ring
+    popover: "280 30% 9%",             // Cyber popover
+    popoverForeground: "0 0% 98%",     // White on popover
+  },
+
+  /**
+   * THEME 16: Midnight Copper
+   * Vibe: Industrial, Warm, Modern
+   * Best for: Urban signage, industrial design
+   * Unique combo: Copper + Midnight blue
+   */
+  "Midnight Copper": {
+    primary: "25 85% 55%",             // Copper
+    secondary: "220 60% 55%",          // Deep blue
+    background: "220 20% 5%",            // Midnight black
+    foreground: "0 0% 98%",              // White
+    card: "220 20% 9%",                  // Midnight card
+    cardForeground: "0 0% 98%",          // White text
+    muted: "220 15% 18%",                // Midnight muted
+    mutedForeground: "220 15% 65%",      // Midnight muted text
+    accent: "220 20% 15%",               // Midnight accent
+    accentForeground: "0 0% 98%",        // White on accent
+    border: "220 15% 22%",               // Midnight border
+    input: "220 15% 18%",                // Midnight input
+    ring: "25 85% 55%",                  // Copper ring
+    popover: "220 20% 9%",               // Midnight popover
+    popoverForeground: "0 0% 98%",       // White on popover
+  },
+};
+
+// ============================================================================
+// QUICK REFERENCE GUIDE
+// ============================================================================
+
+/**
+ * RECOMMENDED FOR SIGNAGE/LED BUSINESSES:
+ * 
+ * Dark Premium (Best):
+ * - Obsidian Gold (Classic luxury)
+ * - Electric Blue (Corporate trust)
+ * - Plasma Purple (Modern tech)
+ * - Thunderbolt (High energy)
+ * - Royal Velvet (Ultimate luxury - purple + gold)
+ * 
+ * Light/Clean:
+ * - Arctic White (Corporate clean)
+ * - Cloud Gray (Minimal tech)
+ * 
+ * Unique/Signature:
+ * - Cyberpunk (Modern/futuristic)
+ * - Sunset Boulevard (Creative/warm)
+ * - Midnight Copper (Industrial)
+ */
+
+/**
+ * CSS VARIABLE USAGE:
+ * 
+ * primary: Main brand color (buttons, links, highlights)
+ * secondary: Supporting accent color
+ * background: Page background
+ * foreground: Main text color
+ * card: Card/component backgrounds
+ * cardForeground: Text on cards
+ * muted: Subtle backgrounds (hover states, striped tables)
+ * mutedForeground: Secondary text (placeholders, descriptions)
+ * accent: Accent backgrounds (badges, highlights)
+ * accentForeground: Text on accent backgrounds
+ * border: Borders for inputs, cards, dividers
+ * input: Input field backgrounds
+ * ring: Focus rings, outlines
+ * popover: Popover/dropdown backgrounds
+ * popoverForeground: Text in popovers
+ */
+
+export default COLOR_PALETTES;

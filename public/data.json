@@ -1,0 +1,84 @@
+{
+  "hero": {
+    "backgroundImage": "/images/hero-bg.jpg",
+    "headline": "We Create Signs That Stand Out",
+    "subtitle": "Premium signage solutions for businesses that want to make a lasting impression",
+    "badgeText": "Est. 2010"
+  },
+  "contact": {
+    "phone": "+91 80 1234 5678",
+    "phone2": "+91 98765 43210",
+    "email": "info@primesign.com",
+    "address": "123 Signage Street, Bangalore, Karnataka 560001",
+    "whatsapp": "+91 98765 43210",
+    "youtube": "https://youtube.com/primesign",
+    "instagram": "https://instagram.com/primesign",
+    "facebook": "https://facebook.com/primesign"
+  },
+  "services": [
+    {
+      "id": 1,
+      "name": "LED Signage",
+      "description": "Eye-catching LED signs that illuminate your brand 24/7 with energy-efficient technology.",
+      "icon": "lightbulb",
+      "image": "/images/service-led.jpg"
+    },
+    {
+      "id": 2,
+      "name": "Neon Signs",
+      "description": "Custom neon signage that brings a retro-modern vibe to your business space.",
+      "icon": "sparkles",
+      "image": "/images/service-neon.jpg"
+    },
+    {
+      "id": 3,
+      "name": "Channel Letters",
+      "description": "Three-dimensional illuminated letters for maximum impact and visibility.",
+      "icon": "type",
+      "image": "/images/service-channel.jpg"
+    },
+    {
+      "id": 4,
+      "name": "Wayfinding",
+      "description": "Clear directional signage to guide visitors through your space effortlessly.",
+      "icon": "map-pin",
+      "image": "/images/service-wayfinding.jpg"
+    },
+    {
+      "id": 5,
+      "name": "Digital Displays",
+      "description": "Dynamic digital signage solutions for modern advertising needs.",
+      "icon": "monitor",
+      "image": "/images/service-digital.jpg"
+    }
+  ],
+  "portfolio": [
+    {
+      "id": 1,
+      "image": "/images/portfolio-1.jpg",
+      "label": "Burger Joint Signage",
+      "category": "Restaurant"
+    },
+    {
+      "id": 2,
+      "image": "/images/portfolio-2.jpg",
+      "label": "Coffee Shop Branding",
+      "category": "Cafe"
+    },
+    {
+      "id": 3,
+      "image": "/images/portfolio-3.jpg",
+      "label": "Retail Store Front",
+      "category": "Retail"
+    },
+    {
+      "id": 4,
+      "image": "/images/portfolio-4.jpg",
+      "label": "Corporate Office Signage",
+      "category": "Corporate"
+    }
+  ],
+  "theme": {
+    "primaryColor": "#eab308"
+  }
+}
