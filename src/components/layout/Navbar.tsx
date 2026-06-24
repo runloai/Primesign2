@@ -1,14 +1,33 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Palette } from "lucide-react";
 import { useQuoteModal } from "@/context/QuoteModalContext";
 const LOGO_URL = "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/logo/logo.webp";
+
+const COLOR_SCHEMES = {
+  "Gold Premium": { p: "38 95% 55%", s: "190 100% 55%", b: "220 15% 6%", f: "0 0% 98%" },
+  "Electric Cyan": { p: "190 100% 55%", s: "280 80% 60%", b: "220 15% 6%", f: "0 0% 98%" },
+  "Neon Green": { p: "142 100% 50%", s: "190 100% 55%", b: "0 0% 5%", f: "0 0% 98%" },
+  "Clean White": { p: "38 95% 45%", s: "220 15% 40%", b: "0 0% 98%", f: "0 0% 10%" },
+  "Royal Blue": { p: "220 90% 55%", s: "38 95% 55%", b: "222 47% 11%", f: "0 0% 98%" },
+};
 
 export default function Navbar() {
   const { open } = useQuoteModal();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [scheme, setScheme] = useState(() => localStorage.getItem("primesign-scheme") || "Gold Premium");
   const [location] = useLocation();
+
+  useEffect(() => {
+    const root = document.documentElement;
+    const s = COLOR_SCHEMES[scheme as keyof typeof COLOR_SCHEMES];
+    root.style.setProperty("--primary", s.p);
+    root.style.setProperty("--secondary", s.s);
+    root.style.setProperty("--background", s.b);
+    root.style.setProperty("--foreground", s.f);
+    localStorage.setItem("primesign-scheme", scheme);
+  }, [scheme]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -60,6 +79,15 @@ export default function Navbar() {
               {link.name}
             </Link>
           ))}
+          <select
+            value={scheme}
+            onChange={(e) => setScheme(e.target.value)}
+            className="bg-white/10 border border-white/20 rounded-full px-3 py-1.5 text-xs text-foreground/80 focus:outline-none focus:border-primary cursor-pointer"
+          >
+            {Object.keys(COLOR_SCHEMES).map((name) => (
+              <option key={name} value={name} className="bg-background text-foreground">{name}</option>
+            ))}
+          </select>
           <button
             onClick={open}
             className="bg-primary text-primary-foreground px-6 py-2 rounded-full font-bold text-sm uppercase tracking-wide hover:bg-primary/90 transition-all box-glow"
