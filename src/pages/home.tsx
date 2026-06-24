@@ -178,21 +178,13 @@ export default function Home() {
     <div className="w-full">
       {/* HERO */}
       <section className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden pt-20">
-        {/* Full-bleed rotating background */}
+        {/* Full-bleed static background */}
         <div className="absolute inset-0 z-0">
-          <AnimatePresence mode="sync">
-            <motion.img
-              key={heroIndex}
-              src={HERO_SLIDES[heroIndex]}
-              alt="Primesign signage"
-              className="absolute inset-0 w-full h-full object-cover"
-              initial={{ opacity: 0, scale: 1.06 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 1.4, ease: "easeInOut" }}
-              data-testid="img-hero-bg"
-            />
-          </AnimatePresence>
+          <img
+            src={IMAGES.portfolio[0]}
+            alt="Primesign signage"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
           {/* Layered overlay — light enough to show the image, dark enough to read text */}
           <div className="absolute inset-0 bg-black/45" />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
@@ -257,17 +249,6 @@ export default function Home() {
         </div>
 
         {/* Slide dots */}
-        <div className="absolute bottom-20 left-1/2 -translate-x-1/2 flex gap-2 z-10">
-          {HERO_SLIDES.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setHeroIndex(i)}
-              className={`h-1.5 rounded-full transition-all duration-300 ${i === heroIndex ? "bg-primary w-8" : "bg-white/30 w-3"}`}
-              data-testid={`dot-hero-${i}`}
-            />
-          ))}
-        </div>
-
         {/* Stat strip */}
         <div className="absolute bottom-0 left-0 right-0 bg-black/40 border-t border-white/10 backdrop-blur-sm py-3 z-10">
           <div className="container mx-auto px-4 flex flex-wrap justify-center md:justify-between gap-6 text-center">
