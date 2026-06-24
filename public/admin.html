@@ -2226,10 +2226,24 @@
         <div class="card mb-4">
           <div class="card-header">
             <div class="card-title">Services</div>
-            <button class="btn btn-cyan btn-sm" onclick="addService()">+ Add Service</button>
+            <div style="display: flex; gap: 12px; align-items: center;">
+              <div class="search-box" style="position: relative;">
+                <input type="text" id="servicesSearch" placeholder="Filter services..." 
+                  style="padding: 8px 12px 8px 36px; background: var(--bg-primary); border: 1px solid var(--border-primary); 
+                         border-radius: var(--radius-md); color: var(--text-primary); font-size: 14px; width: 220px;"
+                  onkeyup="filterServices()">
+                <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); opacity: 0.5;">🔍</span>
+              </div>
+              <button class="btn btn-cyan btn-sm" onclick="addService()">+ Add Service</button>
+            </div>
           </div>
           <div class="card-body">
             <div id="servicesList" class="service-list"></div>
+            <div id="servicesEmpty" class="empty-state hidden" style="padding: 40px; text-align: center;">
+              <div class="empty-icon">🔍</div>
+              <div class="empty-title">No services match</div>
+              <p>Try adjusting your search terms</p>
+            </div>
           </div>
         </div>
       </div>
@@ -3456,9 +3470,27 @@
     // ================================================
     // SERVICES (ARSENAL)
     // ================================================
+    let servicesFilterText = '';
+
+    function filterServices() {
+      const input = document.getElementById('servicesSearch');
+      servicesFilterText = input ? input.value.toLowerCase().trim() : '';
+      renderServices();
+    }
+
     function renderServices() {
       const container = document.getElementById('servicesList');
+      const emptyState = document.getElementById('servicesEmpty');
       if (!container) return;
+
+      // Filter services based on search text
+      let servicesToRender = config.services || [];
+      if (servicesFilterText) {
+        servicesToRender = servicesToRender.filter(s => 
+          (s.name && s.name.toLowerCase().includes(servicesFilterText)) ||
+          (s.desc && s.desc.toLowerCase().includes(servicesFilterText))
+        );
+      }
 
       if (!config.services || config.services.length === 0) {
         container.innerHTML = `
@@ -3468,10 +3500,19 @@
             <p>Add your first service to get started</p>
           </div>
         `;
+        if (emptyState) emptyState.classList.add('hidden');
         return;
       }
 
-      container.innerHTML = config.services.map(service => `
+      if (servicesToRender.length === 0) {
+        container.innerHTML = '';
+        if (emptyState) emptyState.classList.remove('hidden');
+        return;
+      }
+
+      if (emptyState) emptyState.classList.add('hidden');
+
+      container.innerHTML = servicesToRender.map(service => `
         <div class="service-card" id="service-${service.id}">
           <div class="service-header" onclick="toggleService(${service.id})">
             <div class="service-thumb">
