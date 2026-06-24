@@ -89,36 +89,42 @@ const services = [
     desc: "Ultra-bright, energy-efficient LED boards engineered for maximum daylight visibility.",
     img: IMAGES.led[0],
     tag: "Most Popular",
+    category: "led",
   },
   {
     title: "Glow Signs",
     desc: "Illuminated channel-letter installations that blaze through the Bangalore night.",
     img: IMAGES.glow[0],
     tag: null,
+    category: "glow",
   },
   {
     title: "Acrylic Signs",
     desc: "Precision-routed acrylic lettering — crisp, clean, and unmistakably premium.",
     img: IMAGES.acrylic[0],
     tag: null,
+    category: "acrylic",
   },
   {
     title: "Wall Branding",
     desc: "Large-format wall murals and architectural graphics for offices and retail.",
     img: IMAGES.wall[0],
     tag: null,
+    category: "wall",
   },
   {
     title: "Vehicle Wraps",
     desc: "Turn your entire fleet into high-impact moving billboards across the city.",
     img: IMAGES.vehicle[0],
     tag: null,
+    category: "vehicle",
   },
   {
     title: "PVC & Flex",
     desc: "Durable outdoor flex printing for hoardings, banners, and retail displays.",
     img: IMAGES.pvc,
     tag: null,
+    category: "pvc",
   },
 ];
 
@@ -174,6 +180,19 @@ export default function Home() {
     }, 4500);
     return () => clearInterval(timer);
   }, []);
+
+  useEffect(() => {
+    const items = document.querySelectorAll("[data-pf-cat]");
+    items.forEach((item) => {
+      const el = item as HTMLElement;
+      if (portfolioFilter === null) {
+        el.style.display = "";
+      } else {
+        const cat = el.getAttribute("data-pf-cat");
+        el.style.display = cat === portfolioFilter ? "" : "none";
+      }
+    });
+  }, [portfolioFilter]);
 
   return (
     <div className="w-full">
@@ -360,14 +379,15 @@ export default function Home() {
                   <p className="text-muted-foreground text-sm leading-relaxed mb-4 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-300">
                     {service.desc}
                   </p>
-                  <a
-                    href="https://wa.me/c/916366525253"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center text-sm font-bold uppercase tracking-wider text-white hover:text-primary transition-colors"
+                  <button
+                    onClick={() => {
+                      setPortfolioFilter(service.category);
+                      document.getElementById("portfolio")?.scrollIntoView({ behavior: "smooth" });
+                    }}
+                    className="inline-flex items-center text-sm font-bold uppercase tracking-wider text-white hover:text-primary transition-colors cursor-pointer bg-transparent border-none p-0"
                   >
                     Explore Catalogue <ChevronRight className="ml-1 w-4 h-4" />
-                  </a>
+                  </button>
                 </div>
               </motion.div>
             ))}
@@ -410,6 +430,7 @@ export default function Home() {
               viewport={{ once: true }}
               className="col-span-2 row-span-2 aspect-square rounded-2xl overflow-hidden relative group"
               data-testid="img-portfolio-featured"
+              data-pf-cat="led"
             >
               <img src={IMAGES.portfolio[0]} alt="Featured installation" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
@@ -418,10 +439,10 @@ export default function Home() {
             </motion.div>
 
             {[
-              { img: IMAGES.glow[3], label: "Glow Sign" },
-              { img: IMAGES.square[10], label: "LED Channel" },
-              { img: IMAGES.vehicle[2], label: "Vehicle Wrap" },
-              { img: IMAGES.wall[3], label: "Wall Branding" },
+              { img: IMAGES.glow[3], label: "Glow Sign", cat: "glow" },
+              { img: IMAGES.square[10], label: "LED Channel", cat: "led" },
+              { img: IMAGES.vehicle[2], label: "Vehicle Wrap", cat: "vehicle" },
+              { img: IMAGES.wall[3], label: "Wall Branding", cat: "wall" },
             ].map((item, i) => (
               <motion.div
                 key={i}
@@ -431,6 +452,7 @@ export default function Home() {
                 transition={{ delay: (i + 1) * 0.08 }}
                 className="aspect-square rounded-2xl overflow-hidden relative group"
                 data-testid={`img-portfolio-${i}`}
+                data-pf-cat={item.cat}
               >
                 <img src={item.img} alt={item.label} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
@@ -443,10 +465,10 @@ export default function Home() {
           {/* Second row — exactly 4 items to fill the 4-col grid cleanly */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
             {[
-              { img: IMAGES.portfolio[2], label: "Retail Signage" },
-              { img: IMAGES.acrylic[1], label: "Acrylic Letters" },
-              { img: IMAGES.glow[4], label: "Neon Glow" },
-              { img: IMAGES.portfolio[5], label: "Corporate Lobby" },
+              { img: IMAGES.portfolio[2], label: "Retail Signage", cat: "led" },
+              { img: IMAGES.acrylic[1], label: "Acrylic Letters", cat: "acrylic" },
+              { img: IMAGES.glow[4], label: "Neon Glow", cat: "glow" },
+              { img: IMAGES.portfolio[5], label: "Corporate Lobby", cat: "acrylic" },
             ].map((item, i) => (
               <motion.div
                 key={i}
@@ -456,6 +478,7 @@ export default function Home() {
                 transition={{ delay: i * 0.08 }}
                 className="aspect-[4/3] rounded-2xl overflow-hidden relative group"
                 data-testid={`img-portfolio-row2-${i}`}
+                data-pf-cat={item.cat}
               >
                 <img src={item.img} alt={item.label} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
@@ -476,6 +499,7 @@ export default function Home() {
                 transition={{ delay: i * 0.08 }}
                 className="aspect-[4/3] rounded-2xl overflow-hidden relative group"
                 data-testid={`img-portfolio-vehicle-${i}`}
+                data-pf-cat="vehicle"
               >
                 <img src={img} alt={`Vehicle wrap ${i + 1}`} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
