@@ -1,11 +1,12 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "wouter";
-import { ArrowRight, CheckCircle2, ChevronRight, PhoneCall, Star } from "lucide-react";
+import { ArrowRight, CheckCircle2, ChevronRight, PhoneCall, Star, X, ZoomIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuoteModal } from "@/context/QuoteModalContext";
 import { PortfolioImage } from "@/components/ui/image-with-skeleton";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { ImageLightbox } from "@/components/ImageLightbox";
 
 // Types for admin config
 interface Testimonial {
@@ -294,6 +295,8 @@ export default function Home() {
   const [portfolioFilter, setPortfolioFilter] = useState<string | null>(null);
   const [adminConfig, setAdminConfig] = useState<{ portfolio?: any[]; hero?: any; testimonials?: Testimonial[]; services?: any[]; aboutImages?: any[]; advantageImages?: any[] } | null>(null);
   const [testimonialIndex, setTestimonialIndex] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
   const prefersReducedMotion = useReducedMotion();
 
   // Load admin config from localStorage on mount
@@ -362,6 +365,49 @@ export default function Home() {
     }, 4500);
     return () => clearInterval(timer);
   }, []);
+
+  // Build lightbox images array from all portfolio sources
+  const getLightboxImages = useCallback(() => {
+    const images: { src: string; alt: string; label: string }[] = [];
+    
+    // Add dynamic portfolio items if available
+    if (dynamicPortfolioItems && dynamicPortfolioItems.length > 0) {
+      dynamicPortfolioItems.forEach((item: any) => {
+        images.push({ src: item.img, alt: item.label, label: item.label });
+      });
+    } else {
+      // Add default portfolio grid images
+      portfolioGrid.forEach((item) => {
+        images.push({ src: item.img, alt: item.label, label: item.label });
+      });
+      // Add additional hardcoded portfolio images
+      [
+        { img: IMAGES.glow[3], label: "Glow Sign" },
+        { img: IMAGES.square[10], label: "LED Channel" },
+        { img: IMAGES.vehicle[2], label: "Vehicle Wrap" },
+        { img: IMAGES.wall[3], label: "Wall Branding" },
+        { img: IMAGES.portfolio[2], label: "Retail Signage" },
+        { img: IMAGES.acrylic[1], label: "Acrylic Letters" },
+        { img: IMAGES.glow[4], label: "Neon Glow" },
+        { img: IMAGES.portfolio[5], label: "Corporate Lobby" },
+      ].forEach((item) => {
+        images.push({ src: item.img, alt: item.label, label: item.label });
+      });
+      // Add vehicle wraps
+      IMAGES.vehicle.slice(3, 7).forEach((img, i) => {
+        images.push({ src: img, alt: `Vehicle wrap ${i + 1}`, label: "Vehicle Wrap" });
+      });
+    }
+    
+    return images;
+  }, [dynamicPortfolioItems]);
+
+  const lightboxImages = getLightboxImages();
+
+  const openLightbox = (index: number) => {
+    setLightboxIndex(index);
+    setLightboxOpen(true);
+  };
 
   useEffect(() => {
     const items = document.querySelectorAll("[data-pf-cat]");
@@ -692,12 +738,20 @@ export default function Home() {
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
                   viewport={{ once: true }}
-                  className="col-span-2 row-span-2 aspect-square rounded-2xl overflow-hidden relative group"
+                  className="col-span-2 row-span-2 aspect-square rounded-2xl overflow-hidden relative group cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
                   data-testid="img-portfolio-featured"
                   data-pf-cat="led"
+                  tabIndex={0}
+                  onClick={() => openLightbox(0)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      openLightbox(0);
+                    }
+                  }}
                 >
                   <PortfolioImage src={IMAGES.portfolio[0]} alt="Featured installation" />
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300 flex items-end p-6">
                     <span className="text-white font-display font-bold uppercase tracking-widest text-lg">Storefront LED Branding</span>
                   </div>
                 </motion.div>
@@ -714,12 +768,20 @@ export default function Home() {
                     whileInView={{ opacity: 1 }}
                     viewport={{ once: true }}
                     transition={{ delay: (i + 1) * 0.08 }}
-                    className="aspect-square rounded-2xl overflow-hidden relative group"
+                    className="aspect-square rounded-2xl overflow-hidden relative group cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
                     data-testid={`img-portfolio-${i}`}
                     data-pf-cat={item.cat}
+                    tabIndex={0}
+                    onClick={() => openLightbox(i + 1)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        openLightbox(i + 1);
+                      }
+                    }}
                   >
                     <PortfolioImage src={item.img} alt={item.label} />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300 flex items-end p-4">
                       <span className="text-white font-bold uppercase tracking-widest text-sm">{item.label}</span>
                     </div>
                   </motion.div>
@@ -740,9 +802,17 @@ export default function Home() {
                     whileInView={{ opacity: 1 }}
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.08 }}
-                    className="aspect-square rounded-2xl overflow-hidden relative group"
+                    className="aspect-square rounded-2xl overflow-hidden relative group cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
                     data-testid={`img-portfolio-row2-${i}`}
                     data-pf-cat={item.cat}
+                    tabIndex={0}
+                    onClick={() => openLightbox(i + 5)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        openLightbox(i + 5);
+                      }
+                    }}
                   >
                     <PortfolioImage src={item.img} alt={item.label} />
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
@@ -763,12 +833,20 @@ export default function Home() {
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="aspect-square rounded-2xl overflow-hidden relative group"
+                className="aspect-square rounded-2xl overflow-hidden relative group cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
                 data-testid={`img-portfolio-vehicle-${i}`}
                 data-pf-cat="vehicle"
+                tabIndex={0}
+                onClick={() => openLightbox(i + 9)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    openLightbox(i + 9);
+                  }
+                }}
               >
                 <PortfolioImage src={img} alt={`Vehicle wrap ${i + 1}`} />
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300 flex items-end p-4">
                   <span className="text-white font-bold uppercase tracking-widest text-sm">Vehicle Wrap</span>
                 </div>
               </motion.div>
@@ -916,14 +994,14 @@ export default function Home() {
             {/* Navigation Arrows - Mobile optimized with larger touch targets */}
             <button
               onClick={() => setTestimonialIndex((prev) => (prev - 1 + displayTestimonials.length) % displayTestimonials.length)}
-              className="absolute left-2 md:left-0 top-1/2 -translate-y-1/2 md:-translate-x-12 w-10 h-10 md:w-12 md:h-12 rounded-full bg-card border border-white/10 hover:border-primary/50 hover:bg-primary/10 transition-all flex items-center justify-center text-foreground/60 hover:text-primary touch-manipulation"
+              className="absolute left-2 md:left-0 top-1/2 -translate-y-1/2 md:-translate-x-12 w-10 h-10 md:w-12 md:h-12 rounded-full bg-card border border-white/10 hover:border-primary/50 hover:bg-primary/10 transition-all flex items-center justify-center text-foreground/60 hover:text-primary touch-manipulation focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
               aria-label="Previous testimonial"
             >
               ←
             </button>
             <button
               onClick={() => setTestimonialIndex((prev) => (prev + 1) % displayTestimonials.length)}
-              className="absolute right-2 md:right-0 top-1/2 -translate-y-1/2 md:translate-x-12 w-10 h-10 md:w-12 md:h-12 rounded-full bg-card border border-white/10 hover:border-primary/50 hover:bg-primary/10 transition-all flex items-center justify-center text-foreground/60 hover:text-primary touch-manipulation"
+              className="absolute right-2 md:right-0 top-1/2 -translate-y-1/2 md:translate-x-12 w-10 h-10 md:w-12 md:h-12 rounded-full bg-card border border-white/10 hover:border-primary/50 hover:bg-primary/10 transition-all flex items-center justify-center text-foreground/60 hover:text-primary touch-manipulation focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
               aria-label="Next testimonial"
             >
               →
@@ -935,7 +1013,7 @@ export default function Home() {
                 <button
                   key={i}
                   onClick={() => setTestimonialIndex(i)}
-                  className={`w-2.5 h-2.5 rounded-full transition-all ${
+                  className={`w-2.5 h-2.5 rounded-full transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background ${
                     i === testimonialIndex 
                       ? "bg-primary w-8" 
                       : "bg-white/20 hover:bg-white/40"
@@ -987,6 +1065,15 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Image Lightbox */}
+      <ImageLightbox
+        images={lightboxImages}
+        currentIndex={lightboxIndex}
+        isOpen={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+        onNavigate={setLightboxIndex}
+      />
     </div>
   );
 }

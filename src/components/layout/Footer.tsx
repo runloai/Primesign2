@@ -95,39 +95,39 @@ export default function Footer() {
             </p>
             <div className="flex gap-4">
               {contact.whatsapp && (
-                <a href={`https://wa.me/${contact.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="h-10 w-10 rounded-full bg-white/5 flex items-center justify-center text-foreground hover:bg-primary hover:text-primary-foreground transition-all">
-                  <SiWhatsapp size={20} />
+                <a href={`https://wa.me/${contact.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="h-10 w-10 rounded-full bg-white/5 flex items-center justify-center text-foreground hover:bg-primary hover:text-primary-foreground transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background">
+                  <SiWhatsapp size={20} aria-label="WhatsApp"/>
                 </a>
               )}
               {contact.youtube && (
-                <a href={contact.youtube} target="_blank" rel="noopener noreferrer" className="h-10 w-10 rounded-full bg-white/5 flex items-center justify-center text-foreground hover:bg-primary hover:text-primary-foreground transition-all">
-                  <SiYoutube size={20} />
+                <a href={contact.youtube} target="_blank" rel="noopener noreferrer" className="h-10 w-10 rounded-full bg-white/5 flex items-center justify-center text-foreground hover:bg-primary hover:text-primary-foreground transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background">
+                  <SiYoutube size={20} aria-label="YouTube"/>
                 </a>
               )}
               {contact.instagram && (
-                <a href={contact.instagram} target="_blank" rel="noopener noreferrer" className="h-10 w-10 rounded-full bg-white/5 flex items-center justify-center text-foreground hover:bg-primary hover:text-primary-foreground transition-all">
-                  <SiInstagram size={20} />
+                <a href={contact.instagram} target="_blank" rel="noopener noreferrer" className="h-10 w-10 rounded-full bg-white/5 flex items-center justify-center text-foreground hover:bg-primary hover:text-primary-foreground transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background">
+                  <SiInstagram size={20} aria-label="Instagram"/>
                 </a>
               )}
               {contact.facebook && (
-                <a href={contact.facebook} target="_blank" rel="noopener noreferrer" className="h-10 w-10 rounded-full bg-white/5 flex items-center justify-center text-foreground hover:bg-primary hover:text-primary-foreground transition-all">
-                  <SiFacebook size={20} />
+                <a href={contact.facebook} target="_blank" rel="noopener noreferrer" className="h-10 w-10 rounded-full bg-white/5 flex items-center justify-center text-foreground hover:bg-primary hover:text-primary-foreground transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background">
+                  <SiFacebook size={20} aria-label="Facebook"/>
                 </a>
               )}
               {contact.threadsUrl && (
-                <a href={contact.threadsUrl} target="_blank" rel="noopener noreferrer" className="h-10 w-10 rounded-full bg-white/5 flex items-center justify-center text-foreground hover:bg-primary hover:text-primary-foreground transition-all">
-                  <SiThreads size={20} />
+                <a href={contact.threadsUrl} target="_blank" rel="noopener noreferrer" className="h-10 w-10 rounded-full bg-white/5 flex items-center justify-center text-foreground hover:bg-primary hover:text-primary-foreground transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background">
+                  <SiThreads size={20} aria-label="Threads"/>
                 </a>
               )}
               {contact.mapsUrl && (
-                <a href={contact.mapsUrl} target="_blank" rel="noopener noreferrer" className="h-10 w-10 rounded-full bg-white/5 flex items-center justify-center text-foreground hover:bg-primary hover:text-primary-foreground transition-all">
-                  <SiGooglemaps size={18} />
+                <a href={contact.mapsUrl} target="_blank" rel="noopener noreferrer" className="h-10 w-10 rounded-full bg-white/5 flex items-center justify-center text-foreground hover:bg-primary hover:text-primary-foreground transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background">
+                  <SiGooglemaps size={18} aria-label="Google Maps"/>
                 </a>
               )}
             </div>
           </div>
 
-          {/* Quick Links */}
+          {/* Qualit Links */}
           <div>
             <h4 className="text-lg font-display font-bold uppercase tracking-wider mb-6">Quick Links</h4>
             <ul className="space-y-4">
@@ -136,7 +136,7 @@ export default function Footer() {
                   <Link 
                     href={link.href} 
                     onClick={() => handleNavClick(link.href)}
-                    className="text-muted-foreground hover:text-primary transition-colors"
+                    className="text-muted-foreground hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background rounded-sm px-1"
                   >
                     {link.name}
                   </Link>
@@ -165,7 +165,9 @@ export default function Footer() {
                 <Phone className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                 <div>
                   {phones.map((phone, i) => (
-                    <a key={i} href={`tel:${phone.replace(/\s/g, '')}`} className="block hover:text-foreground transition-colors">
+                    <a key={i} 
+                       href={`tel:${phone.replace(/\s/g, '')}`} 
+                       className="block hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background rounded-sm px-1">
                       {phone}
                     </a>
                   ))}
@@ -175,7 +177,9 @@ export default function Footer() {
                 <Mail className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                 <div>
                   {emails.map((email, i) => (
-                    <a key={i} href={`mailto:${email}`} className="block hover:text-foreground transition-colors">
+                    <a key={i} 
+                       href={`mailto:${email}`} 
+                       className="block hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background rounded-sm px-1">
                       {email}
                     </a>
                   ))}

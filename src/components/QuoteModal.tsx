@@ -118,7 +118,7 @@ export default function QuoteModal() {
                 <p className="text-xs text-primary font-bold uppercase tracking-widest mb-1">Free Quote</p>
                 <h2 className="text-2xl font-display font-bold">Tell Us About Your Project</h2>
               </div>
-              <button onClick={handleClose} className="mt-1 p-2 rounded-full hover:bg-white/10 transition-colors" data-testid="button-close-modal">
+              <button onClick={handleClose} className="mt-1 p-2 rounded-full hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background" data-testid="button-close-modal" aria-label="Close quote modal">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -193,12 +193,13 @@ export default function QuoteModal() {
                           key={s}
                           type="button"
                           onClick={() => toggleService(s)}
-                          className={`flex items-center gap-2 px-3 py-2.5 rounded-lg border text-left text-sm font-medium transition-all ${
+                          className={`flex items-center gap-2 px-3 py-2.5 rounded-lg border text-left text-sm font-medium transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background ${
                             active
                               ? "border-primary bg-primary/10 text-foreground"
                               : "border-white/10 bg-background/40 text-muted-foreground hover:border-white/30"
                           }`}
-                          data-testid={`checkbox-service-${s.replace(/\s+/g, "-")}`}
+                          data-testid={`checkbox-service-${s.replace(/\s+/g, "-")}}`}
+                          aria-pressed={active}
                         >
                           {active ? <CheckSquare className="w-4 h-4 text-primary shrink-0" /> : <Square className="w-4 h-4 shrink-0" />}
                           {s}
@@ -222,12 +223,14 @@ export default function QuoteModal() {
                             key={t}
                             type="button"
                             onClick={() => setForm((prev) => ({ ...prev, timeline: t }))}
-                            className={`px-3 py-2.5 rounded-lg border text-left text-sm font-medium transition-all ${
+                            className={`px-3 py-2.5 rounded-lg border text-left text-sm font-medium transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background ${
                               form.timeline === t
                                 ? "border-primary bg-primary/10 text-foreground"
                                 : "border-white/10 bg-background/40 text-muted-foreground hover:border-white/30"
                             }`}
                             data-testid={`button-timeline-${t}`}
+                            role="radio"
+                            aria-checked={form.timeline === t}
                           >
                             {t}
                           </button>
