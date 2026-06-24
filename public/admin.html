@@ -2205,6 +2205,15 @@
     // Check auth on load
     if (localStorage.getItem('primesign-auth') === 'true') {
       showDashboard();
+      // Auto-detect old config and offer upgrade
+      if (config.contact && config.contact.phone1 && !config.contact.phones) {
+        if (confirm("📦 Your saved data is from an older version. Update to get all features (phones array, image galleries, etc)?\n\nYour changes will be preserved where possible.")) {
+          config.contact.phones = [config.contact.phone1, config.contact.phone2, config.contact.phone3].filter(Boolean);
+          if (config.contact.email) config.contact.emails = [config.contact.email];
+          saveConfig();
+          location.reload();
+        }
+      }
     }
 
     // ================================================
