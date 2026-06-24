@@ -507,7 +507,7 @@ export default function Home() {
                 ))}
               </div>
 
-              {/* Second row */}
+              {/* Second row - consistent aspect-square */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
                 {dynamicPortfolioItems.slice(5, 9).map((item: any, i: number) => (
                   <motion.div
@@ -516,7 +516,7 @@ export default function Home() {
                     whileInView={{ opacity: 1 }}
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.08 }}
-                    className="aspect-[4/3] rounded-2xl overflow-hidden relative group"
+                    className="aspect-square rounded-2xl overflow-hidden relative group"
                     data-testid={`img-portfolio-row2-${i}`}
                     data-pf-cat={item.cat}
                   >
@@ -585,7 +585,7 @@ export default function Home() {
                     whileInView={{ opacity: 1 }}
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.08 }}
-                    className="aspect-[4/3] rounded-2xl overflow-hidden relative group"
+                    className="aspect-square rounded-2xl overflow-hidden relative group"
                     data-testid={`img-portfolio-row2-${i}`}
                     data-pf-cat={item.cat}
                   >
@@ -599,7 +599,7 @@ export default function Home() {
             </>
           )}
 
-          {/* Third row — vehicle wrap showcase */}
+          {/* Third row — vehicle wrap showcase - consistent aspect-square */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {IMAGES.vehicle.slice(3, 7).map((img, i) => (
               <motion.div
@@ -608,7 +608,7 @@ export default function Home() {
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="aspect-[4/3] rounded-2xl overflow-hidden relative group"
+                className="aspect-square rounded-2xl overflow-hidden relative group"
                 data-testid={`img-portfolio-vehicle-${i}`}
                 data-pf-cat="vehicle"
               >
