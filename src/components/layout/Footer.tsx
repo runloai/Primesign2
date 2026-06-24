@@ -10,7 +10,9 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           {/* Brand */}
           <div className="space-y-6">
-            <img src={LOGO_URL} alt="Primesign" className="h-10 w-auto" />
+            <span className="text-2xl font-display font-black tracking-tight">
+            <span className="text-primary">PRIME</span><span className="text-foreground">SIGN</span>
+          </span>
             <p className="text-muted-foreground font-light leading-relaxed max-w-xs">
               Bangalore's premier signage and branding studio. We build bold, high-impact visual communication that makes your business unforgettable.
             </p>

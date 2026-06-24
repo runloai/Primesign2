@@ -74,7 +74,9 @@ export default function Navbar() {
     >
       <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 z-50 relative">
-          <img src={LOGO_URL} alt="Primesign Logo" className="h-8 md:h-10 w-auto object-contain" />
+          <span className="text-2xl md:text-3xl font-display font-black tracking-tight">
+            <span className="text-primary">PRIME</span><span className="text-foreground">SIGN</span>
+          </span>
         </Link>
 
         {/* Desktop Nav */}
