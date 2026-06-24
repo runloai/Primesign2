@@ -7,7 +7,7 @@ import { useQuoteModal } from "@/context/QuoteModalContext";
 import { PortfolioImage } from "@/components/ui/image-with-skeleton";
 
 // Helper function to read admin config from localStorage
-function getAdminConfig(): { portfolio?: any[]; hero?: any; services?: any[] } | null {
+function getAdminConfig(): { portfolio?: any[]; hero?: any; services?: any[]; testimonials?: Testimonial[] } | null {
   try {
     const stored = localStorage.getItem("primesign-config");
     if (stored) {
@@ -16,6 +16,7 @@ function getAdminConfig(): { portfolio?: any[]; hero?: any; services?: any[] } |
         portfolio: config.portfolio,
         hero: config.hero,
         services: config.services,
+        testimonials: config.testimonials,
       };
     }
   } catch (e) {
