@@ -114,16 +114,6 @@ const staggerContainer = {
   visible: { opacity: 1, transition: { staggerChildren: 0.2 } },
 };
 
-interface Testimonial {
-  id?: number;
-  name?: string;
-  author?: string;
-  role?: string;
-  text?: string;
-  rating?: number;
-  avatar?: string;
-}
-
 const services = [
   {
     title: "LED Signs",
@@ -289,7 +279,7 @@ export default function Home() {
   const { open: openQuote } = useQuoteModal();
   const [heroIndex, setHeroIndex] = useState(0);
   const [portfolioFilter, setPortfolioFilter] = useState<string | null>(null);
-  const [adminConfig, setAdminConfig] = useState<{ portfolio?: any[]; hero?: any; testimonials?: Testimonial[]; services?: any[] } | null>(null);
+  const [adminConfig, setAdminConfig] = useState<{ portfolio?: any[]; hero?: any; testimonials?: Testimonial[]; services?: any[]; aboutImages?: any[]; advantageImages?: any[] } | null>(null);
   const [testimonialIndex, setTestimonialIndex] = useState(0);
 
   // Load admin config from localStorage on mount
@@ -307,6 +297,8 @@ export default function Home() {
   // Get hero data from config or fallback to hardcoded
   const heroBgImage = adminConfig?.hero?.bgImage || IMAGES.portfolio[0];
   const heroBadgeText = adminConfig?.hero?.badge || "Bangalore's Premier Signage Studio";
+  const heroHeadline = adminConfig?.hero?.headline;
+  const heroSubtitle = adminConfig?.hero?.subtitle || "From bold LED boards to precision 3D channel letters. We engineer high-impact signage that lights up Bangalore and makes your brand impossible to ignore.";
 
   // Get testimonials from config or fallback to hardcoded
   const dynamicTestimonials = getDynamicTestimonials();
@@ -334,6 +326,21 @@ export default function Home() {
   };
 
   const dynamicPortfolioItems = getPortfolioItems();
+
+  // Get about images from config or fallback to hardcoded
+  const aboutImages = adminConfig?.aboutImages && adminConfig.aboutImages.length >= 4
+    ? adminConfig.aboutImages.slice(0, 4).map((img: any) => img.url || img)
+    : [IMAGES.glow[2], IMAGES.wall[2], IMAGES.led[1], IMAGES.square[10]];
+
+  // Get advantage/reasons from config or fallback to hardcoded
+  const displayReasons = adminConfig?.advantageImages && adminConfig.advantageImages.length >= 6
+    ? adminConfig.advantageImages.slice(0, 6).map((img: any) => img.label || img.toString())
+    : reasons;
+
+  // Get advantage images (optional icons) from config
+  const advantageImages = adminConfig?.advantageImages && adminConfig.advantageImages.length >= 6
+    ? adminConfig.advantageImages.slice(0, 6).map((img: any) => img.url).filter(Boolean)
+    : [];
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -483,7 +490,7 @@ export default function Home() {
               transition={{ duration: 0.8 }}
               className="grid grid-cols-2 gap-3"
             >
-              {[IMAGES.glow[2], IMAGES.wall[2], IMAGES.led[1], IMAGES.square[10]].map((src, i) => (
+              {aboutImages.map((src: string, i: number) => (
                 <div key={i} className="aspect-square rounded-xl overflow-hidden">
                   <img
                     src={src}
@@ -777,7 +784,7 @@ export default function Home() {
                 It requires structural integrity, flawless design, and reliable execution.
               </p>
               <div className="grid sm:grid-cols-2 gap-6">
-                {reasons.map((reason, i) => (
+                {displayReasons.map((reason: string, i: number) => (
                   <motion.div
                     key={i}
                     initial={{ opacity: 0, x: -20 }}
