@@ -521,7 +521,7 @@ export default function Home() {
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent flex flex-col justify-end p-8">
+                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent flex flex-col justify-end p-8 transition-all duration-300 group-hover:backdrop-blur-sm">
                   <h4 className="text-2xl font-display font-bold mb-2 group-hover:text-primary transition-colors">
                     {service.title}
                   </h4>
@@ -584,7 +584,7 @@ export default function Home() {
                   data-testid="img-portfolio-featured"
                   data-pf-cat={dynamicPortfolioItems[0]?.cat || "led"}
                 >
-                  <img src={dynamicPortfolioItems[0]?.img} alt={dynamicPortfolioItems[0]?.label || "Featured installation"} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                  <PortfolioImage src={dynamicPortfolioItems[0]?.img} alt={dynamicPortfolioItems[0]?.label || "Featured installation"} />
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
                     <span className="text-white font-display font-bold uppercase tracking-widest text-lg">{dynamicPortfolioItems[0]?.label || "Storefront LED Branding"}</span>
                   </div>
@@ -601,7 +601,7 @@ export default function Home() {
                     data-testid={`img-portfolio-${i}`}
                     data-pf-cat={item.cat}
                   >
-                    <img src={item.img} alt={item.label} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    <PortfolioImage src={item.img} alt={item.label} />
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
                       <span className="text-white font-bold uppercase tracking-widest text-sm">{item.label}</span>
                     </div>
@@ -622,7 +622,7 @@ export default function Home() {
                     data-testid={`img-portfolio-row2-${i}`}
                     data-pf-cat={item.cat}
                   >
-                    <img src={item.img} alt={item.label} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    <PortfolioImage src={item.img} alt={item.label} />
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
                       <span className="text-white font-bold uppercase tracking-widest text-sm">{item.label}</span>
                     </div>
@@ -643,7 +643,7 @@ export default function Home() {
                   data-testid="img-portfolio-featured"
                   data-pf-cat="led"
                 >
-                  <img src={IMAGES.portfolio[0]} alt="Featured installation" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                  <PortfolioImage src={IMAGES.portfolio[0]} alt="Featured installation" />
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
                     <span className="text-white font-display font-bold uppercase tracking-widest text-lg">Storefront LED Branding</span>
                   </div>
@@ -665,7 +665,7 @@ export default function Home() {
                     data-testid={`img-portfolio-${i}`}
                     data-pf-cat={item.cat}
                   >
-                    <img src={item.img} alt={item.label} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    <PortfolioImage src={item.img} alt={item.label} />
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
                       <span className="text-white font-bold uppercase tracking-widest text-sm">{item.label}</span>
                     </div>
@@ -691,7 +691,7 @@ export default function Home() {
                     data-testid={`img-portfolio-row2-${i}`}
                     data-pf-cat={item.cat}
                   >
-                    <img src={item.img} alt={item.label} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    <PortfolioImage src={item.img} alt={item.label} />
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
                       <span className="text-white font-bold uppercase tracking-widest text-sm">{item.label}</span>
                     </div>
@@ -714,7 +714,7 @@ export default function Home() {
                 data-testid={`img-portfolio-vehicle-${i}`}
                 data-pf-cat="vehicle"
               >
-                <img src={img} alt={`Vehicle wrap ${i + 1}`} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                <PortfolioImage src={img} alt={`Vehicle wrap ${i + 1}`} />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
                   <span className="text-white font-bold uppercase tracking-widest text-sm">Vehicle Wrap</span>
                 </div>
