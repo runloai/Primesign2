@@ -1618,7 +1618,10 @@
         <button class="nav-tab active" data-tab="contact" onclick="switchTab('contact')">📞 Contact</button>
         <button class="nav-tab" data-tab="arsenal" onclick="switchTab('arsenal')">🛠️ The Arsenal</button>
         <button class="nav-tab" data-tab="portfolio" onclick="switchTab('portfolio')">🖼️ Our Work Gallery</button>
+        <button class="nav-tab" data-tab="reviews" onclick="switchTab('reviews')">⭐ Reviews</button>
         <button class="nav-tab" data-tab="hero" onclick="switchTab('hero')">🎯 Hero Section</button>
+        <button class="nav-tab" data-tab="about" onclick="switchTab('about')">ℹ️ About Images</button>
+        <button class="nav-tab" data-tab="advantage" onclick="switchTab('advantage')">🏆 Advantage</button>
         <button class="nav-tab" data-tab="colors" onclick="switchTab('colors')">🎨 Color Scheme</button>
         <button class="nav-tab" data-tab="settings" onclick="switchTab('settings')">⚙️ Settings</button>
       </div>
@@ -1745,7 +1748,7 @@
         <div class="card mb-4">
           <div class="card-header">
             <div class="card-title">Portfolio Items</div>
-            <button class="btn btn-cyan btn-sm" onclick="addPortfolioItem()">+ Add Project</button>
+            <button class="btn btn-cyan btn-sm" onclick="showAddPortfolioModal()">+ Add Image</button>
           </div>
           <div class="card-body">
             <div id="portfolioGrid" class="portfolio-grid"></div>
@@ -1822,6 +1825,71 @@
               <div id="heroStats"></div>
               <button class="btn btn-outline btn-sm mt-3" onclick="addHeroStat()">+ Add Stat</button>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reviews Tab -->
+      <div class="tab-content" id="tab-reviews">
+        <div class="section-header">
+          <h2 class="section-title">
+            <div class="section-title-icon">⭐</div>
+            Reviews & Testimonials
+          </h2>
+          <p class="section-desc">Manage customer reviews and testimonials displayed on the homepage</p>
+        </div>
+        <div class="card mb-4">
+          <div class="card-header">
+            <div class="card-title">Testimonials</div>
+            <button class="btn btn-cyan btn-sm" onclick="addTestimonial()">+ Add Review</button>
+          </div>
+          <div class="card-body">
+            <div id="testimonialsList" class="portfolio-grid"></div>
+            <div id="testimonialsEmpty" class="empty-state hidden">
+              <div class="empty-icon">⭐</div>
+              <div class="empty-title">No testimonials yet</div>
+              <p>Add your first customer review</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- About Tab -->
+      <div class="tab-content" id="tab-about">
+        <div class="section-header">
+          <h2 class="section-title">
+            <div class="section-title-icon">ℹ️</div>
+            About Section Images
+          </h2>
+          <p class="section-desc">These 4 images appear in the "About Primesign" section on the homepage</p>
+        </div>
+        <div class="card mb-4">
+          <div class="card-header">
+            <div class="card-title">About Section Gallery</div>
+          </div>
+          <div class="card-body">
+            <div id="aboutImagesGrid" class="image-grid"></div>
+            <p class="text-muted mt-3" style="font-size: 13px;">4 images shown in a 2x2 grid on the About section. Click any image to upload a new one.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Advantage Tab -->
+      <div class="tab-content" id="tab-advantage">
+        <div class="section-header">
+          <h2 class="section-title">
+            <div class="section-title-icon">🏆</div>
+            Primesign Advantage Icons
+          </h2>
+          <p class="section-desc">These 6 images/icons appear in the "Why Choose Us" section alongside each benefit</p>
+        </div>
+        <div class="card mb-4">
+          <div class="card-header">
+            <div class="card-title">Advantage Icons</div>
+          </div>
+          <div class="card-body">
+            <div id="advantageImagesGrid" class="portfolio-grid"></div>
+            <p class="text-muted mt-3" style="font-size: 13px;">Upload icons or images for each benefit in the Primesign Advantage section.</p>
           </div>
         </div>
       </div>
@@ -1944,6 +2012,51 @@
     </div>
   </div>
 
+  <!-- Portfolio Add Modal -->
+  <div class="modal-overlay" id="portfolioAddModal">
+    <div class="modal" style="max-width: 500px;">
+      <div class="modal-header">
+        <div class="modal-title">🖼️ Add Portfolio Image</div>
+        <button class="modal-close" onclick="closePortfolioAddModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="margin-bottom: 20px; color: var(--text-secondary);">Choose how you want to add an image to the portfolio:</p>
+        <div style="display: grid; gap: 16px;">
+          <button class="btn btn-gold btn-block" onclick="triggerPortfolioUploadNew()" style="padding: 20px; flex-direction: column; gap: 8px;">
+            <span style="font-size: 24px;">📤</span>
+            <span style="font-size: 16px;">Upload New Image</span>
+            <span style="font-size: 12px; font-weight: 400; opacity: 0.8;">Upload from your computer</span>
+          </button>
+          <button class="btn btn-cyan btn-block" onclick="showPickFromServices()" style="padding: 20px; flex-direction: column; gap: 8px;">
+            <span style="font-size: 24px;">📂</span>
+            <span style="font-size: 16px;">Pick from Services</span>
+            <span style="font-size: 12px; font-weight: 400; opacity: 0.8;">Select from existing service galleries</span>
+          </button>
+        </div>
+        <input type="file" id="portfolioNewFile" accept="image/*" style="display: none;" onchange="handlePortfolioNewUpload(event)">
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closePortfolioAddModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pick from Services Modal -->
+  <div class="modal-overlay" id="pickFromServicesModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">📂 Pick from Services</div>
+        <button class="modal-close" onclick="closePickFromServices()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div id="pickFromServicesContent"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closePickFromServices()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast Container -->
   <div class="toast-container" id="toastContainer"></div>
 
@@ -1971,6 +2084,46 @@
         threadsUrl: "",
         mapsUrl: "https://maps.google.com/?q=Primesign+Ramamurthy+Nagar+Bangalore"
       },
+      testimonials: [
+        {
+          id: 1,
+          name: "Rajesh K.",
+          role: "Restaurant Owner, Indiranagar",
+          text: "Primesign completely transformed our storefront. The 3D LED letters are incredibly bright and the finishing is flawless. Highly professional team.",
+          rating: 5,
+          avatar: ""
+        },
+        {
+          id: 2,
+          name: "Priya M.",
+          role: "Facility Manager, Whitefield",
+          text: "We needed massive corporate branding for our new tech park. Primesign delivered ahead of schedule with exceptional quality. Their attention to detail is unmatched.",
+          rating: 5,
+          avatar: ""
+        },
+        {
+          id: 3,
+          name: "Arjun S.",
+          role: "Cafe Founder, Koramangala",
+          text: "The custom neon sign they built for our cafe has become the main photo spot for our customers. Fast, affordable, and brilliant execution.",
+          rating: 5,
+          avatar: ""
+        }
+      ],
+      aboutImages: [
+        { url: "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/glow/2.webp", label: "About Image 1" },
+        { url: "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/wall/2.webp", label: "About Image 2" },
+        { url: "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/led/1.webp", label: "About Image 3" },
+        { url: "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/square/10.webp", label: "About Image 4" }
+      ],
+      advantageImages: [
+        { url: "", label: "Premium Quality Materials" },
+        { url: "", label: "Rapid Turnaround Times" },
+        { url: "", label: "Expert Installation Team" },
+        { url: "", label: "End-to-End Service" },
+        { url: "", label: "Competitive Pricing" },
+        { url: "", label: "Bangalore-Based Manufacturing" }
+      ],
       services: [
         {
           id: 1,
@@ -2276,8 +2429,17 @@
         case 'portfolio':
           renderPortfolio();
           break;
+        case 'reviews':
+          renderTestimonials();
+          break;
         case 'hero':
           renderHero();
+          break;
+        case 'about':
+          renderAboutImages();
+          break;
+        case 'advantage':
+          renderAdvantageImages();
           break;
         case 'colors':
           renderColors();
@@ -2292,7 +2454,10 @@
       renderContact();
       renderServices();
       renderPortfolio();
+      renderTestimonials();
       renderHero();
+      renderAboutImages();
+      renderAdvantageImages();
       renderColors();
       renderSettings();
     }
@@ -2534,12 +2699,11 @@
       });
     }
 
-    function convertToWebP(dataUrl, quality = 0.85) {
+    function convertToWebP(dataUrl, quality = 0.85, maxDim = 1920) {
       return new Promise((resolve, reject) => {
         const img = new Image();
         img.onload = () => {
           const canvas = document.getElementById('processCanvas');
-          const maxDim = 1920;
           let width = img.width;
           let height = img.height;
 
@@ -3079,6 +3243,432 @@
     }
 
     // ================================================
+    // PORTFOLIO ADD MODAL FUNCTIONS
+    // ================================================
+    let pendingPortfolioCategory = 'led';
+
+    function showAddPortfolioModal() {
+      document.getElementById('portfolioAddModal').classList.add('visible');
+    }
+
+    function closePortfolioAddModal() {
+      document.getElementById('portfolioAddModal').classList.remove('visible');
+    }
+
+    function triggerPortfolioUploadNew() {
+      document.getElementById('portfolioNewFile').click();
+    }
+
+    async function handlePortfolioNewUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      try {
+        const dataUrl = await fileToDataUrl(file);
+        const webpUrl = await convertToWebP(dataUrl, 0.9);
+
+        const newId = Math.max(...config.portfolio.map(p => p.id), 0) + 1;
+        config.portfolio.push({
+          id: newId,
+          url: webpUrl,
+          label: file.name.replace(/\.[^.]+$/, ""),
+          category: pendingPortfolioCategory,
+          featured: false
+        });
+
+        renderPortfolio();
+        updateSaveIndicator(false);
+        closePortfolioAddModal();
+        showToast('New portfolio item added', 'success');
+      } catch (err) {
+        showToast('Failed to process image', 'error');
+      }
+    }
+
+    function showPickFromServices() {
+      const container = document.getElementById('pickFromServicesContent');
+      if (!container) return;
+
+      // Build list of all service images
+      let serviceImages = [];
+      config.services.forEach(service => {
+        if (service.images && service.images.length > 0) {
+          service.images.forEach((img, idx) => {
+            serviceImages.push({
+              url: img.url || img,
+              label: img.label || `${service.name} ${idx + 1}`,
+              category: service.category || getCategoryFromServiceName(service.name)
+            });
+          });
+        }
+      });
+
+      if (serviceImages.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">📂</div>
+            <div class="empty-title">No service images found</div>
+            <p>Add images to your service galleries first</p>
+          </div>
+        `;
+      } else {
+        container.innerHTML = `
+          <div class="image-grid" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));">
+            ${serviceImages.map((img, idx) => `
+              <div class="image-item" style="cursor: pointer;" onclick="addServiceImageToPortfolio('${escapeHtml(img.url)}', '${img.category || 'led'}')">
+                <img src="${img.url}" alt="${escapeHtml(img.label)}" style="width: 100%; height: 100%; object-fit: cover;">
+                <div class="image-item-order" style="position: absolute; bottom: 8px; left: 8px; top: auto; right: auto;">
+                  ${escapeHtml(img.label)}
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }
+
+      document.getElementById('pickFromServicesModal').classList.add('visible');
+    }
+
+    function closePickFromServices() {
+      document.getElementById('pickFromServicesModal').classList.remove('visible');
+    }
+
+    function addServiceImageToPortfolio(url, category) {
+      const newId = Math.max(...config.portfolio.map(p => p.id), 0) + 1;
+      config.portfolio.push({
+        id: newId,
+        url: url,
+        label: "From Services",
+        category: category || 'led',
+        featured: false
+      });
+
+      renderPortfolio();
+      updateSaveIndicator(false);
+      closePickFromServices();
+      closePortfolioAddModal();
+      showToast('Image added from services', 'success');
+    }
+
+    function getCategoryFromServiceName(name) {
+      const nameLower = (name || '').toLowerCase();
+      if (nameLower.includes('led')) return 'led';
+      if (nameLower.includes('glow')) return 'glow';
+      if (nameLower.includes('acrylic')) return 'acrylic';
+      if (nameLower.includes('wall')) return 'wall';
+      if (nameLower.includes('vehicle')) return 'vehicle';
+      return 'led';
+    }
+
+    // ================================================
+    // TESTIMONIALS / REVIEWS
+    // ================================================
+    function renderTestimonials() {
+      const container = document.getElementById('testimonialsList');
+      const empty = document.getElementById('testimonialsEmpty');
+
+      if (!container) return;
+
+      // Ensure testimonials array exists
+      if (!config.testimonials) {
+        config.testimonials = JSON.parse(JSON.stringify(DEFAULT_CONFIG.testimonials));
+      }
+
+      if (!config.testimonials || config.testimonials.length === 0) {
+        container.classList.add('hidden');
+        if (empty) empty.classList.remove('hidden');
+        return;
+      }
+
+      container.classList.remove('hidden');
+      if (empty) empty.classList.add('hidden');
+
+      container.innerHTML = config.testimonials.map((item, index) => `
+        <div class="portfolio-card">
+          <div class="portfolio-content" style="padding: 20px;">
+            <div style="margin-bottom: 12px;">
+              <span class="text-gold">${'★'.repeat(item.rating || 5)}</span>
+              <span class="text-muted">${'☆'.repeat(5 - (item.rating || 5))}</span>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Customer Name</label>
+              <input type="text" class="field-input" value="${escapeHtml(item.name)}"
+                onchange="updateTestimonial(${item.id}, 'name', this.value)">
+            </div>
+            <div class="field-group">
+              <label class="field-label">Role</label>
+              <input type="text" class="field-input" value="${escapeHtml(item.role)}"
+                placeholder="e.g. Restaurant Owner, Indiranagar"
+                onchange="updateTestimonial(${item.id}, 'role', this.value)">
+            </div>
+            <div class="field-group">
+              <label class="field-label">Review Text</label>
+              <textarea class="field-textarea" rows="3"
+                onchange="updateTestimonial(${item.id}, 'text', this.value)">${escapeHtml(item.text)}</textarea>
+            </div>
+            <div class="field-row">
+              <div class="field-group" style="flex: 1;">
+                <label class="field-label">Star Rating</label>
+                <select class="field-select" onchange="updateTestimonial(${item.id}, 'rating', parseInt(this.value))">
+                  <option value="1" ${item.rating === 1 ? 'selected' : ''}>1 Star</option>
+                  <option value="2" ${item.rating === 2 ? 'selected' : ''}>2 Stars</option>
+                  <option value="3" ${item.rating === 3 ? 'selected' : ''}>3 Stars</option>
+                  <option value="4" ${item.rating === 4 ? 'selected' : ''}>4 Stars</option>
+                  <option value="5" ${item.rating === 5 ? 'selected' : ''}>5 Stars</option>
+                </select>
+              </div>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Avatar (optional)</label>
+              <div style="display: flex; gap: 12px; align-items: center;">
+                ${item.avatar ? `<img src="${item.avatar}" alt="Avatar" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;">` : '<div style="width: 48px; height: 48px; border-radius: 50%; background: var(--bg-tertiary); display: flex; align-items: center; justify-content: center; font-size: 20px;">👤</div>'}
+                <label class="btn btn-outline btn-sm" style="cursor: pointer;">
+                  ${item.avatar ? 'Change Avatar' : 'Upload Avatar'}
+                  <input type="file" accept="image/*" style="display: none;"
+                    onchange="handleTestimonialAvatarUpload(${item.id}, event)">
+                </label>
+                ${item.avatar ? `<button class="btn btn-danger btn-sm" onclick="removeTestimonialAvatar(${item.id})">Remove</button>` : ''}
+              </div>
+            </div>
+          </div>
+          <div class="portfolio-actions">
+            <div class="order-controls">
+              <button class="btn btn-icon btn-outline btn-sm" onclick="moveTestimonial(${item.id}, -1)" ${index === 0 ? 'disabled' : ''}>↑</button>
+              <button class="btn btn-icon btn-outline btn-sm" onclick="moveTestimonial(${item.id}, 1)" ${index === config.testimonials.length - 1 ? 'disabled' : ''}>↓</button>
+            </div>
+            <button class="btn btn-danger btn-sm" onclick="deleteTestimonial(${item.id})">🗑️ Delete</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function addTestimonial() {
+      if (!config.testimonials) config.testimonials = [];
+      const newId = Math.max(...config.testimonials.map(t => t.id), 0) + 1;
+      config.testimonials.push({
+        id: newId,
+        name: "New Customer",
+        role: "",
+        text: "",
+        rating: 5,
+        avatar: ""
+      });
+      renderTestimonials();
+      updateSaveIndicator(false);
+      showToast('New review added', 'success');
+    }
+
+    function updateTestimonial(id, field, value) {
+      const item = config.testimonials.find(t => t.id === id);
+      if (item) {
+        item[field] = value;
+        updateSaveIndicator(false);
+      }
+    }
+
+    function moveTestimonial(id, direction) {
+      if (!config.testimonials) return;
+      const idx = config.testimonials.findIndex(t => t.id === id);
+      if (idx === -1) return;
+
+      const newIdx = idx + direction;
+      if (newIdx < 0 || newIdx >= config.testimonials.length) return;
+
+      [config.testimonials[idx], config.testimonials[newIdx]] = [config.testimonials[newIdx], config.testimonials[idx]];
+      renderTestimonials();
+      updateSaveIndicator(false);
+    }
+
+    function deleteTestimonial(id) {
+      if (!confirm('Delete this review?')) return;
+      config.testimonials = config.testimonials.filter(t => t.id !== id);
+      renderTestimonials();
+      updateSaveIndicator(false);
+      showToast('Review deleted', 'success');
+    }
+
+    async function handleTestimonialAvatarUpload(id, event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      try {
+        const dataUrl = await fileToDataUrl(file);
+        const webpUrl = await convertToWebP(dataUrl, 0.9, 200);
+
+        const item = config.testimonials.find(t => t.id === id);
+        if (item) {
+          item.avatar = webpUrl;
+          renderTestimonials();
+          updateSaveIndicator(false);
+          showToast('Avatar uploaded', 'success');
+        }
+      } catch (err) {
+        showToast('Failed to process image', 'error');
+      }
+    }
+
+    function removeTestimonialAvatar(id) {
+      const item = config.testimonials.find(t => t.id === id);
+      if (item) {
+        item.avatar = "";
+        renderTestimonials();
+        updateSaveIndicator(false);
+        showToast('Avatar removed', 'success');
+      }
+    }
+
+    // ================================================
+    // ABOUT IMAGES
+    // ================================================
+    function renderAboutImages() {
+      const container = document.getElementById('aboutImagesGrid');
+      if (!container) return;
+
+      // Ensure aboutImages array exists
+      if (!config.aboutImages) {
+        config.aboutImages = JSON.parse(JSON.stringify(DEFAULT_CONFIG.aboutImages));
+      }
+
+      container.innerHTML = config.aboutImages.map((img, idx) => `
+        <div class="image-item" style="aspect-ratio: 1; cursor: pointer;">
+          ${img.url
+            ? `<img src="${img.url}" alt="${escapeHtml(img.label)}" onclick="triggerAboutImageUpload(${idx})">`
+            : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:48px; cursor: pointer;" onclick="triggerAboutImageUpload(${idx})">🖼️</div>`
+          }
+          <div class="image-item-order">#${idx + 1}</div>
+          <div class="image-item-actions">
+            <button class="btn btn-gold btn-sm" onclick="triggerAboutImageUpload(${idx})">📁 Change</button>
+            <button class="btn btn-danger btn-sm" onclick="removeAboutImage(${idx})">🗑️</button>
+          </div>
+          <input type="file" id="aboutFile-${idx}" accept="image/*" style="display:none" onchange="handleAboutImageUpload(${idx}, event)">
+        </div>
+      `).join('');
+    }
+
+    function triggerAboutImageUpload(idx) {
+      document.getElementById(`aboutFile-${idx}`).click();
+    }
+
+    async function handleAboutImageUpload(idx, event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      try {
+        const dataUrl = await fileToDataUrl(file);
+        const webpUrl = await convertToWebP(dataUrl, 0.9);
+
+        if (!config.aboutImages) config.aboutImages = [];
+        config.aboutImages[idx] = { url: webpUrl, label: file.name.replace(/\.[^.]+$/, "") };
+        renderAboutImages();
+        updateSaveIndicator(false);
+        showToast('About image updated', 'success');
+      } catch (err) {
+        showToast('Failed to process image', 'error');
+      }
+    }
+
+    function removeAboutImage(idx) {
+      if (!config.aboutImages) return;
+      config.aboutImages[idx] = { url: "", label: `About Image ${idx + 1}` };
+      renderAboutImages();
+      updateSaveIndicator(false);
+      showToast('Image removed', 'success');
+    }
+
+    // ================================================
+    // ADVANTAGE IMAGES
+    // ================================================
+    function renderAdvantageImages() {
+      const container = document.getElementById('advantageImagesGrid');
+      if (!container) return;
+
+      // Ensure advantageImages array exists
+      if (!config.advantageImages) {
+        config.advantageImages = JSON.parse(JSON.stringify(DEFAULT_CONFIG.advantageImages));
+      }
+
+      container.innerHTML = config.advantageImages.map((img, idx) => `
+        <div class="portfolio-card">
+          <div class="portfolio-image" style="aspect-ratio: 1;">
+            ${img.url
+              ? `<img src="${img.url}" alt="${escapeHtml(img.label)}" style="width: 100%; height: 100%; object-fit: cover;">`
+              : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:48px; background: var(--bg-tertiary);">🏆</div>`
+            }
+            <div class="portfolio-overlay">
+              <button class="btn btn-gold btn-sm" onclick="triggerAdvantageImageUpload(${idx})">📁 Change</button>
+              <button class="btn btn-cyan btn-sm" onclick="pickIconForAdvantage(${idx})">🎨 Icon</button>
+            </div>
+          </div>
+          <div class="portfolio-content">
+            <div class="field-group" style="margin-bottom: 0;">
+              <input type="text" class="field-input" value="${escapeHtml(img.label)}"
+                placeholder="Benefit label"
+                onchange="updateAdvantageLabel(${idx}, this.value)">
+            </div>
+          </div>
+          <div class="portfolio-actions">
+            <button class="btn btn-danger btn-sm" onclick="removeAdvantageImage(${idx})">🗑️ Remove</button>
+          </div>
+          <input type="file" id="advantageFile-${idx}" accept="image/*" style="display:none" onchange="handleAdvantageImageUpload(${idx}, event)">
+        </div>
+      `).join('');
+    }
+
+    function triggerAdvantageImageUpload(idx) {
+      document.getElementById(`advantageFile-${idx}`).click();
+    }
+
+    async function handleAdvantageImageUpload(idx, event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      try {
+        const dataUrl = await fileToDataUrl(file);
+        const webpUrl = await convertToWebP(dataUrl, 0.9, 400);
+
+        if (!config.advantageImages) config.advantageImages = [];
+        config.advantageImages[idx] = { ...config.advantageImages[idx], url: webpUrl };
+        renderAdvantageImages();
+        updateSaveIndicator(false);
+        showToast('Advantage image updated', 'success');
+      } catch (err) {
+        showToast('Failed to process image', 'error');
+      }
+    }
+
+    function updateAdvantageLabel(idx, value) {
+      if (!config.advantageImages) return;
+      config.advantageImages[idx].label = value;
+      updateSaveIndicator(false);
+    }
+
+    function removeAdvantageImage(idx) {
+      if (!config.advantageImages) return;
+      const defaultLabels = [
+        "Premium Quality Materials",
+        "Rapid Turnaround Times",
+        "Expert Installation Team",
+        "End-to-End Service",
+        "Competitive Pricing",
+        "Bangalore-Based Manufacturing"
+      ];
+      config.advantageImages[idx] = { url: "", label: defaultLabels[idx] || `Benefit ${idx + 1}` };
+      renderAdvantageImages();
+      updateSaveIndicator(false);
+      showToast('Image removed', 'success');
+    }
+
+    function pickIconForAdvantage(idx) {
+      // Simple icon picker - could be expanded with an icon library
+      const icons = ['🏆', '⚡', '👥', '🔄', '💰', '🏭', '✅', '🎯', '⭐', '🔧', '💡', '🚀'];
+      const icon = prompt(`Choose an icon for "${config.advantageImages[idx].label}":\n\nAvailable: ${icons.join(' ')}\n\nEnter icon emoji:`, icons[idx] || '✅');
+      if (icon) {
+        // Store the icon preference in a data attribute or separate field if needed
+        showToast('Icon preference saved (icons are cosmetic only)', 'success');
+      }
+    }
+
+    // ================================================
     // HERO STATS
     // ================================================
     function renderHeroStats() {
@@ -3258,6 +3848,8 @@
       if (e.key === 'Escape') {
         closeCropper();
         closeGalleryModal();
+        closePortfolioAddModal();
+        closePickFromServices();
       }
     });
 
