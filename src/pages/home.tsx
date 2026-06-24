@@ -100,6 +100,16 @@ const staggerContainer = {
   visible: { opacity: 1, transition: { staggerChildren: 0.2 } },
 };
 
+interface Testimonial {
+  id?: number;
+  name?: string;
+  author?: string;
+  role?: string;
+  text?: string;
+  rating?: number;
+  avatar?: string;
+}
+
 const services = [
   {
     title: "LED Signs",
@@ -167,30 +177,60 @@ const reasons = [
 
 const testimonials = [
   {
+    id: 1,
     text: "Primesign completely transformed our storefront. The 3D LED letters are incredibly bright and the finishing is flawless. Highly professional team.",
     author: "Rajesh K.",
+    name: "Rajesh K.",
     role: "Restaurant Owner, Indiranagar",
     rating: 5,
+    avatar: "",
   },
   {
+    id: 2,
     text: "We needed massive corporate branding for our new tech park. Primesign delivered ahead of schedule with exceptional quality. Their attention to detail is unmatched.",
     author: "Priya M.",
+    name: "Priya M.",
     role: "Facility Manager, Whitefield",
     rating: 5,
+    avatar: "",
   },
   {
+    id: 3,
     text: "The custom neon sign they built for our cafe has become the main photo spot for our customers. Fast, affordable, and brilliant execution.",
     author: "Arjun S.",
+    name: "Arjun S.",
     role: "Cafe Founder, Koramangala",
     rating: 5,
+    avatar: "",
   },
 ];
+
+// Helper to get dynamic testimonials from localStorage
+function getDynamicTestimonials(): Testimonial[] | null {
+  try {
+    const stored = localStorage.getItem("primesign-config");
+    if (stored) {
+      const config = JSON.parse(stored);
+      if (config.testimonials && config.testimonials.length > 0) {
+        return config.testimonials.map((t: Testimonial) => ({
+          ...t,
+          avatar: t.avatar || "",
+          name: t.name || t.author || "Client",
+        }));
+      }
+    }
+  } catch (e) {
+    console.error("Error loading testimonials:", e);
+  }
+  return null;
+}
 
 export default function Home() {
   const { open: openQuote } = useQuoteModal();
   const [heroIndex, setHeroIndex] = useState(0);
   const [portfolioFilter, setPortfolioFilter] = useState<string | null>(null);
-  const [adminConfig, setAdminConfig] = useState<{ portfolio?: any[]; hero?: any } | null>(null);
+  const [adminConfig, setAdminConfig] = useState<{ portfolio?: any[]; hero?: any; testimonials?: Testimonial[] } | null>(null);
+  const [testimonialIndex, setTestimonialIndex] = useState(0);
 
   // Load admin config from localStorage on mount
   useEffect(() => {
@@ -204,7 +244,17 @@ export default function Home() {
   const heroBgImage = adminConfig?.hero?.bgImage || IMAGES.portfolio[0];
   const heroBadgeText = adminConfig?.hero?.badge || "Bangalore's Premier Signage Studio";
 
-  // Get portfolio items from config or fallback to hardcoded
+  // Get testimonials from config or fallback to hardcoded
+  const dynamicTestimonials = getDynamicTestimonials();
+  const displayTestimonials = dynamicTestimonials || adminConfig?.testimonials || testimonials;
+
+  // Auto-rotate testimonials every 6 seconds
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTestimonialIndex((prev) => (prev + 1) % displayTestimonials.length);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, [displayTestimonials.length]);
   const getPortfolioItems = () => {
     if (adminConfig?.portfolio && adminConfig.portfolio.length > 0) {
       // Convert config portfolio items to the format expected by the grid
@@ -694,40 +744,94 @@ export default function Home() {
         </div>
       </section>
 
-      {/* TESTIMONIALS */}
-      <section className="py-24 bg-card">
+      {/* TESTIMONIALS CAROUSEL */}
+      <section id="testimonials" className="py-24 bg-card overflow-hidden">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="text-center max-w-3xl mx-auto mb-20">
+          <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-sm text-primary font-bold tracking-widest uppercase mb-4">Client Feedback</h2>
             <h3 className="text-4xl md:text-5xl font-display font-bold leading-tight">
               TRUSTED BY BANGALORE BUSINESSES
             </h3>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((t, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.2 }}
-                className="bg-background p-8 rounded-2xl border border-white/5 relative"
-                data-testid={`card-testimonial-${i}`}
-              >
-                <div className="text-primary text-6xl font-serif leading-none absolute top-4 left-6 opacity-20">"</div>
-                <div className="flex gap-1 mb-4 relative z-10">
-                  {Array.from({ length: t.rating }).map((_, s) => (
-                    <Star key={s} className="w-4 h-4 fill-primary text-primary" />
-                  ))}
-                </div>
-                <p className="text-muted-foreground text-lg italic mb-8 relative z-10">{t.text}</p>
-                <div>
-                  <div className="font-bold text-foreground font-display uppercase tracking-wider">{t.author}</div>
-                  <div className="text-sm text-muted-foreground">{t.role}</div>
-                </div>
-              </motion.div>
-            ))}
+          {/* Carousel Container */}
+          <div className="relative max-w-4xl mx-auto">
+            {/* Carousel Slides */}
+            <div className="overflow-hidden">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={testimonialIndex}
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -50 }}
+                  transition={{ duration: 0.4 }}
+                  className="bg-background p-8 md:p-12 rounded-3xl border border-white/5 relative text-center"
+                >
+                  <div className="text-primary text-8xl font-serif leading-none absolute top-4 left-8 opacity-10">"</div>
+                  
+                  {/* Avatar */}
+                  {displayTestimonials[testimonialIndex]?.avatar && (
+                    <img 
+                      src={displayTestimonials[testimonialIndex].avatar} 
+                      alt={displayTestimonials[testimonialIndex]?.name || displayTestimonials[testimonialIndex]?.author || "Client"}
+                      className="w-20 h-20 rounded-full object-cover mx-auto mb-6 border-4 border-primary/20"
+                    />
+                  )}
+                  
+                  {/* Rating */}
+                  <div className="flex justify-center gap-1 mb-6">
+                    {Array.from({ length: displayTestimonials[testimonialIndex]?.rating || 5 }).map((_, s) => (
+                      <Star key={s} className="w-5 h-5 fill-primary text-primary" />
+                    ))}
+                  </div>
+                  
+                  {/* Quote */}
+                  <p className="text-xl md:text-2xl text-foreground/90 font-light leading-relaxed mb-8 max-w-2xl mx-auto relative z-10">
+                    {displayTestimonials[testimonialIndex]?.text}
+                  </p>
+                  
+                  {/* Author */}
+                  <div>
+                    <div className="font-bold text-foreground font-display uppercase tracking-wider text-lg">
+                      {displayTestimonials[testimonialIndex]?.name || displayTestimonials[testimonialIndex]?.author}
+                    </div>
+                    <div className="text-primary/80">{displayTestimonials[testimonialIndex]?.role}</div>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* Navigation Arrows */}
+            <button
+              onClick={() => setTestimonialIndex((prev) => (prev - 1 + displayTestimonials.length) % displayTestimonials.length)}
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-12 w-12 h-12 rounded-full bg-card border border-white/10 hover:border-primary/50 hover:bg-primary/10 transition-all flex items-center justify-center text-foreground/60 hover:text-primary"
+              aria-label="Previous testimonial"
+            >
+              ←
+            </button>
+            <button
+              onClick={() => setTestimonialIndex((prev) => (prev + 1) % displayTestimonials.length)}
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-12 w-12 h-12 rounded-full bg-card border border-white/10 hover:border-primary/50 hover:bg-primary/10 transition-all flex items-center justify-center text-foreground/60 hover:text-primary"
+              aria-label="Next testimonial"
+            >
+              →
+            </button>
+
+            {/* Dots Indicator */}
+            <div className="flex justify-center gap-2 mt-8">
+              {displayTestimonials.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setTestimonialIndex(i)}
+                  className={`w-2.5 h-2.5 rounded-full transition-all ${
+                    i === testimonialIndex 
+                      ? "bg-primary w-8" 
+                      : "bg-white/20 hover:bg-white/40"
+                  }`}
+                  aria-label={`Go to testimonial ${i + 1}`}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </section>
