@@ -6,6 +6,17 @@ import { Button } from "@/components/ui/button";
 import { useQuoteModal } from "@/context/QuoteModalContext";
 import { PortfolioImage } from "@/components/ui/image-with-skeleton";
 
+// Types for admin config
+interface Testimonial {
+  id?: number;
+  name?: string;
+  author?: string;
+  role?: string;
+  text?: string;
+  rating?: number;
+  avatar?: string;
+}
+
 // Helper function to read admin config from localStorage
 function getAdminConfig(): { portfolio?: any[]; hero?: any; services?: any[]; testimonials?: Testimonial[] } | null {
   try {
@@ -379,20 +390,17 @@ export default function Home() {
             <motion.h1
               variants={fadeInUp}
               className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-display font-bold leading-[1.1] mb-6 tracking-tight"
-            >
-              WE BUILD <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary text-glow">
-                UNFORGETTABLE
-              </span>
-              <br />
-              VISIBILITY.
-            </motion.h1>
+              dangerouslySetInnerHTML={{
+                __html: heroHeadline
+                  ? heroHeadline.replace(/<br\s*\/?>/gi, '<br />')
+                  : "WE BUILD <br />UNFORGETTABLE<br />VISIBILITY."
+              }}
+            />
             <motion.p
               variants={fadeInUp}
               className="text-base sm:text-xl md:text-2xl text-muted-foreground font-light max-w-2xl mb-10 leading-relaxed"
             >
-              From bold LED boards to precision 3D channel letters. We engineer high-impact signage
-              that lights up Bangalore and makes your brand impossible to ignore.
+              {heroSubtitle}
             </motion.p>
             <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row gap-4">
               <Button
@@ -507,7 +515,7 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="group relative bg-card rounded-2xl overflow-hidden border border-white/5 hover:border-primary/50 transition-all duration-500"
+                className="group relative bg-card rounded-2xl overflow-hidden border border-white/5 hover:border-primary/50 hover:shadow-[0_0_40px_rgba(240,168,48,0.15)] transition-all duration-500 ease-out"
                 data-testid={`card-service-${index}`}
               >
                 {service.tag && (
