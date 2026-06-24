@@ -1743,7 +1743,7 @@
             <div class="section-title-icon">🖼️</div>
             Our Work Gallery
           </h2>
-          <p class="section-desc">These images appear in the "REAL INSTALLATIONS" section with All/LED/Glow/Acrylic/Wall/Vehicle filter buttons. Set category and mark one as Featured.</p>
+          <p class="section-desc">These images appear in the "REAL INSTALLATIONS" section with All/LED/Glow/Acrylic/Wall/Vehicle filter buttons. <strong>Mark one item as "Featured" to display it prominently as the large hero image in the grid.</strong></p>
         </div>
         <div class="card mb-4">
           <div class="card-header">
@@ -3127,7 +3127,7 @@
             ${item.url
               ? `<img src="${item.url}" alt="${escapeHtml(item.label)}">`
               : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:48px;">🖼️</div>`}
-            ${item.featured ? '<div class="portfolio-featured-badge">Featured</div>' : ''}
+            ${item.featured ? '<div class="portfolio-featured-badge" title="This image appears larger as the hero in portfolio grid">★ Featured Hero</div>' : ''}
             <div class="portfolio-overlay">
               <button class="btn btn-gold btn-sm" onclick="triggerPortfolioUpload(${item.id})">📁 Change</button>
               <button class="btn btn-cyan btn-sm" onclick="openCropper('portfolio', event, ${item.id})">✂️ Crop</button>
@@ -3152,8 +3152,8 @@
               <button class="btn btn-icon btn-outline btn-sm" onclick="movePortfolio(${item.id}, 1)" ${index === config.portfolio.length - 1 ? 'disabled' : ''}>↓</button>
             </div>
             <div class="flex gap-2">
-              <button class="btn btn-outline btn-sm" onclick="toggleFeatured(${item.id})">
-                ${item.featured ? '★ Featured' : '☆ Feature'}
+              <button class="btn ${item.featured ? 'btn-gold' : 'btn-outline'} btn-sm ${item.featured ? 'featured-active' : ''}" onclick="toggleFeatured(${item.id})" title="Only one item can be featured - it appears as the large hero image">
+                ${item.featured ? '★ Featured (Hero Image)' : '☆ Set as Featured Hero'}
               </button>
               <button class="btn btn-danger btn-sm" onclick="deletePortfolio(${item.id})">🗑️</button>
             </div>
