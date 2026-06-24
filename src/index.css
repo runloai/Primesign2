@@ -239,13 +239,50 @@
   }
 }
 
-/* Reduced motion preference */
+/* Reduced motion preference - comprehensive support */
 @media (prefers-reduced-motion: reduce) {
   .animate-shimmer,
   .hover-zoom,
-  * {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
+  
+  /* Disable motion for Framer Motion elements */
+  [data-framer-motion] {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  /* Ensure focus states still visible without motion */
+  *:focus {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+  
+  /* Disable hover effects on touch devices */
+  @media (hover: none) {
+    *:hover {
+      transform: none !important;
+    }
+  }
+}
+
+/* Ensure visible focus states outside of reduced motion */
+*:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
+}
+
+/* Smooth focus transition for interactive elements */
+button, a, [role="button"], [tabindex]:not([tabindex="-1"]) {
+  transition: outline-offset 0.15s ease-out;
+}
+
+button:focus-visible, a:focus-visible, [role="button"]:focus-visible {
+  outline-offset: 4px;
 }

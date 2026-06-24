@@ -104,17 +104,80 @@ export function ServiceImage({
 }: ImageWithSkeletonProps) {
   const [isLoading, setIsLoading] = useState(true);
 
+  // Validate alt text
+  const validatedAlt = alt && alt.trim() ? alt : "Service image";
+
   return (
     <div className={cn("relative w-full h-full overflow-hidden", className)}>
       {isLoading && (
         <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-muted to-muted/50" />
       )}
       <img
-        alt={alt}
+        alt={validatedAlt}
         className={cn(
           "w-full h-full object-cover transition-opacity duration-500",
           isLoading ? "opacity-0" : "opacity-100",
           "group-hover:scale-105 transition-transform duration-700"
+        )}
+        onLoad={() => setIsLoading(false)}
+        loading="lazy"
+        {...props}
+      />
+    </div>
+  );
+}
+
+// Hero image component (eager loading for above-fold)
+export function HeroImage({
+  className,
+  alt,
+  ...props
+}: ImageWithSkeletonProps) {
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Validate alt text
+  const validatedAlt = alt && alt.trim() ? alt : "Hero image";
+
+  return (
+    <div className={cn("relative w-full h-full overflow-hidden", className)}>
+      {isLoading && (
+        <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-muted to-muted/50" />
+      )}
+      <img
+        alt={validatedAlt}
+        className={cn(
+          "w-full h-full object-cover transition-opacity duration-500",
+          isLoading ? "opacity-0" : "opacity-100"
+        )}
+        onLoad={() => setIsLoading(false)}
+        loading="eager"
+        {...props}
+      />
+    </div>
+  );
+}
+
+// Client logo image with lazy loading
+export function ClientLogoImage({
+  className,
+  alt,
+  ...props
+}: ImageWithSkeletonProps) {
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Validate alt text
+  const validatedAlt = alt && alt.trim() ? alt : "Client logo";
+
+  return (
+    <div className={cn("relative w-full h-full overflow-hidden", className)}>
+      {isLoading && (
+        <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-muted to-muted/50" />
+      )}
+      <img
+        alt={validatedAlt}
+        className={cn(
+          "w-full h-full object-contain transition-opacity duration-500 grayscale hover:grayscale-0",
+          isLoading ? "opacity-0" : "opacity-100"
         )}
         onLoad={() => setIsLoading(false)}
         loading="lazy"

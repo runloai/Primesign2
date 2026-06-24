@@ -5,6 +5,7 @@ import { ArrowRight, CheckCircle2, ChevronRight, PhoneCall, Star } from "lucide-
 import { Button } from "@/components/ui/button";
 import { useQuoteModal } from "@/context/QuoteModalContext";
 import { PortfolioImage } from "@/components/ui/image-with-skeleton";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 // Types for admin config
 interface Testimonial {
@@ -106,12 +107,24 @@ const IMAGES = {
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 40 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } },
+  visible: (prefersReducedMotion: boolean) => ({
+    opacity: 1,
+    y: 0,
+    transition: { 
+      duration: prefersReducedMotion ? 0.01 : 0.8, 
+      ease: "easeOut" 
+    }
+  }),
 };
 
 const staggerContainer = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.2 } },
+  visible: (prefersReducedMotion: boolean) => ({
+    opacity: 1,
+    transition: { 
+      staggerChildren: prefersReducedMotion ? 0 : 0.2 
+    }
+  }),
 };
 
 const services = [
@@ -281,6 +294,7 @@ export default function Home() {
   const [portfolioFilter, setPortfolioFilter] = useState<string | null>(null);
   const [adminConfig, setAdminConfig] = useState<{ portfolio?: any[]; hero?: any; testimonials?: Testimonial[]; services?: any[]; aboutImages?: any[]; advantageImages?: any[] } | null>(null);
   const [testimonialIndex, setTestimonialIndex] = useState(0);
+  const prefersReducedMotion = useReducedMotion();
 
   // Load admin config from localStorage on mount
   useEffect(() => {
@@ -383,11 +397,11 @@ export default function Home() {
           <motion.div
             initial="hidden"
             animate="visible"
-            variants={staggerContainer}
+            variants={staggerContainer(prefersReducedMotion)}
             className="max-w-4xl"
           >
             <motion.div
-              variants={fadeInUp}
+              variants={fadeInUp(prefersReducedMotion)}
               className="inline-block border border-primary/30 bg-primary/10 px-4 py-1.5 rounded-full mb-6 backdrop-blur-sm"
             >
               <span className="text-primary font-bold text-sm tracking-wider uppercase">
@@ -395,7 +409,7 @@ export default function Home() {
               </span>
             </motion.div>
             <motion.h1
-              variants={fadeInUp}
+              variants={fadeInUp(prefersReducedMotion)}
               className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-display font-bold leading-[1.1] mb-6 tracking-tight"
               dangerouslySetInnerHTML={{
                 __html: heroHeadline
@@ -404,12 +418,12 @@ export default function Home() {
               }}
             />
             <motion.p
-              variants={fadeInUp}
+              variants={fadeInUp(prefersReducedMotion)}
               className="text-base sm:text-xl md:text-2xl text-muted-foreground font-light max-w-2xl mb-10 leading-relaxed"
             >
               {heroSubtitle}
             </motion.p>
-            <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row gap-4">
+            <motion.div variants={fadeInUp(prefersReducedMotion)} className="flex flex-col sm:flex-row gap-4">
               <Button
                 size="lg"
                 onClick={openQuote}
@@ -455,7 +469,7 @@ export default function Home() {
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
+              transition={{ duration: prefersReducedMotion ? 0.01 : 0.8 }}
             >
               <h2 className="text-sm text-primary font-bold tracking-widest uppercase mb-4">About Primesign</h2>
               <h3 className="text-4xl md:text-5xl font-display font-bold leading-tight mb-6">
@@ -487,14 +501,15 @@ export default function Home() {
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
+              transition={{ duration: prefersReducedMotion ? 0.01 : 0.8 }}
               className="grid grid-cols-2 gap-3"
             >
               {aboutImages.map((src: string, i: number) => (
                 <div key={i} className="aspect-square rounded-xl overflow-hidden">
                   <img
                     src={src}
-                    alt={`Primesign work ${i + 1}`}
+                    alt={`Primesign signage work sample ${i + 1}`}
+                    loading={i < 2 ? "eager" : "lazy"}
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                     data-testid={`img-about-${i}`}
                   />
@@ -514,26 +529,36 @@ export default function Home() {
             <h3 className="text-4xl md:text-6xl font-display font-bold leading-tight">THE ARSENAL</h3>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8" role="list" aria-label="Services">
             {displayServices.map((service, index) => (
               <motion.div
                 key={service.title}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="group relative bg-card rounded-2xl overflow-hidden border border-white/5 hover:border-primary/50 hover:shadow-[0_0_40px_rgba(240,168,48,0.15)] transition-all duration-500 ease-out"
+                transition={{ duration: prefersReducedMotion ? 0.01 : 0.5, delay: index * 0.1 }}
+                className="group relative bg-card rounded-2xl overflow-hidden border border-white/5 hover:border-primary/50 hover:shadow-[0_0_40px_rgba(240,168,48,0.15)] transition-all duration-500 ease-out focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 focus-within:ring-offset-background"
                 data-testid={`card-service-${index}`}
+                role="listitem"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setPortfolioFilter(service.category);
+                    document.getElementById("portfolio")?.scrollIntoView({ behavior: "smooth" });
+                  }
+                }}
               >
                 {service.tag && (
-                  <div className="absolute top-4 right-4 z-20 bg-primary text-primary-foreground text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full">
+                  <div className="absolute top-4 right-4 z-20 bg-primary text-primary-foreground text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full" aria-label={`Tag: ${service.tag}`}>
                     {service.tag}
                   </div>
                 )}
                 <div className="aspect-[4/3] overflow-hidden">
                   <img
                     src={service.img}
-                    alt={service.title}
+                    alt={`${service.title} service example`}
+                    loading="lazy"
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                 </div>
@@ -549,9 +574,10 @@ export default function Home() {
                       setPortfolioFilter(service.category);
                       document.getElementById("portfolio")?.scrollIntoView({ behavior: "smooth" });
                     }}
-                    className="inline-flex items-center text-sm font-bold uppercase tracking-wider text-white hover:text-primary transition-colors cursor-pointer bg-transparent border-none p-0"
+                    aria-label={`Explore ${service.title} catalogue`}
+                    className="inline-flex items-center text-sm font-bold uppercase tracking-wider text-white hover:text-primary transition-colors cursor-pointer bg-transparent border-none p-0 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background rounded-sm"
                   >
-                    Explore Catalogue <ChevronRight className="ml-1 w-4 h-4" />
+                    Explore Catalogue <ChevronRight className="ml-1 w-4 h-4" aria-hidden="true" />
                   </button>
                 </div>
               </motion.div>
@@ -575,11 +601,21 @@ export default function Home() {
             </a>
           </div>
 
-          {/* Category Filter Buttons - Mobile optimized with horizontal scroll */}
-          <div className="flex flex-wrap gap-2 md:gap-3 mb-8 md:mb-10 justify-center md:justify-start">
+          {/* Portfolio filter buttons with keyboard navigation */}
+          <div 
+            className="flex flex-wrap gap-2 md:gap-3 mb-8 md:mb-10 justify-center md:justify-start"
+            role="tablist"
+            aria-label="Portfolio categories"
+          >
             {["All","LED","Glow","Acrylic","Wall","Vehicle","PVC","Flex"].map(cat => (
-              <button key={cat} onClick={() => setPortfolioFilter(cat === "All" ? null : cat.toLowerCase())}
-                className={`px-4 md:px-5 py-2 rounded-full text-xs md:text-sm font-bold uppercase tracking-wider transition-all ${
+              <button 
+                key={cat} 
+                onClick={() => setPortfolioFilter(cat === "All" ? null : cat.toLowerCase())}
+                role="tab"
+                aria-selected={(cat === "All" && !portfolioFilter) || portfolioFilter === cat.toLowerCase()}
+                aria-controls="portfolio-grid"
+                tabIndex={0}
+                className={`px-4 md:px-5 py-2 rounded-full text-xs md:text-sm font-bold uppercase tracking-wider transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background ${
                   (cat === "All" && !portfolioFilter) || portfolioFilter === cat.toLowerCase()
                     ? "bg-primary text-primary-foreground" : "bg-white/5 text-white/60 hover:bg-white/10"}`}
               >{cat}</button>
@@ -587,6 +623,7 @@ export default function Home() {
           </div>
 
           {/* Main masonry-style grid — use dynamic data if available, fallback to hardcoded */}
+          <div id="portfolio-grid" role="tabpanel" aria-label="Portfolio gallery">
           {dynamicPortfolioItems && dynamicPortfolioItems.length >= 9 ? (
             // Dynamic portfolio grid using admin config
             <>
@@ -738,6 +775,7 @@ export default function Home() {
             ))}
           </div>
         </div>
+        </div>
       </section>
 
       {/* CLIENTS STRIP */}
@@ -760,7 +798,8 @@ export default function Home() {
               >
                 <img
                   src={src}
-                  alt={`Client ${i + 1}`}
+                  alt={`Client logo ${i + 1}`}
+                  loading="lazy"
                   className="h-12 w-full object-contain opacity-70 hover:opacity-100 transition-opacity grayscale hover:grayscale-0"
                 />
               </motion.div>
@@ -804,7 +843,12 @@ export default function Home() {
             <div className="grid grid-cols-2 gap-3">
               {[IMAGES.glow[5], IMAGES.wall[4], IMAGES.led[2], IMAGES.square[12]].map((src, i) => (
                 <div key={i} className="aspect-square rounded-xl overflow-hidden">
-                  <img src={src} alt={`Primesign quality work ${i + 1}`} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                  <img 
+                    src={src} 
+                    alt={`Primesign quality work sample ${i + 1}`} 
+                    loading="lazy"
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" 
+                  />
                 </div>
               ))}
             </div>
@@ -829,10 +873,10 @@ export default function Home() {
               <AnimatePresence mode="wait">
                 <motion.div
                   key={testimonialIndex}
-                  initial={{ opacity: 0, x: 50 }}
+                  initial={{ opacity: prefersReducedMotion ? 1 : 0, x: prefersReducedMotion ? 0 : 50 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -50 }}
-                  transition={{ duration: 0.4 }}
+                  transition={{ duration: prefersReducedMotion ? 0.01 : 0.4 }}
                   className="bg-background p-8 md:p-12 rounded-3xl border border-white/5 relative text-center"
                 >
                   <div className="text-primary text-8xl font-serif leading-none absolute top-4 left-8 opacity-10">"</div>

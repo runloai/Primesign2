@@ -101,13 +101,14 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-8">
+        <nav className="hidden md:flex items-center gap-8" aria-label="Main navigation">
           {navLinks.map((link) => (
             <Link
               key={link.name}
               href={link.href}
               onClick={() => handleNavClick(link.href)}
-              className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors uppercase tracking-wider font-display"
+              className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors uppercase tracking-wider font-display focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background rounded-sm px-1"
+              aria-label={`Navigate to ${link.name}`}
             >
               {link.name}
             </Link>
@@ -116,6 +117,7 @@ export default function Navbar() {
             value={scheme}
             onChange={(e) => setScheme(e.target.value)}
             className="bg-white/10 border border-white/20 rounded-full px-3 py-1.5 text-xs text-foreground/80 focus:outline-none focus:border-primary cursor-pointer"
+            aria-label="Select color theme"
           >
             {Object.keys(COLOR_SCHEMES).map((name) => (
               <option key={name} value={name} className="bg-background text-foreground">{name}</option>
@@ -123,8 +125,9 @@ export default function Navbar() {
           </select>
           <button
             onClick={open}
-            className="bg-primary text-primary-foreground px-6 py-2 rounded-full font-bold text-sm uppercase tracking-wide hover:bg-primary/90 transition-all box-glow"
+            className="bg-primary text-primary-foreground px-6 py-2 rounded-full font-bold text-sm uppercase tracking-wide hover:bg-primary/90 transition-all box-glow focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
             data-testid="button-nav-quote"
+            aria-label="Get a free quote"
           >
             Get a Quote
           </button>
@@ -132,17 +135,24 @@ export default function Navbar() {
 
         {/* Mobile Menu Toggle */}
         <button
-          className="md:hidden text-foreground z-50 relative"
+          className="md:hidden text-foreground z-50 relative focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background rounded-sm p-1"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={isMobileMenuOpen}
+          aria-controls="mobile-menu"
         >
           {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
         </button>
 
         {/* Mobile Nav */}
         <div
+          id="mobile-menu"
           className={`fixed inset-0 bg-background/95 backdrop-blur-xl z-40 flex flex-col items-center justify-center transition-all duration-300 ${
             isMobileMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
           }`}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Mobile navigation menu"
         >
           <nav className="flex flex-col items-center gap-8 text-center">
             {navLinks.map((link) => (
