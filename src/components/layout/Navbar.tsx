@@ -16,6 +16,10 @@ const COLOR_SCHEMES = {
   "Royal Velvet": { p: "270 90% 55%", s: "45 100% 55%", b: "260 30% 6%", f: "0 0% 98%" },
   "Thunderbolt": { p: "195 100% 55%", s: "45 100% 55%", b: "220 15% 5%", f: "0 0% 98%" },
   "Midnight Copper": { p: "20 90% 55%", s: "200 90% 50%", b: "222 40% 5%", f: "0 0% 98%" },
+  "Sky Light": { p: "210 90% 40%", s: "30 70% 60%", b: "210 50% 97%", f: "210 20% 15%" },
+  "Warm Cream": { p: "35 85% 45%", s: "15 60% 35%", b: "40 60% 97%", f: "30 20% 12%" },
+  "Mint Fresh": { p: "160 60% 40%", s: "200 50% 45%", b: "150 30% 96%", f: "160 25% 15%" },
+  "Lavender Dream": { p: "270 60% 55%", s: "330 50% 60%", b: "260 40% 97%", f: "260 25% 15%" },
 };
 
 export default function Navbar() {
@@ -128,6 +132,15 @@ export default function Navbar() {
                 {link.name}
               </Link>
             ))}
+            <select
+              value={scheme}
+              onChange={(e) => setScheme(e.target.value)}
+              className="bg-foreground/10 border border-foreground/20 rounded-full px-4 py-2 text-sm text-foreground/80 focus:outline-none focus:border-primary cursor-pointer mt-4"
+            >
+              {Object.keys(COLOR_SCHEMES).map((name) => (
+                <option key={name} value={name} className="bg-background text-foreground">{name}</option>
+              ))}
+            </select>
             <button
               className="mt-4 bg-primary text-primary-foreground px-8 py-3 rounded-full font-bold text-lg uppercase tracking-wide hover:bg-primary/90 transition-all box-glow"
               onClick={() => { setIsMobileMenuOpen(false); open(); }}
