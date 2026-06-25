@@ -1,18 +1,561 @@
 {
-  "contact": {},
-  "testimonials": [],
-  "services": [
+  "contact": {
+    "phones": [
+      "+91 6366525253",
+      "+91 8861848284",
+      "080 49595599"
+    ],
+    "emails": [
+      "primesign2021@gmail.com"
+    ],
+    "address": "#35, Ramamurthy Nagar Signal, T C Palya Main Road, Bangalore 560016",
+    "whatsapp": "+91 6366525253",
+    "youtube": "https://www.youtube.com/@PrimesignBangalore",
+    "instagram": "https://www.instagram.com/primesignpvtltd/",
+    "facebook": "https://www.facebook.com/primesign.in",
+    "threadsUrl": "",
+    "mapsUrl": "https://maps.google.com/?q=Primesign+Ramamurthy+Nagar+Bangalore",
+    "sendFileLabel": "Send Your File",
+    "sendFileNumber": "+91 6366525253"
+  },
+  "testimonials": [
     {
-      "name": "test"
+      "id": 1,
+      "name": "Rajesh K.",
+      "role": "Restaurant Owner, Indiranagar",
+      "text": "Primesign completely transformed our storefront. The 3D LED letters are incredibly bright and the finishing is flawless. Highly professional team.",
+      "rating": 5,
+      "avatar": ""
+    },
+    {
+      "id": 2,
+      "name": "Priya M.",
+      "role": "Facility Manager, Whitefield",
+      "text": "We needed massive corporate branding for our new tech park. Primesign delivered ahead of schedule with exceptional quality. Their attention to detail is unmatched.",
+      "rating": 5,
+      "avatar": ""
+    },
+    {
+      "id": 3,
+      "name": "Arjun S.",
+      "role": "Cafe Founder, Koramangala",
+      "text": "The custom neon sign they built for our cafe has become the main photo spot for our customers. Fast, affordable, and brilliant execution.",
+      "rating": 5,
+      "avatar": ""
     }
   ],
-  "portfolio": [],
-  "hero": {},
-  "aboutImages": [],
-  "advantageImages": [],
-  "colorScheme": "",
-  "serviceCategories": [],
-  "settings": {},
-  "_publishedAt": "2026-06-25T10:33:18.850Z",
+  "services": [
+    {
+      "id": 1,
+      "name": "LED Signs",
+      "desc": "High-brightness LED boards with ACP backing and 3D letters",
+      "badge": "popular",
+      "category": "sign-boards",
+      "images": [
+        {
+          "url": "/images/led/1.webp",
+          "label": "LED Signs - Image 1"
+        },
+        {
+          "url": "/images/led/2.webp",
+          "label": "LED Signs - Image 2"
+        },
+        {
+          "url": "/images/led/3.webp",
+          "label": "LED Signs - Image 3"
+        },
+        {
+          "url": "/images/led/4.webp",
+          "label": "LED Signs - Image 4"
+        },
+        {
+          "url": "/images/led/5.webp",
+          "label": "LED Signs - Image 5"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Glow Signs",
+      "desc": "Illuminated glow signs visible day and night",
+      "badge": "",
+      "category": "sign-boards",
+      "images": [
+        {
+          "url": "/images/glow/1.webp",
+          "label": "Glow Signs - Image 1"
+        },
+        {
+          "url": "/images/glow/2.webp",
+          "label": "Glow Signs - Image 2"
+        },
+        {
+          "url": "/images/glow/3.webp",
+          "label": "Glow Signs - Image 3"
+        },
+        {
+          "url": "/images/glow/4.webp",
+          "label": "Glow Signs - Image 4"
+        },
+        {
+          "url": "/images/glow/5.webp",
+          "label": "Glow Signs - Image 5"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Acrylic Signs",
+      "desc": "Laser-cut precision acrylic signs for corporate and retail",
+      "badge": "",
+      "category": "sign-boards",
+      "images": [
+        {
+          "url": "/images/acrylic/1.webp",
+          "label": "Acrylic Signs - Image 1"
+        },
+        {
+          "url": "/images/acrylic/2.webp",
+          "label": "Acrylic Signs - Image 2"
+        },
+        {
+          "url": "/images/acrylic/3.webp",
+          "label": "Acrylic Signs - Image 3"
+        },
+        {
+          "url": "/images/acrylic/4.webp",
+          "label": "Acrylic Signs - Image 4"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Wall Branding",
+      "desc": "Custom vinyl graphics and murals for interior and exterior walls",
+      "badge": "",
+      "category": "sign-boards",
+      "images": [
+        {
+          "url": "/images/wall/1.webp",
+          "label": "Wall Branding - Image 1"
+        },
+        {
+          "url": "/images/wall/2.webp",
+          "label": "Wall Branding - Image 2"
+        },
+        {
+          "url": "/images/wall/3.webp",
+          "label": "Wall Branding - Image 3"
+        },
+        {
+          "url": "/images/wall/4.webp",
+          "label": "Wall Branding - Image 4"
+        },
+        {
+          "url": "/images/wall/5.webp",
+          "label": "Wall Branding - Image 5"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Vehicle Wraps",
+      "desc": "Full and partial vehicle wraps for mobile advertising",
+      "badge": "",
+      "category": "vehicle",
+      "images": [
+        {
+          "url": "/images/vehicle/1.webp",
+          "label": "Vehicle Wraps - Image 1"
+        },
+        {
+          "url": "/images/vehicle/2.webp",
+          "label": "Vehicle Wraps - Image 2"
+        },
+        {
+          "url": "/images/vehicle/3.webp",
+          "label": "Vehicle Wraps - Image 3"
+        },
+        {
+          "url": "/images/vehicle/4.webp",
+          "label": "Vehicle Wraps - Image 4"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "PVC & Flex",
+      "desc": "Durable outdoor flex printing for hoardings and banners",
+      "badge": "",
+      "category": "pvc-flex",
+      "images": [
+        {
+          "url": "/images/pvc/1.webp",
+          "label": "PVC & Flex - Image 1"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Non-Light Sign Board",
+      "desc": "Non-illuminated sign boards for daytime visibility and cost-effective branding",
+      "badge": "",
+      "category": "sign-boards",
+      "images": [
+        {
+          "url": "/images/led/1.webp",
+          "label": "Non-Light Sign Board - Image 1"
+        },
+        {
+          "url": "/images/led/2.webp",
+          "label": "Non-Light Sign Board - Image 2"
+        },
+        {
+          "url": "/images/led/3.webp",
+          "label": "Non-Light Sign Board - Image 3"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "3D LED Letters",
+      "desc": "Premium 3D fabricated LED letters for standout storefront branding",
+      "badge": "",
+      "category": "sign-boards",
+      "images": [
+        {
+          "url": "/images/led/1.webp",
+          "label": "3D LED Letters - Image 1"
+        },
+        {
+          "url": "/images/led/2.webp",
+          "label": "3D LED Letters - Image 2"
+        },
+        {
+          "url": "/images/led/3.webp",
+          "label": "3D LED Letters - Image 3"
+        },
+        {
+          "url": "/images/led/4.webp",
+          "label": "3D LED Letters - Image 4"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "name": "Glow Sign Board",
+      "desc": "Illuminated glow sign boards that attract attention day and night",
+      "badge": "",
+      "category": "sign-boards",
+      "images": []
+    },
+    {
+      "id": 10,
+      "name": "Acrylic Sign Board",
+      "desc": "High-gloss acrylic sign boards with laser-cut precision",
+      "badge": "",
+      "category": "sign-boards",
+      "images": []
+    },
+    {
+      "id": 11,
+      "name": "PVC/SS Letter Sign",
+      "desc": "PVC and stainless steel letter signs for modern corporate branding",
+      "badge": "",
+      "category": "sign-boards",
+      "images": []
+    },
+    {
+      "id": 12,
+      "name": "Hoardings",
+      "desc": "Large-format outdoor hoardings for maximum brand visibility",
+      "badge": "",
+      "category": "outdoor",
+      "images": [
+        {
+          "url": "/images/wall/1.webp",
+          "label": "Hoardings - Image 1"
+        },
+        {
+          "url": "/images/wall/2.webp",
+          "label": "Hoardings - Image 2"
+        },
+        {
+          "url": "/images/wall/3.webp",
+          "label": "Hoardings - Image 3"
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "name": "One Way Vision",
+      "desc": "Perforated window films for see-through branding on glass surfaces",
+      "badge": "",
+      "category": "graphics",
+      "images": []
+    },
+    {
+      "id": 14,
+      "name": "Gloss Branding",
+      "desc": "High-gloss vinyl branding for a premium polished finish",
+      "badge": "",
+      "category": "graphics",
+      "images": []
+    },
+    {
+      "id": 15,
+      "name": "Wall Graphics",
+      "desc": "Custom wall murals and graphics for interior and exterior spaces",
+      "badge": "",
+      "category": "graphics",
+      "images": [
+        {
+          "url": "/images/wall/1.webp",
+          "label": "Wall Graphics - Image 1"
+        },
+        {
+          "url": "/images/wall/2.webp",
+          "label": "Wall Graphics - Image 2"
+        },
+        {
+          "url": "/images/wall/3.webp",
+          "label": "Wall Graphics - Image 3"
+        },
+        {
+          "url": "/images/wall/4.webp",
+          "label": "Wall Graphics - Image 4"
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "name": "Promotional Tents",
+      "desc": "Custom branded promotional tents for events and outdoor campaigns",
+      "badge": "",
+      "category": "promotional",
+      "images": []
+    },
+    {
+      "id": 17,
+      "name": "Roll Up Standees",
+      "desc": "Portable roll-up banner stands for indoor events and promotions",
+      "badge": "",
+      "category": "promotional",
+      "images": []
+    },
+    {
+      "id": 18,
+      "name": "Posters",
+      "desc": "High-quality poster printing for indoor and outdoor advertising",
+      "badge": "",
+      "category": "print",
+      "images": []
+    },
+    {
+      "id": 19,
+      "name": "Visiting Cards",
+      "desc": "Premium visiting card printing on multiple paper stocks and finishes",
+      "badge": "",
+      "category": "print",
+      "images": []
+    },
+    {
+      "id": 20,
+      "name": "ID Cards",
+      "desc": "Custom ID card printing with lamination and accessories",
+      "badge": "",
+      "category": "print",
+      "images": []
+    },
+    {
+      "id": 21,
+      "name": "T-Shirts",
+      "desc": "Custom t-shirt printing with screen and DTF transfer methods",
+      "badge": "",
+      "category": "apparel",
+      "images": []
+    },
+    {
+      "id": 22,
+      "name": "Quick Printing",
+      "desc": "Fast turnaround digital printing for brochures, flyers and documents",
+      "badge": "",
+      "category": "print",
+      "images": []
+    }
+  ],
+  "portfolio": [
+    {
+      "id": 1,
+      "url": "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/portfolio/01.webp",
+      "label": "Storefront LED Branding",
+      "category": "led",
+      "featured": true
+    },
+    {
+      "id": 2,
+      "url": "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/glow/4.webp",
+      "label": "Night Glow Sign",
+      "category": "glow",
+      "featured": false
+    },
+    {
+      "id": 3,
+      "url": "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/acrylic/2.webp",
+      "label": "Corporate Acrylic Sign",
+      "category": "acrylic",
+      "featured": false
+    },
+    {
+      "id": 4,
+      "url": "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/wall/4.webp",
+      "label": "Wall Branding",
+      "category": "wall",
+      "featured": false
+    },
+    {
+      "id": 5,
+      "url": "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/vehicle/3.webp",
+      "label": "Vehicle Wrap",
+      "category": "vehicle",
+      "featured": false
+    },
+    {
+      "id": 6,
+      "url": "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/portfolio/03.webp",
+      "label": "Retail Signage",
+      "category": "led",
+      "featured": false
+    },
+    {
+      "id": 7,
+      "url": "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/glow/5.webp",
+      "label": "Neon Glow",
+      "category": "glow",
+      "featured": false
+    },
+    {
+      "id": 8,
+      "url": "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/vehicle/4.webp",
+      "label": "Vehicle Wrap 2",
+      "category": "vehicle",
+      "featured": false
+    },
+    {
+      "id": 9,
+      "url": "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/vehicle/5.webp",
+      "label": "Vehicle Wrap 3",
+      "category": "vehicle",
+      "featured": false
+    },
+    {
+      "id": 10,
+      "url": "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/vehicle/6.webp",
+      "label": "Vehicle Wrap 4",
+      "category": "vehicle",
+      "featured": false
+    }
+  ],
+  "hero": {
+    "bgImage": "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/portfolio/01.webp",
+    "headline": "WE BUILD <br>UNFORGETTABLE<br>VISIBILITY.",
+    "subtitle": "From bold LED boards to precision 3D channel letters. We engineer high-impact signage that lights up Bangalore.",
+    "badge": "Bangalore's Premier Signage Studio",
+    "stats": [
+      {
+        "value": "500+",
+        "label": "Projects"
+      },
+      {
+        "value": "5+",
+        "label": "Years"
+      },
+      {
+        "value": "100%",
+        "label": "Satisfaction"
+      },
+      {
+        "value": "Bangalore",
+        "label": "Based"
+      }
+    ]
+  },
+  "aboutImages": [
+    {
+      "url": "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/glow/2.webp",
+      "label": "About Image 1"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/wall/2.webp",
+      "label": "About Image 2"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/led/1.webp",
+      "label": "About Image 3"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/square/10.webp",
+      "label": "About Image 4"
+    }
+  ],
+  "advantageImages": [
+    {
+      "url": "",
+      "label": "Premium Quality Materials"
+    },
+    {
+      "url": "",
+      "label": "Rapid Turnaround Times"
+    },
+    {
+      "url": "",
+      "label": "Expert Installation Team"
+    },
+    {
+      "url": "",
+      "label": "End-to-End Service"
+    },
+    {
+      "url": "",
+      "label": "Competitive Pricing"
+    },
+    {
+      "url": "",
+      "label": "Bangalore-Based Manufacturing"
+    }
+  ],
+  "serviceCategories": [
+    {
+      "id": "sign-boards",
+      "label": "Sign Boards",
+      "icon": "🪧",
+      "description": "Premium signage solutions for every business need"
+    },
+    {
+      "id": "promotional",
+      "label": "Promotional Display",
+      "icon": "📢",
+      "description": "Eye-catching display solutions for events & marketing"
+    },
+    {
+      "id": "digital",
+      "label": "Digital Prints",
+      "icon": "🖨️",
+      "description": "High-quality digital printing on various media"
+    },
+    {
+      "id": "commercial",
+      "label": "Commercial",
+      "icon": "🏢",
+      "description": "Professional printing for business needs"
+    }
+  ],
+  "settings": {
+    "logoType": "text",
+    "scheme": "Obsidian Gold",
+    "whatsappNumber": "+91 6366525253",
+    "whatsappMessage": "Hi Primesign! I want to share a file for my signage project."
+  },
+  "_publishedAt": "2026-06-25T10:33:53.653Z",
   "_version": "1.0"
 }
