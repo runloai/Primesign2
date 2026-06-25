@@ -812,7 +812,7 @@ function ContactSection({ prefersReducedMotion, adminConfig }: { prefersReducedM
       file ? `\n*Attachment:* ${file.name}` : null,
     ].filter(Boolean).join("\n");
 
-    const waNumber = (adminConfig?.contact?.phones?.[0] || adminConfig?.settings?.whatsappNumber || "916366525253").replace(/[^\d]/g, '');
+    const waNumber = (adminConfig?.contact?.phones?.[0] || "DEFAULT").replace(/[^\d]/g, '');
     const url = `https://wa.me/${waNumber}?text=${encodeURIComponent(lines)}`;
     window.open(url, "_blank");
     setSubmitted(true);
@@ -962,7 +962,7 @@ function ContactSection({ prefersReducedMotion, adminConfig }: { prefersReducedM
                     Send via WhatsApp
                   </Button>
                   <a
-                    href={`https://wa.me/${(adminConfig?.contact?.phones?.[0] || adminConfig?.settings?.whatsappNumber || "916366525253").replace(/[^\d]/g, '')}?text=${encodeURIComponent(adminConfig?.settings?.whatsappMessage || "Hello PrimeSign, I'd like to know more about your services.")}`}
+                    href={`https://wa.me/${(adminConfig?.contact?.phones?.[0] || "DEFAULT").replace(/[^\d]/g, '')}?text=${encodeURIComponent(adminConfig?.settings?.whatsappMessage || "Hello PrimeSign, I'd like to know more about your services.")}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex-1"
@@ -1006,7 +1006,7 @@ function ContactSection({ prefersReducedMotion, adminConfig }: { prefersReducedM
                 <h4 className="font-bold text-lg mb-2">Call Us</h4>
                 <p className="text-muted-foreground text-sm">
                   <a href={`tel:+91${(adminConfig?.contact?.phones?.[0] || adminConfig?.settings?.whatsappNumber || "6366525253").replace(/[^\d]/g, '').slice(-10)}`} className="hover:text-primary transition-colors">
-                    {adminConfig?.contact?.phones?.[0] || adminConfig?.settings?.whatsappNumber || "+91 63665 25253"}
+                    {adminConfig?.contact?.phones?.[0] || "DEFAULT"}
                   </a>
                 </p>
               </div>
@@ -1022,7 +1022,7 @@ function ContactSection({ prefersReducedMotion, adminConfig }: { prefersReducedM
               <div className="bg-background/50 backdrop-blur-sm p-6 rounded-xl border border-white/5 hover:border-primary/30 transition-colors">
                 <Clock className="w-8 h-8 text-primary mb-4" />
                 <h4 className="font-bold text-lg mb-2">Working Hours</h4>
-                <p className="text-muted-foreground text-sm" dangerouslySetInnerHTML={{ __html: adminConfig?.settings?.workingHours || "Mon - Sat: 9:00 AM - 7:00 PM<br>Sunday: Closed" }} />
+                <p className="text-muted-foreground text-sm" dangerouslySetInnerHTML={{ __html: adminConfig?.settings?.workingHours || "DEFAULT" }} />
               </div>
             </div>
 
@@ -1117,8 +1117,8 @@ export default function Home() {
 
   // Get hero data from config or fallback
   const heroBgImage = adminConfig?.hero?.bgImage || "/images/portfolio/01.webp";
-  const heroBadgeText = adminConfig?.hero?.badge || "Bangalore's Premier Signage Studio";
-  const heroHeadline = adminConfig?.hero?.headline;
+  const heroBadgeText = adminConfig?.hero?.badge || "DEFAULT";
+  const heroHeadline = adminConfig?.hero?.headline || "DEFAULT";
   const heroSubtitle = adminConfig?.hero?.subtitle || "From bold LED boards to precision 3D channel letters. We engineer high-impact signage that lights up Bangalore and makes your brand impossible to ignore.";
 
   // Get testimonials from config or fallback
@@ -1193,9 +1193,7 @@ export default function Home() {
     return allPortfolioItems.filter(item => !item.featured);
   }, [allPortfolioItems]);
 
-  const aboutImages = adminConfig?.aboutImages && adminConfig.aboutImages.length >= 4
-    ? adminConfig.aboutImages.slice(0, 4).map((img: any) => img.url || img)
-    : ["/images/glow/3.webp", "/images/wall/3.webp", "/images/led/2.webp", "/images/square/brass.webp"];
+  const aboutImages = (adminConfig?.aboutImages || ["/images/glow/3.webp", "/images/wall/3.webp", "/images/led/2.webp", "/images/square/brass.webp"]).slice(0, 4).map((img: any) => (typeof img === 'string' ? img : img?.url || img));
 
   const displayReasons = adminConfig?.advantageImages && adminConfig.advantageImages.length >= 6
     ? adminConfig.advantageImages.slice(0, 6)
@@ -1341,9 +1339,7 @@ export default function Home() {
               variants={fadeInUp}
               className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-display font-bold leading-[1.1] mb-6 tracking-tight"
               dangerouslySetInnerHTML={{
-                __html: heroHeadline
-                  ? heroHeadline.replace(/<br\s*\/?>/gi, '<br />')
-                  : "WE BUILD <br />UNFORGETTABLE<br />VISIBILITY."
+                __html: heroHeadline.replace(/<br\s*\/?>/gi, '<br />')
               }}
             />
             <motion.p
@@ -1363,7 +1359,7 @@ export default function Home() {
                 <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
               <a 
-                href={`https://wa.me/${(adminConfig?.contact?.phones?.[0] || adminConfig?.settings?.whatsappNumber || "916366525253").replace(/[^\d]/g, '')}?text=${encodeURIComponent(adminConfig?.settings?.whatsappMessage || "Hello PrimeSign, I'd like to get a quote for signage services.")}`}
+                href={`https://wa.me/${(adminConfig?.contact?.phones?.[0] || "DEFAULT").replace(/[^\d]/g, '')}?text=${encodeURIComponent(adminConfig?.settings?.whatsappMessage || "Hello PrimeSign, I'd like to get a quote for signage services.")}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -1418,7 +1414,7 @@ export default function Home() {
                 BORN IN BANGALORE.<br />BUILT FOR IMPACT.
               </h3>
               <p className="text-lg text-muted-foreground font-light leading-relaxed mb-6">
-                {adminConfig?.settings?.aboutDescription || "Founded in 2021, Primesign Private Limited has rapidly become Bangalore's go-to studio for premium signage and architectural branding."}
+                {adminConfig?.settings?.aboutDescription || "DEFAULT"}
               </p>
               <p className="text-lg text-muted-foreground font-light leading-relaxed mb-8">
                 We don't just print signs — we engineer visibility. Our obsession with quality
@@ -1709,7 +1705,7 @@ export default function Home() {
               TRUSTED BY BANGALORE BUSINESSES
             </h3>
             <a 
-              href={`https://wa.me/${(adminConfig?.contact?.phones?.[0] || adminConfig?.settings?.whatsappNumber || "916366525253").replace(/[^\d]/g, '')}?text=Hello%20PrimeSign%2C%20I%27d%20like%20to%20submit%20a%20review%20for%20your%20services.`}
+              href={`https://wa.me/${(adminConfig?.contact?.phones?.[0] || "DEFAULT").replace(/[^\d]/g, '')}?text=Hello%20PrimeSign%2C%20I%27d%20like%20to%20submit%20a%20review%20for%20your%20services.`}
               target="_blank" 
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm font-medium"
@@ -1830,7 +1826,7 @@ export default function Home() {
                   <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
                 <a 
-                  href={`https://wa.me/${(adminConfig?.contact?.phones?.[0] || adminConfig?.settings?.whatsappNumber || "916366525253").replace(/[^\d]/g, '')}?text=${encodeURIComponent(adminConfig?.settings?.whatsappMessage || "Hello PrimeSign, I'd like to discuss a project with you.")}`}
+                  href={`https://wa.me/${(adminConfig?.contact?.phones?.[0] || "DEFAULT").replace(/[^\d]/g, '')}?text=${encodeURIComponent(adminConfig?.settings?.whatsappMessage || "Hello PrimeSign, I'd like to discuss a project with you.")}`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
