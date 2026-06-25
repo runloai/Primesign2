@@ -125,7 +125,16 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scheme, setScheme] = useState(() => localStorage.getItem("primesign-scheme") || "Obsidian Gold");
-  const [useTextLogo, setUseTextLogo] = useState(() => localStorage.getItem("primesign-logo") === "text");
+  const [useTextLogo, setUseTextLogo] = useState(() => {
+    try {
+      const stored = localStorage.getItem("primesign-config");
+      if (stored) {
+        const config = JSON.parse(stored);
+        if (config.settings?.logoType === "text") return true;
+      }
+    } catch(e) {}
+    return localStorage.getItem("primesign-logo") === "text";
+  });
   const [location] = useLocation();
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [showTopBar, setShowTopBar] = useState(true);
