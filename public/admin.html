@@ -3752,6 +3752,14 @@
         uploadZone.querySelector('.upload-title').classList.remove('hidden');
         uploadZone.querySelector('.upload-subtitle').classList.remove('hidden');
       }
+
+      const badgeInput = document.querySelector('[data-path="hero.badge"]');
+      const headlineInput = document.querySelector('[data-path="hero.headline"]');
+      const subtitleInput = document.querySelector('[data-path="hero.subtitle"]');
+      if (badgeInput) badgeInput.value = config.hero.badge || '';
+      if (headlineInput) headlineInput.value = config.hero.headline || '';
+      if (subtitleInput) subtitleInput.value = config.hero.subtitle || '';
+
       renderHeroStats();
     }
 
