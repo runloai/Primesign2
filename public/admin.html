@@ -5001,7 +5001,7 @@
       };
       
       try {
-        const resp = await fetch("/api/publish", {
+        const resp = await fetch("/.netlify/functions/publish", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(publishConfig)
