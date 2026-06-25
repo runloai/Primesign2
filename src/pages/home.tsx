@@ -146,15 +146,15 @@ const SERVICES_CATEGORIES = [
     description: "Premium signage solutions for every business need",
     icon: "sign",
     items: [
-      { name: "Non-Light Sign Boards", desc: "Elegant non-illuminated signage for day visibility", img: IMAGES.acrylic[0] },
-      { name: "3D LED Letters", desc: "Dimensional illuminated letters with stunning depth", img: IMAGES.led[0], badge: "Popular" },
-      { name: "Glow Sign Boards", desc: "Backlit signs that shine through the night", img: IMAGES.glow[0] },
-      { name: "Acrylic Signs", desc: "Premium acrylic with precision-cut finishes", img: IMAGES.acrylic[1] },
-      { name: "PVC/SS Letters", desc: "Durable metal and PVC letter solutions", img: IMAGES.pvc },
-      { name: "Outdoor Hoardings", desc: "Large-format outdoor advertising displays", img: IMAGES.portfolio[5] },
-      { name: "One Way Vision", desc: "See-through vinyl for windows & vehicles", img: IMAGES.vehicle[2] },
-      { name: "Gloss Branding", desc: "High-gloss premium finish signage", img: IMAGES.square[8] },
-      { name: "Wall Graphics", desc: "Custom wall murals and graphics", img: IMAGES.wall[0] },
+      { name: "Non-Light Sign Boards", desc: "Elegant non-illuminated signage for day visibility", img: "/images/acrylic/1.webp" },
+      { name: "3D LED Letters", desc: "Dimensional illuminated letters with stunning depth", img: "/images/led/1.webp", badge: "Popular" },
+      { name: "Glow Sign Boards", desc: "Backlit signs that shine through the night", img: "/images/glow/1.webp" },
+      { name: "Acrylic Signs", desc: "Premium acrylic with precision-cut finishes", img: "/images/acrylic/2.webp" },
+      { name: "PVC/SS Letters", desc: "Durable metal and PVC letter solutions", img: "/images/pvc/1.webp" },
+      { name: "Outdoor Hoardings", desc: "Large-format outdoor advertising displays", img: "/images/portfolio/04.webp" },
+      { name: "One Way Vision", desc: "See-through vinyl for windows & vehicles", img: "/images/vehicle/3.webp" },
+      { name: "Gloss Branding", desc: "High-gloss premium finish signage", img: "/images/square/8.webp" },
+      { name: "Wall Graphics", desc: "Custom wall murals and graphics", img: "/images/wall/1.webp" },
     ]
   },
   {
@@ -163,11 +163,11 @@ const SERVICES_CATEGORIES = [
     description: "Eye-catching display solutions for events & marketing",
     icon: "display",
     items: [
-      { name: "Promo Tents", desc: "Branded tents for events and exhibitions", img: IMAGES.portfolio[3] },
-      { name: "Roll Up Standees", desc: "Portable retractable banner stands", img: IMAGES.portfolio[4] },
-      { name: "Promo Displays", desc: "Custom promotional fixtures and kiosks", img: IMAGES.portfolio[6] },
-      { name: "Table Top Displays", desc: "Compact counter-top branding solutions", img: IMAGES.square[3] },
-      { name: "Canopy Branding", desc: "Branded canopies for outdoor events", img: IMAGES.portfolio[7] },
+      { name: "Promo Tents", desc: "Branded tents for events and exhibitions", img: "/images/portfolio/01.webp" },
+      { name: "Roll Up Standees", desc: "Portable retractable banner stands", img: "/images/portfolio/03.webp" },
+      { name: "Promo Displays", desc: "Custom promotional fixtures and kiosks", img: "/images/portfolio/05.webp" },
+      { name: "Table Top Displays", desc: "Compact counter-top branding solutions", img: "/images/square/3.webp" },
+      { name: "Canopy Branding", desc: "Branded canopies for outdoor events", img: "/images/portfolio/06.webp" },
     ]
   },
   {
@@ -176,14 +176,14 @@ const SERVICES_CATEGORIES = [
     description: "High-quality digital printing on various media",
     icon: "print",
     items: [
-      { name: "Posters & Banners", desc: "Vibrant large-format posters", img: IMAGES.wall[3] },
-      { name: "Visiting Cards", desc: "Premium business card printing", img: IMAGES.square[4] },
-      { name: "ID Cards", desc: "Employee & access ID card solutions", img: IMAGES.square[5] },
-      { name: "T-Shirt Printing", desc: "Custom apparel and uniform branding", img: IMAGES.square[6] },
-      { name: "Mug Printing", desc: "Personalized promotional mugs", img: IMAGES.square[7] },
-      { name: "Invitations", desc: "Elegant event invitation designs", img: IMAGES.acrylic[2] },
-      { name: "Certificates", desc: "Premium certificate printing", img: IMAGES.square[2] },
-      { name: "Photo Printing", desc: "High-resolution photo prints", img: IMAGES.led[1] },
+      { name: "Posters & Banners", desc: "Vibrant large-format posters", img: "/images/wall/4.webp" },
+      { name: "Visiting Cards", desc: "Premium business card printing", img: "/images/square/4.webp" },
+      { name: "ID Cards", desc: "Employee & access ID card solutions", img: "/images/square/5.webp" },
+      { name: "T-Shirt Printing", desc: "Custom apparel and uniform branding", img: "/images/square/6.webp" },
+      { name: "Mug Printing", desc: "Personalized promotional mugs", img: "/images/square/7.webp" },
+      { name: "Invitations", desc: "Elegant event invitation designs", img: "/images/acrylic/3.webp" },
+      { name: "Certificates", desc: "Premium certificate printing", img: "/images/square/2.webp" },
+      { name: "Photo Printing", desc: "High-resolution photo prints", img: "/images/led/2.webp" },
     ]
   },
   {
@@ -192,11 +192,11 @@ const SERVICES_CATEGORIES = [
     description: "Professional printing for business needs",
     icon: "commercial",
     items: [
-      { name: "Quick Print", desc: "Fast turnaround digital printing", img: IMAGES.portfolio[8] },
-      { name: "Flex Format", desc: "Large flex banner printing", img: IMAGES.portfolio[9] },
-      { name: "Digital Offset", desc: "High-volume quality printing", img: IMAGES.portfolio[10] },
-      { name: "Brochures", desc: "Multi-fold marketing brochures", img: IMAGES.portfolio[11] },
-      { name: "Flyers & Leaflets", desc: "Promotional handout materials", img: IMAGES.portfolio[12] },
+      { name: "Quick Print", desc: "Fast turnaround digital printing", img: "/images/portfolio/007.webp" },
+      { name: "Flex Format", desc: "Large flex banner printing", img: "/images/portfolio/004.webp" },
+      { name: "Digital Offset", desc: "High-volume quality printing", img: "/images/portfolio/005.webp" },
+      { name: "Brochures", desc: "Multi-fold marketing brochures", img: "/images/portfolio/006.webp" },
+      { name: "Flyers & Leaflets", desc: "Promotional handout materials", img: "/images/portfolio/07.webp" },
     ]
   }
 ];
@@ -227,42 +227,42 @@ const services = [
   {
     title: "LED Signs",
     desc: "Ultra-bright, energy-efficient LED boards engineered for maximum daylight visibility.",
-    images: IMAGES.led.slice(0, 5),
+    images: ["/images/led/1.webp","/images/led/2.webp","/images/led/3.webp","/images/led/4.webp","/images/led/5.webp"],
     tag: "Most Popular",
     category: "led",
   },
   {
     title: "Glow Signs",
     desc: "Illuminated channel-letter installations that blaze through the Bangalore night.",
-    images: IMAGES.glow.slice(0, 5),
+    images: ["/images/glow/1.webp","/images/glow/2.webp","/images/glow/3.webp","/images/glow/4.webp","/images/glow/5.webp"],
     tag: null,
     category: "glow",
   },
   {
     title: "Acrylic Signs",
     desc: "Precision-routed acrylic lettering — crisp, clean, and unmistakably premium.",
-    images: IMAGES.acrylic.slice(0, 4),
+    images: ["/images/acrylic/1.webp","/images/acrylic/2.webp","/images/acrylic/3.webp","/images/acrylic/4.webp"],
     tag: null,
     category: "acrylic",
   },
   {
     title: "Wall Branding",
     desc: "Large-format wall murals and architectural graphics for offices and retail.",
-    images: IMAGES.wall.slice(0, 5),
+    images: ["/images/wall/1.webp","/images/wall/2.webp","/images/wall/3.webp","/images/wall/4.webp","/images/wall/5.webp"],
     tag: null,
     category: "wall",
   },
   {
     title: "Vehicle Wraps",
     desc: "Turn your entire fleet into high-impact moving billboards across the city.",
-    images: IMAGES.vehicle.slice(0, 6),
+    images: ["/images/vehicle/1.webp","/images/vehicle/2.webp","/images/vehicle/3.webp"],
     tag: null,
     category: "vehicle",
   },
   {
     title: "PVC & Flex",
     desc: "Durable outdoor flex printing for hoardings, banners, and retail displays.",
-    images: [IMAGES.pvc, ...IMAGES.wall.slice(0, 4)],
+    images: ["/images/pvc/1.webp", ...["/images/wall/1.webp","/images/wall/2.webp","/images/wall/3.webp","/images/wall/4.webp"]],
     tag: null,
     category: "pvc",
   },
@@ -448,13 +448,13 @@ function extractImageUrl(img: ServiceImage | string): string {
 // Helper to get fallback image for service category
 function getServiceImage(serviceName: string): string {
   const name = serviceName.toLowerCase();
-  if (name.includes("led")) return IMAGES.led[0];
-  if (name.includes("glow")) return IMAGES.glow[0];
-  if (name.includes("acrylic")) return IMAGES.acrylic[0];
-  if (name.includes("wall")) return IMAGES.wall[0];
-  if (name.includes("vehicle")) return IMAGES.vehicle[0];
-  if (name.includes("pvc") || name.includes("flex")) return IMAGES.pvc;
-  return IMAGES.led[0];
+  if (name.includes("led")) return "/images/led/1.webp";
+  if (name.includes("glow")) return "/images/glow/1.webp";
+  if (name.includes("acrylic")) return "/images/acrylic/1.webp";
+  if (name.includes("wall")) return "/images/wall/1.webp";
+  if (name.includes("vehicle")) return "/images/vehicle/1.webp";
+  if (name.includes("pvc") || name.includes("flex")) return "/images/pvc/1.webp";
+  return "/images/led/1.webp";
 }
 
 // Extract category from service name
@@ -527,7 +527,7 @@ function getDynamicServiceCategories(): typeof SERVICES_CATEGORIES | null {
           items: items.map((s: any) => ({
             name: s.name,
             desc: s.desc || "",
-            img: s.images?.[0]?.url || s.images?.[0] || IMAGES.led[0],
+            img: s.images?.[0]?.url || s.images?.[0] || "/images/led/1.webp",
             badge: s.badge
           }))
         }));
@@ -552,7 +552,7 @@ function ServiceImageGallery({ images, serviceTitle, prefersReducedMotion }: Ser
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const autoScrollRef = useRef<NodeJS.Timeout | null>(null);
 
-  const displayImages = images.length > 0 ? images : [IMAGES.led[0]];
+  const displayImages = images.length > 0 ? images : ["/images/led/1.webp"];
   const totalImages = displayImages.length;
 
   useEffect(() => {
@@ -674,7 +674,7 @@ function ClientLogosCarousel({ prefersReducedMotion }: { prefersReducedMotion: b
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isPaused, setIsPaused] = useState(false);
   
-  const clients = IMAGES.clients;
+  const clients = [];
   // Double the logos for seamless loop
   const displayClients = [...clients, ...clients];
 
@@ -1046,8 +1046,8 @@ export default function Home() {
   const displayServices = useMemo(() => {
     return rawDisplayServices.map((s: any) => ({
       ...s,
-      images: s.images || (s.img ? [s.img] : [IMAGES.led[0]]),
-      thumbnail: s.thumbnail || s.img || (s.images?.[0]) || IMAGES.led[0],
+      images: s.images || (s.img ? [s.img] : ["/images/led/1.webp"]),
+      thumbnail: s.thumbnail || s.img || (s.images?.[0]) || "/images/led/1.webp",
     }));
   }, [rawDisplayServices]);
 
@@ -1056,7 +1056,7 @@ export default function Home() {
   const serviceCategories = dynamicServiceCategories || SERVICES_CATEGORIES;
 
   // Get hero data from config or fallback
-  const heroBgImage = adminConfig?.hero?.bgImage || IMAGES.portfolio[0];
+  const heroBgImage = adminConfig?.hero?.bgImage || "/images/portfolio/01.webp";
   const heroBadgeText = adminConfig?.hero?.badge || "Bangalore's Premier Signage Studio";
   const heroHeadline = adminConfig?.hero?.headline;
   const heroSubtitle = adminConfig?.hero?.subtitle || "From bold LED boards to precision 3D channel letters. We engineer high-impact signage that lights up Bangalore and makes your brand impossible to ignore.";
@@ -1111,15 +1111,15 @@ export default function Home() {
     }
     
     return [
-      { img: IMAGES.portfolio[0], label: "Storefront LED Branding", cat: "led", featured: true },
-      { img: IMAGES.glow[3], label: "Glow Sign", cat: "glow", featured: false },
-      { img: IMAGES.square[10], label: "LED Channel", cat: "led", featured: false },
-      { img: IMAGES.vehicle[2], label: "Vehicle Wrap", cat: "vehicle", featured: false },
-      { img: IMAGES.wall[3], label: "Wall Branding", cat: "wall", featured: false },
-      { img: IMAGES.portfolio[2], label: "Retail Signage", cat: "led", featured: false },
-      { img: IMAGES.acrylic[1], label: "Acrylic Letters", cat: "acrylic", featured: false },
-      { img: IMAGES.glow[4], label: "Neon Glow", cat: "glow", featured: false },
-      { img: IMAGES.portfolio[5], label: "Corporate Lobby", cat: "acrylic", featured: false },
+      { img: "/images/portfolio/01.webp", label: "Storefront LED Branding", cat: "led", featured: true },
+      { img: "/images/glow/4.webp", label: "Glow Sign", cat: "glow", featured: false },
+      { img: "/images/square/brass.webp", label: "LED Channel", cat: "led", featured: false },
+      { img: "/images/vehicle/3.webp", label: "Vehicle Wrap", cat: "vehicle", featured: false },
+      { img: "/images/wall/4.webp", label: "Wall Branding", cat: "wall", featured: false },
+      { img: "/images/portfolio/02.webp", label: "Retail Signage", cat: "led", featured: false },
+      { img: "/images/acrylic/2.webp", label: "Acrylic Letters", cat: "acrylic", featured: false },
+      { img: "/images/glow/5.webp", label: "Neon Glow", cat: "glow", featured: false },
+      { img: "/images/portfolio/04.webp", label: "Corporate Lobby", cat: "acrylic", featured: false },
     ];
   };
 
@@ -1135,7 +1135,7 @@ export default function Home() {
 
   const aboutImages = adminConfig?.aboutImages && adminConfig.aboutImages.length >= 4
     ? adminConfig.aboutImages.slice(0, 4).map((img: any) => img.url || img)
-    : [IMAGES.glow[2], IMAGES.wall[2], IMAGES.led[1], IMAGES.square[10]];
+    : ["/images/glow/3.webp", "/images/wall/3.webp", "/images/led/2.webp", "/images/square/brass.webp"];
 
   const displayReasons = adminConfig?.advantageImages && adminConfig.advantageImages.length >= 6
     ? adminConfig.advantageImages.slice(0, 6).map((img: any) => img.label || img.toString())
@@ -1211,7 +1211,7 @@ export default function Home() {
         if (imgs.length > 0) return imgs;
       }
     }
-    return fallbackImg ? [fallbackImg] : [IMAGES.led[0]];
+    return fallbackImg ? [fallbackImg] : ["/images/led/1.webp"];
   }, [serviceImagesLookup]);
 
   const openServiceDetail = useCallback((item: { name: string; desc: string; img?: string }) => {
@@ -1617,7 +1617,7 @@ export default function Home() {
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              {[IMAGES.glow[5], IMAGES.wall[4], IMAGES.led[2], IMAGES.square[12]].map((src, i) => (
+              {["/images/glow/6.webp", "/images/wall/5.webp", "/images/led/3.webp", "/images/square/resto-square.webp"].map((src, i) => (
                 <div key={i} className="aspect-square rounded-xl overflow-hidden">
                   <img 
                     src={src} 
