@@ -53,23 +53,23 @@
       "category": "sign-boards",
       "images": [
         {
-          "url": "/images/led/1.webp",
+          "url": "/images/services/sign-boards/house-1.png",
           "label": "LED Signs - Image 1"
         },
         {
-          "url": "/images/led/2.webp",
+          "url": "/images/services/sign-boards/house-2.png",
           "label": "LED Signs - Image 2"
         },
         {
-          "url": "/images/led/3.webp",
+          "url": "/images/services/sign-boards/house-3.png",
           "label": "LED Signs - Image 3"
         },
         {
-          "url": "/images/led/4.webp",
+          "url": "/images/services/sign-boards/house-4.png",
           "label": "LED Signs - Image 4"
         },
         {
-          "url": "/images/led/5.webp",
+          "url": "/images/services/sign-boards/house-5.png",
           "label": "LED Signs - Image 5"
         }
       ]
@@ -82,7 +82,7 @@
       "category": "sign-boards",
       "images": [
         {
-          "url": "/images/glow/1.webp",
+          "url": "/images/services/sign-boards/glow-1.jpg",
           "label": "Glow Signs - Image 1"
         },
         {
@@ -111,19 +111,19 @@
       "category": "sign-boards",
       "images": [
         {
-          "url": "/images/acrylic/1.webp",
+          "url": "/images/services/sign-boards/acrylic-1.png",
           "label": "Acrylic Signs - Image 1"
         },
         {
-          "url": "/images/acrylic/2.webp",
+          "url": "/images/services/sign-boards/acrylic-2.png",
           "label": "Acrylic Signs - Image 2"
         },
         {
-          "url": "/images/acrylic/3.webp",
+          "url": "/images/services/sign-boards/acrylic-3.png",
           "label": "Acrylic Signs - Image 3"
         },
         {
-          "url": "/images/acrylic/4.webp",
+          "url": "/images/services/sign-boards/acrylic-4.png",
           "label": "Acrylic Signs - Image 4"
         }
       ]
@@ -136,23 +136,23 @@
       "category": "sign-boards",
       "images": [
         {
-          "url": "/images/wall/1.webp",
+          "url": "/images/services/sign-boards/wall-1.png",
           "label": "Wall Branding - Image 1"
         },
         {
-          "url": "/images/wall/2.webp",
+          "url": "/images/services/sign-boards/wall-2.png",
           "label": "Wall Branding - Image 2"
         },
         {
-          "url": "/images/wall/3.webp",
+          "url": "/images/services/sign-boards/wall-3.png",
           "label": "Wall Branding - Image 3"
         },
         {
-          "url": "/images/wall/4.webp",
+          "url": "/images/services/sign-boards/wall-4.png",
           "label": "Wall Branding - Image 4"
         },
         {
-          "url": "/images/wall/5.webp",
+          "url": "/images/services/sign-boards/wall-5.png",
           "label": "Wall Branding - Image 5"
         }
       ]
@@ -165,19 +165,19 @@
       "category": "vehicle",
       "images": [
         {
-          "url": "/images/vehicle/1.webp",
+          "url": "/images/services/sign-boards/vehicle-1.png",
           "label": "Vehicle Wraps - Image 1"
         },
         {
-          "url": "/images/vehicle/2.webp",
+          "url": "/images/services/sign-boards/vehicle-2.png",
           "label": "Vehicle Wraps - Image 2"
         },
         {
-          "url": "/images/vehicle/3.webp",
+          "url": "/images/services/sign-boards/vehicle-3.png",
           "label": "Vehicle Wraps - Image 3"
         },
         {
-          "url": "/images/vehicle/4.webp",
+          "url": "/images/services/sign-boards/vehicle-5.png",
           "label": "Vehicle Wraps - Image 4"
         }
       ]
@@ -192,6 +192,14 @@
         {
           "url": "/images/pvc/1.webp",
           "label": "PVC & Flex - Image 1"
+        },
+        {
+          "url": "/images/wall/1.webp",
+          "label": "PVC & Flex - Image 2"
+        },
+        {
+          "url": "/images/wall/2.webp",
+          "label": "PVC & Flex - Image 3"
         }
       ]
     },
@@ -203,16 +211,20 @@
       "category": "sign-boards",
       "images": [
         {
-          "url": "/images/led/1.webp",
+          "url": "/images/services/sign-boards/nonlight-1.png",
           "label": "Non-Light Sign Board - Image 1"
         },
         {
-          "url": "/images/led/2.webp",
+          "url": "/images/services/sign-boards/nonlight-2.png",
           "label": "Non-Light Sign Board - Image 2"
         },
         {
-          "url": "/images/led/3.webp",
+          "url": "/images/services/sign-boards/nonlight-3.png",
           "label": "Non-Light Sign Board - Image 3"
+        },
+        {
+          "url": "/images/services/sign-boards/nonlight-4.png",
+          "label": "Non-Light Sign Board - Image 4"
         }
       ]
     },
@@ -247,7 +259,24 @@
       "desc": "Illuminated glow sign boards that attract attention day and night",
       "badge": "",
       "category": "sign-boards",
-      "images": []
+      "images": [
+        {
+          "url": "/images/glow/1.webp",
+          "label": "Glow Sign Board - Image 1"
+        },
+        {
+          "url": "/images/glow/2.webp",
+          "label": "Glow Sign Board - Image 2"
+        },
+        {
+          "url": "/images/glow/3.webp",
+          "label": "Glow Sign Board - Image 3"
+        },
+        {
+          "url": "/images/glow/4.webp",
+          "label": "Glow Sign Board - Image 4"
+        }
+      ]
     },
     {
       "id": 10,
@@ -255,7 +284,24 @@
       "desc": "High-gloss acrylic sign boards with laser-cut precision",
       "badge": "",
       "category": "sign-boards",
-      "images": []
+      "images": [
+        {
+          "url": "/images/services/sign-boards/acrylic-1.png",
+          "label": "Acrylic Sign Board - Image 1"
+        },
+        {
+          "url": "/images/services/sign-boards/acrylic-2.png",
+          "label": "Acrylic Sign Board - Image 2"
+        },
+        {
+          "url": "/images/services/sign-boards/acrylic-3.png",
+          "label": "Acrylic Sign Board - Image 3"
+        },
+        {
+          "url": "/images/services/sign-boards/acrylic-4.png",
+          "label": "Acrylic Sign Board - Image 4"
+        }
+      ]
     },
     {
       "id": 11,
@@ -263,7 +309,32 @@
       "desc": "PVC and stainless steel letter signs for modern corporate branding",
       "badge": "",
       "category": "sign-boards",
-      "images": []
+      "images": [
+        {
+          "url": "/images/services/sign-boards/pvc-ss-1.png",
+          "label": "PVC/SS Letter Sign - Image 1"
+        },
+        {
+          "url": "/images/services/sign-boards/pvc-ss-2.png",
+          "label": "PVC/SS Letter Sign - Image 2"
+        },
+        {
+          "url": "/images/services/sign-boards/pvc-ss-3.png",
+          "label": "PVC/SS Letter Sign - Image 3"
+        },
+        {
+          "url": "/images/services/sign-boards/pvc-ss-4.png",
+          "label": "PVC/SS Letter Sign - Image 4"
+        },
+        {
+          "url": "/images/services/sign-boards/pvc-ss-5.png",
+          "label": "PVC/SS Letter Sign - Image 5"
+        },
+        {
+          "url": "/images/services/sign-boards/pvc-ss-6.png",
+          "label": "PVC/SS Letter Sign - Image 6"
+        }
+      ]
     },
     {
       "id": 12,
@@ -273,16 +344,28 @@
       "category": "outdoor",
       "images": [
         {
-          "url": "/images/wall/1.webp",
+          "url": "/images/services/sign-boards/hoardings-1.png",
           "label": "Hoardings - Image 1"
         },
         {
-          "url": "/images/wall/2.webp",
+          "url": "/images/services/sign-boards/hoardings-2.png",
           "label": "Hoardings - Image 2"
         },
         {
-          "url": "/images/wall/3.webp",
+          "url": "/images/services/sign-boards/hoardings-3.png",
           "label": "Hoardings - Image 3"
+        },
+        {
+          "url": "/images/services/sign-boards/hoardings-4.png",
+          "label": "Hoardings - Image 4"
+        },
+        {
+          "url": "/images/services/sign-boards/hoardings-5.png",
+          "label": "Hoardings - Image 5"
+        },
+        {
+          "url": "/images/services/sign-boards/hoardings-6.png",
+          "label": "Hoardings - Image 6"
         }
       ]
     },
@@ -292,7 +375,20 @@
       "desc": "Perforated window films for see-through branding on glass surfaces",
       "badge": "",
       "category": "graphics",
-      "images": []
+      "images": [
+        {
+          "url": "/images/vehicle/1.webp",
+          "label": "One Way Vision - Image 1"
+        },
+        {
+          "url": "/images/vehicle/2.webp",
+          "label": "One Way Vision - Image 2"
+        },
+        {
+          "url": "/images/vehicle/3.webp",
+          "label": "One Way Vision - Image 3"
+        }
+      ]
     },
     {
       "id": 14,
@@ -300,7 +396,20 @@
       "desc": "High-gloss vinyl branding for a premium polished finish",
       "badge": "",
       "category": "graphics",
-      "images": []
+      "images": [
+        {
+          "url": "/images/led/1.webp",
+          "label": "Gloss Branding - Image 1"
+        },
+        {
+          "url": "/images/led/2.webp",
+          "label": "Gloss Branding - Image 2"
+        },
+        {
+          "url": "/images/led/3.webp",
+          "label": "Gloss Branding - Image 3"
+        }
+      ]
     },
     {
       "id": 15,
@@ -324,6 +433,10 @@
         {
           "url": "/images/wall/4.webp",
           "label": "Wall Graphics - Image 4"
+        },
+        {
+          "url": "/images/wall/5.webp",
+          "label": "Wall Graphics - Image 5"
         }
       ]
     },
@@ -333,7 +446,24 @@
       "desc": "Custom branded promotional tents for events and outdoor campaigns",
       "badge": "",
       "category": "promotional",
-      "images": []
+      "images": [
+        {
+          "url": "/images/services/promotional/tent-1.png",
+          "label": "Promotional Tents - Image 1"
+        },
+        {
+          "url": "/images/services/promotional/tent-2.png",
+          "label": "Promotional Tents - Image 2"
+        },
+        {
+          "url": "/images/services/promotional/tent-3.png",
+          "label": "Promotional Tents - Image 3"
+        },
+        {
+          "url": "/images/services/promotional/tent-4.png",
+          "label": "Promotional Tents - Image 4"
+        }
+      ]
     },
     {
       "id": 17,
@@ -341,7 +471,28 @@
       "desc": "Portable roll-up banner stands for indoor events and promotions",
       "badge": "",
       "category": "promotional",
-      "images": []
+      "images": [
+        {
+          "url": "/images/services/promotional/rollup-1.png",
+          "label": "Roll Up Standees - Image 1"
+        },
+        {
+          "url": "/images/services/promotional/rollup-2.png",
+          "label": "Roll Up Standees - Image 2"
+        },
+        {
+          "url": "/images/services/promotional/rollup-3.png",
+          "label": "Roll Up Standees - Image 3"
+        },
+        {
+          "url": "/images/services/promotional/rollup-4.png",
+          "label": "Roll Up Standees - Image 4"
+        },
+        {
+          "url": "/images/services/promotional/rollup-5.png",
+          "label": "Roll Up Standees - Image 5"
+        }
+      ]
     },
     {
       "id": 18,
@@ -349,7 +500,20 @@
       "desc": "High-quality poster printing for indoor and outdoor advertising",
       "badge": "",
       "category": "print",
-      "images": []
+      "images": [
+        {
+          "url": "/images/wall/4.webp",
+          "label": "Posters - Image 1"
+        },
+        {
+          "url": "/images/wall/5.webp",
+          "label": "Posters - Image 2"
+        },
+        {
+          "url": "/images/wall/6.webp",
+          "label": "Posters - Image 3"
+        }
+      ]
     },
     {
       "id": 19,
@@ -357,7 +521,24 @@
       "desc": "Premium visiting card printing on multiple paper stocks and finishes",
       "badge": "",
       "category": "print",
-      "images": []
+      "images": [
+        {
+          "url": "/images/square/1.webp",
+          "label": "Visiting Cards - Image 1"
+        },
+        {
+          "url": "/images/square/2.webp",
+          "label": "Visiting Cards - Image 2"
+        },
+        {
+          "url": "/images/square/3.webp",
+          "label": "Visiting Cards - Image 3"
+        },
+        {
+          "url": "/images/square/4.webp",
+          "label": "Visiting Cards - Image 4"
+        }
+      ]
     },
     {
       "id": 20,
@@ -365,7 +546,20 @@
       "desc": "Custom ID card printing with lamination and accessories",
       "badge": "",
       "category": "print",
-      "images": []
+      "images": [
+        {
+          "url": "/images/square/5.webp",
+          "label": "ID Cards - Image 1"
+        },
+        {
+          "url": "/images/square/6.webp",
+          "label": "ID Cards - Image 2"
+        },
+        {
+          "url": "/images/square/7.webp",
+          "label": "ID Cards - Image 3"
+        }
+      ]
     },
     {
       "id": 21,
@@ -373,7 +567,20 @@
       "desc": "Custom t-shirt printing with screen and DTF transfer methods",
       "badge": "",
       "category": "apparel",
-      "images": []
+      "images": [
+        {
+          "url": "/images/square/6.webp",
+          "label": "T-Shirts - Image 1"
+        },
+        {
+          "url": "/images/square/7.webp",
+          "label": "T-Shirts - Image 2"
+        },
+        {
+          "url": "/images/square/8.webp",
+          "label": "T-Shirts - Image 3"
+        }
+      ]
     },
     {
       "id": 22,
@@ -381,83 +588,145 @@
       "desc": "Fast turnaround digital printing for brochures, flyers and documents",
       "badge": "",
       "category": "print",
-      "images": []
+      "images": [
+        {
+          "url": "/images/square/2.webp",
+          "label": "Quick Printing - Image 1"
+        },
+        {
+          "url": "/images/square/3.webp",
+          "label": "Quick Printing - Image 2"
+        },
+        {
+          "url": "/images/square/1.webp",
+          "label": "Quick Printing - Image 3"
+        }
+      ]
     }
   ],
   "portfolio": [
     {
       "id": 1,
-      "url": "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/portfolio/01.webp",
+      "url": "/images/portfolio/01.webp",
       "label": "Storefront LED Branding",
+      "category": "led",
+      "featured": true
+    },
+    {
+      "id": 2,
+      "url": "/images/portfolio/03.webp",
+      "label": "Retail Signage",
       "category": "led",
       "featured": false
     },
     {
-      "id": 2,
-      "url": "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/glow/4.webp",
-      "label": "Night Glow Sign",
-      "category": "glow",
-      "featured": true
-    },
-    {
       "id": 3,
-      "url": "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/acrylic/2.webp",
+      "url": "/images/portfolio/04.webp",
       "label": "Corporate Acrylic Sign",
       "category": "acrylic",
       "featured": false
     },
     {
       "id": 4,
-      "url": "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/wall/4.webp",
+      "url": "/images/portfolio/05.webp",
       "label": "Wall Branding",
       "category": "wall",
       "featured": false
     },
     {
       "id": 5,
-      "url": "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/vehicle/3.webp",
+      "url": "/images/portfolio/06.webp",
       "label": "Vehicle Wrap",
       "category": "vehicle",
       "featured": false
     },
     {
       "id": 6,
-      "url": "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/portfolio/03.webp",
-      "label": "Retail Signage",
-      "category": "led",
+      "url": "/images/portfolio/07.webp",
+      "label": "Night Glow Sign",
+      "category": "glow",
       "featured": false
     },
     {
       "id": 7,
-      "url": "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/glow/5.webp",
-      "label": "Neon Glow",
+      "url": "/images/portfolio/003.webp",
+      "label": "Glow Installation",
       "category": "glow",
       "featured": false
     },
     {
       "id": 8,
-      "url": "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/vehicle/4.webp",
+      "url": "/images/portfolio/004.webp",
       "label": "Vehicle Wrap 2",
       "category": "vehicle",
       "featured": false
     },
     {
       "id": 9,
-      "url": "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/vehicle/5.webp",
+      "url": "/images/portfolio/005.webp",
+      "label": "LED Storefront",
+      "category": "led",
+      "featured": false
+    },
+    {
+      "id": 10,
+      "url": "/images/portfolio/006.webp",
+      "label": "Acrylic Branding",
+      "category": "acrylic",
+      "featured": false
+    },
+    {
+      "id": 11,
+      "url": "/images/portfolio/007.webp",
+      "label": "Wall Mural",
+      "category": "wall",
+      "featured": false
+    },
+    {
+      "id": 12,
+      "url": "/images/portfolio/008.webp",
       "label": "Vehicle Wrap 3",
       "category": "vehicle",
       "featured": false
     },
     {
-      "id": 10,
-      "url": "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/vehicle/6.webp",
+      "id": 13,
+      "url": "/images/portfolio/009.webp",
+      "label": "Glow Sign Detail",
+      "category": "glow",
+      "featured": false
+    },
+    {
+      "id": 14,
+      "url": "/images/portfolio/010.webp",
+      "label": "LED Channel Letters",
+      "category": "led",
+      "featured": false
+    },
+    {
+      "id": 15,
+      "url": "/images/portfolio/011.webp",
+      "label": "Corporate Signage",
+      "category": "led",
+      "featured": false
+    },
+    {
+      "id": 16,
+      "url": "/images/portfolio/012.webp",
+      "label": "Outdoor Hoarding",
+      "category": "wall",
+      "featured": false
+    },
+    {
+      "id": 17,
+      "url": "/images/portfolio/013.webp",
       "label": "Vehicle Wrap 4",
       "category": "vehicle",
       "featured": false
     }
   ],
   "hero": {
-    "bgImage": "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/portfolio/01.webp",
+    "bgImage": "/images/portfolio/01.webp",
     "headline": "WE BUILD <br>UNFORGETTABLE<br>VISIBILITY.",
     "subtitle": "From bold LED boards to precision 3D channel letters. We engineer high-impact signage that lights up Bangalore.",
     "badge": "Bangalore's Premier Signage Studio",
@@ -482,19 +751,19 @@
   },
   "aboutImages": [
     {
-      "url": "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/glow/2.webp",
+      "url": "/images/glow/2.webp",
       "label": "About Image 1"
     },
     {
-      "url": "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/wall/2.webp",
+      "url": "/images/wall/2.webp",
       "label": "About Image 2"
     },
     {
-      "url": "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/led/1.webp",
+      "url": "/images/led/1.webp",
       "label": "About Image 3"
     },
     {
-      "url": "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/square/10.webp",
+      "url": "/images/square/10.webp",
       "label": "About Image 4"
     }
   ],
@@ -542,6 +811,18 @@
       "label": "PVC & Flex",
       "icon": "\ud83d\udccb",
       "description": "Durable flex and PVC printing solutions"
+    },
+    {
+      "id": "outdoor",
+      "label": "Outdoor",
+      "icon": "\ud83c\udfd7\ufe0f",
+      "description": "Large-format outdoor signage solutions"
+    },
+    {
+      "id": "graphics",
+      "label": "Graphics",
+      "icon": "\ud83c\udfa8",
+      "description": "Custom graphics and branding solutions"
     },
     {
       "id": "promotional",

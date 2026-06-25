@@ -43,6 +43,13 @@ class PublishHandler(http.server.SimpleHTTPRequestHandler):
         else:
             super().do_GET()
 
+    def do_OPTIONS(self):
+        self.send_response(200)
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.end_headers()
+
 if __name__ == "__main__":
     port = int(sys.argv[1]) if len(sys.argv) > 1 else 8888
     server = http.server.HTTPServer(("0.0.0.0", port), PublishHandler)
