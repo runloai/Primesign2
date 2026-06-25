@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { Link } from "wouter";
 import { ArrowRight, CheckCircle2, ChevronRight, PhoneCall, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -19,8 +19,24 @@ interface Testimonial {
   avatar?: string;
 }
 
+interface ServiceConfig {
+  id?: number;
+  name: string;
+  desc?: string;
+  badge?: string;
+  images?: { url: string; label: string }[] | string[];
+}
+
+interface PortfolioConfig {
+  id: number;
+  url: string;
+  label?: string;
+  category: string;
+  featured?: boolean;
+}
+
 // Helper function to read admin config from localStorage
-function getAdminConfig(): { portfolio?: any[]; hero?: any; services?: any[]; testimonials?: Testimonial[] } | null {
+function getAdminConfig(): { portfolio?: PortfolioConfig[]; hero?: any; services?: ServiceConfig[]; testimonials?: Testimonial[] } | null {
   try {
     const stored = localStorage.getItem("primesign-config");
     if (stored) {
@@ -173,17 +189,6 @@ const services = [
   },
 ];
 
-const portfolioGrid = [
-  { img: IMAGES.portfolio[0], label: "LED Storefront", span: "col-span-2 row-span-2" },
-  { img: IMAGES.glow[1], label: "Glow Channel Letters", span: "" },
-  { img: IMAGES.square[0], label: "Corporate Lobby Sign", span: "" },
-  { img: IMAGES.vehicle[1], label: "Fleet Wrap", span: "" },
-  { img: IMAGES.portfolio[2], label: "Retail Branding", span: "" },
-  { img: IMAGES.wall[1], label: "Office Wall Mural", span: "" },
-  { img: IMAGES.acrylic[1], label: "Acrylic Letters", span: "" },
-  { img: IMAGES.portfolio[6], label: "Restaurant Signage", span: "" },
-];
-
 const reasons = [
   "Premium Quality Materials",
   "Rapid Turnaround Times",
@@ -252,22 +257,16 @@ function getDynamicServices(): any[] | null {
       if (config.services && config.services.length > 0) {
         // Map admin service format to main site format
         return config.services
-          .filter((s: any) => s.name) // Only include services with names
-          .map((s: any) => ({
+          .filter((s: ServiceConfig) => s.name) // Only include services with names
+          .map((s: ServiceConfig) => ({
             title: s.name,
             desc: s.desc || "",
             // Get first image from images array, or fallback to category-based image
             img: s.images && s.images.length > 0 
-              ? (typeof s.images[0] === 'string' ? s.images[0] : s.images[0]?.url || IMAGES.led[0])
+              ? (typeof s.images[0] === 'string' ? s.images[0] : (s.images[0] as {url: string}).url || IMAGES.led[0])
               : getServiceImage(s.name),
             tag: s.badge === "popular" ? "Most Popular" : s.badge === "new" ? "New" : null,
-            category: s.name.toLowerCase().includes("led") ? "led" 
-                    : s.name.toLowerCase().includes("glow") ? "glow"
-                    : s.name.toLowerCase().includes("acrylic") ? "acrylic"
-                    : s.name.toLowerCase().includes("wall") ? "wall"
-                    : s.name.toLowerCase().includes("vehicle") ? "vehicle"
-                    : s.name.toLowerCase().includes("pvc") || s.name.toLowerCase().includes("flex") ? "pvc"
-                    : "led",
+            category: getCategoryFromServiceName(s.name),
           }));
       }
     }
@@ -275,6 +274,20 @@ function getDynamicServices(): any[] | null {
     // Silent fail - services not available
   }
   return null;
+}
+
+// Extract category from service name
+function getCategoryFromServiceName(serviceName: string): string {
+  const name = serviceName.toLowerCase();
+  if (name.includes("led")) return "led";
+  if (name.includes("glow")) return "glow";
+  if (name.includes("acrylic")) return "acrylic";
+  if (name.includes("wall")) return "wall";
+  if (name.includes("vehicle")) return "vehicle";
+  if (name.includes("pvc") || name.includes("flex")) return "pvc";
+  // Use the first word of the service name as category
+  const firstWord = name.split(/\s+/)[0];
+  return firstWord || "led";
 }
 
 // Helper to get fallback image for service category
@@ -293,7 +306,7 @@ export default function Home() {
   const { open: openQuote } = useQuoteModal();
   const [heroIndex, setHeroIndex] = useState(0);
   const [portfolioFilter, setPortfolioFilter] = useState<string | null>(null);
-  const [adminConfig, setAdminConfig] = useState<{ portfolio?: any[]; hero?: any; testimonials?: Testimonial[]; services?: any[]; aboutImages?: any[]; advantageImages?: any[] } | null>(null);
+  const [adminConfig, setAdminConfig] = useState<{ portfolio?: PortfolioConfig[]; hero?: any; testimonials?: Testimonial[]; services?: ServiceConfig[]; aboutImages?: any[]; advantageImages?: any[] } | null>(null);
   const [testimonialIndex, setTestimonialIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
@@ -328,21 +341,45 @@ export default function Home() {
     }, 6000);
     return () => clearInterval(timer);
   }, [displayTestimonials.length]);
+
+  // Get portfolio items with proper structure including featured flag
   const getPortfolioItems = () => {
     if (adminConfig?.portfolio && adminConfig.portfolio.length > 0) {
       // Convert config portfolio items to the format expected by the grid
       return adminConfig.portfolio
-        .filter((item: any) => item.url)
-        .map((item: any) => ({
+        .filter((item: PortfolioConfig) => item.url)
+        .map((item: PortfolioConfig) => ({
           img: item.url,
           label: item.label || "Installation",
           cat: item.category || "led",
+          featured: item.featured || false,
         }));
     }
-    return null;
+    // Fallback: create items from hardcoded portfolio + assign categories
+    // First item is featured by default
+    return [
+      { img: IMAGES.portfolio[0], label: "Storefront LED Branding", cat: "led", featured: true },
+      { img: IMAGES.glow[3], label: "Glow Sign", cat: "glow", featured: false },
+      { img: IMAGES.square[10], label: "LED Channel", cat: "led", featured: false },
+      { img: IMAGES.vehicle[2], label: "Vehicle Wrap", cat: "vehicle", featured: false },
+      { img: IMAGES.wall[3], label: "Wall Branding", cat: "wall", featured: false },
+      { img: IMAGES.portfolio[2], label: "Retail Signage", cat: "led", featured: false },
+      { img: IMAGES.acrylic[1], label: "Acrylic Letters", cat: "acrylic", featured: false },
+      { img: IMAGES.glow[4], label: "Neon Glow", cat: "glow", featured: false },
+      { img: IMAGES.portfolio[5], label: "Corporate Lobby", cat: "acrylic", featured: false },
+    ];
   };
 
-  const dynamicPortfolioItems = getPortfolioItems();
+  const allPortfolioItems = getPortfolioItems();
+  
+  // Separate featured and non-featured items
+  const featuredItem = useMemo(() => {
+    return allPortfolioItems.find(item => item.featured) || null;
+  }, [allPortfolioItems]);
+  
+  const nonFeaturedItems = useMemo(() => {
+    return allPortfolioItems.filter(item => !item.featured);
+  }, [allPortfolioItems]);
 
   // Get about images from config or fallback to hardcoded
   const aboutImages = adminConfig?.aboutImages && adminConfig.aboutImages.length >= 4
@@ -359,6 +396,17 @@ export default function Home() {
     ? adminConfig.advantageImages.slice(0, 6).map((img: any) => img.url).filter(Boolean)
     : [];
 
+  // Extract unique categories from services for portfolio filter buttons
+  const portfolioCategories = useMemo(() => {
+    const categories = new Set<string>();
+    displayServices.forEach((service: any) => {
+      if (service.category) {
+        categories.add(service.category.toLowerCase());
+      }
+    });
+    return Array.from(categories).sort();
+  }, [displayServices]);
+
   useEffect(() => {
     const timer = setInterval(() => {
       setHeroIndex((prev) => (prev + 1) % HERO_SLIDES.length);
@@ -370,37 +418,17 @@ export default function Home() {
   const getLightboxImages = useCallback(() => {
     const images: { src: string; alt: string; label: string }[] = [];
     
-    // Add dynamic portfolio items if available
-    if (dynamicPortfolioItems && dynamicPortfolioItems.length > 0) {
-      dynamicPortfolioItems.forEach((item: any) => {
-        images.push({ src: item.img, alt: item.label, label: item.label });
-      });
-    } else {
-      // Add default portfolio grid images
-      portfolioGrid.forEach((item) => {
-        images.push({ src: item.img, alt: item.label, label: item.label });
-      });
-      // Add additional hardcoded portfolio images
-      [
-        { img: IMAGES.glow[3], label: "Glow Sign" },
-        { img: IMAGES.square[10], label: "LED Channel" },
-        { img: IMAGES.vehicle[2], label: "Vehicle Wrap" },
-        { img: IMAGES.wall[3], label: "Wall Branding" },
-        { img: IMAGES.portfolio[2], label: "Retail Signage" },
-        { img: IMAGES.acrylic[1], label: "Acrylic Letters" },
-        { img: IMAGES.glow[4], label: "Neon Glow" },
-        { img: IMAGES.portfolio[5], label: "Corporate Lobby" },
-      ].forEach((item) => {
-        images.push({ src: item.img, alt: item.label, label: item.label });
-      });
-      // Add vehicle wraps
-      IMAGES.vehicle.slice(3, 7).forEach((img, i) => {
-        images.push({ src: img, alt: `Vehicle wrap ${i + 1}`, label: "Vehicle Wrap" });
-      });
-    }
+    // Add all portfolio items (featured first, then others)
+    const items = [];
+    if (featuredItem) items.push(featuredItem);
+    items.push(...nonFeaturedItems);
+    
+    items.forEach((item: any) => {
+      images.push({ src: item.img, alt: item.label, label: item.label });
+    });
     
     return images;
-  }, [dynamicPortfolioItems]);
+  }, [featuredItem, nonFeaturedItems]);
 
   const lightboxImages = getLightboxImages();
 
@@ -409,18 +437,22 @@ export default function Home() {
     setLightboxOpen(true);
   };
 
-  useEffect(() => {
-    const items = document.querySelectorAll("[data-pf-cat]");
-    items.forEach((item) => {
-      const el = item as HTMLElement;
-      if (portfolioFilter === null) {
-        el.style.display = "";
-      } else {
-        const cat = el.getAttribute("data-pf-cat");
-        el.style.display = cat === portfolioFilter ? "" : "none";
-      }
-    });
-  }, [portfolioFilter]);
+  // Filter items based on selected category
+  const filteredFeaturedItem = useMemo(() => {
+    if (!portfolioFilter) return featuredItem;
+    return featuredItem && featuredItem.cat === portfolioFilter ? featuredItem : null;
+  }, [featuredItem, portfolioFilter]);
+
+  const filteredNonFeaturedItems = useMemo(() => {
+    if (!portfolioFilter) return nonFeaturedItems;
+    return nonFeaturedItems.filter(item => item.cat === portfolioFilter);
+  }, [nonFeaturedItems, portfolioFilter]);
+
+  // Calculate lightbox index for featured item
+  const getFeaturedLightboxIndex = useCallback(() => {
+    if (!featuredItem) return 0;
+    return 0; // Featured item is always first in lightbox
+  }, [featuredItem]);
 
   return (
     <div className="w-full">
@@ -493,7 +525,6 @@ export default function Home() {
           </motion.div>
         </div>
 
-        {/* Slide dots */}
         {/* Stat strip */}
         <div className="absolute bottom-0 left-0 right-0 bg-black/40 border-t border-white/10 backdrop-blur-sm py-3 z-10">
           <div className="container mx-auto px-4 flex flex-wrap justify-center md:justify-between gap-6 text-center">
@@ -576,7 +607,7 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8" role="list" aria-label="Services">
-            {displayServices.map((service, index) => (
+            {displayServices.map((service: any, index: number) => (
               <motion.div
                 key={service.title}
                 initial={{ opacity: 0, y: 30 }}
@@ -647,100 +678,51 @@ export default function Home() {
             </a>
           </div>
 
-          {/* Portfolio filter buttons with keyboard navigation */}
+          {/* Portfolio filter buttons - dynamically from services categories + All */}
           <div 
             className="flex flex-wrap gap-2 md:gap-3 mb-8 md:mb-10 justify-center md:justify-start"
             role="tablist"
             aria-label="Portfolio categories"
           >
-            {["All","LED","Glow","Acrylic","Wall","Vehicle","PVC","Flex"].map(cat => (
+            <button 
+              onClick={() => setPortfolioFilter(null)}
+              role="tab"
+              aria-selected={!portfolioFilter}
+              aria-controls="portfolio-grid"
+              tabIndex={0}
+              className={`px-4 md:px-5 py-2 rounded-full text-xs md:text-sm font-bold uppercase tracking-wider transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background ${
+                !portfolioFilter
+                  ? "bg-primary text-primary-foreground" : "bg-white/5 text-white/60 hover:bg-white/10"}`}
+            >All</button>
+            {portfolioCategories.map(cat => (
               <button 
-                key={cat} 
-                onClick={() => setPortfolioFilter(cat === "All" ? null : cat.toLowerCase())}
+                key={cat}
+                onClick={() => setPortfolioFilter(cat)}
                 role="tab"
-                aria-selected={(cat === "All" && !portfolioFilter) || portfolioFilter === cat.toLowerCase()}
+                aria-selected={portfolioFilter === cat}
                 aria-controls="portfolio-grid"
                 tabIndex={0}
                 className={`px-4 md:px-5 py-2 rounded-full text-xs md:text-sm font-bold uppercase tracking-wider transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background ${
-                  (cat === "All" && !portfolioFilter) || portfolioFilter === cat.toLowerCase()
+                  portfolioFilter === cat
                     ? "bg-primary text-primary-foreground" : "bg-white/5 text-white/60 hover:bg-white/10"}`}
-              >{cat}</button>
+              >
+                {cat.charAt(0).toUpperCase() + cat.slice(1)}
+              </button>
             ))}
           </div>
 
-          {/* Main masonry-style grid — use dynamic data if available, fallback to hardcoded */}
+          {/* Main masonry-style grid with featured hero support */}
           <div id="portfolio-grid" role="tabpanel" aria-label="Portfolio gallery">
-          {dynamicPortfolioItems && dynamicPortfolioItems.length >= 9 ? (
-            // Dynamic portfolio grid using admin config
-            <>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
-                {/* Big featured item */}
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  viewport={{ once: true }}
-                  className="col-span-2 row-span-2 aspect-square rounded-2xl overflow-hidden relative group"
-                  data-testid="img-portfolio-featured"
-                  data-pf-cat={dynamicPortfolioItems[0]?.cat || "led"}
-                >
-                  <PortfolioImage src={dynamicPortfolioItems[0]?.img} alt={dynamicPortfolioItems[0]?.label || "Featured installation"} />
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                    <span className="text-white font-display font-bold uppercase tracking-widest text-lg">{dynamicPortfolioItems[0]?.label || "Storefront LED Branding"}</span>
-                  </div>
-                </motion.div>
-
-                {dynamicPortfolioItems.slice(1, 5).map((item: any, i: number) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: (i + 1) * 0.08 }}
-                    className="aspect-square rounded-2xl overflow-hidden relative group"
-                    data-testid={`img-portfolio-${i}`}
-                    data-pf-cat={item.cat}
-                  >
-                    <PortfolioImage src={item.img} alt={item.label} />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                      <span className="text-white font-bold uppercase tracking-widest text-sm">{item.label}</span>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* Second row - consistent aspect-square */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
-                {dynamicPortfolioItems.slice(5, 9).map((item: any, i: number) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.08 }}
-                    className="aspect-square rounded-2xl overflow-hidden relative group"
-                    data-testid={`img-portfolio-row2-${i}`}
-                    data-pf-cat={item.cat}
-                  >
-                    <PortfolioImage src={item.img} alt={item.label} />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                      <span className="text-white font-bold uppercase tracking-widest text-sm">{item.label}</span>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </>
-          ) : (
-            // Fallback to original hardcoded grid
-            <>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
-                {/* Big featured item */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
+              {/* Featured item - appears first and spans 2x2 */}
+              {filteredFeaturedItem && (
                 <motion.div
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
                   viewport={{ once: true }}
                   className="col-span-2 row-span-2 aspect-square rounded-2xl overflow-hidden relative group cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
                   data-testid="img-portfolio-featured"
-                  data-pf-cat="led"
+                  data-pf-cat={filteredFeaturedItem.cat}
                   tabIndex={0}
                   onClick={() => openLightbox(0)}
                   onKeyDown={(e) => {
@@ -750,54 +732,47 @@ export default function Home() {
                     }
                   }}
                 >
-                  <PortfolioImage src={IMAGES.portfolio[0]} alt="Featured installation" />
+                  <PortfolioImage src={filteredFeaturedItem.img} alt={filteredFeaturedItem.label} />
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                    <span className="text-white font-display font-bold uppercase tracking-widest text-lg">Storefront LED Branding</span>
+                    <span className="text-white font-display font-bold uppercase tracking-widest text-lg">{filteredFeaturedItem.label}</span>
                   </div>
                 </motion.div>
+              )}
 
-                {[
-                  { img: IMAGES.glow[3], label: "Glow Sign", cat: "glow" },
-                  { img: IMAGES.square[10], label: "LED Channel", cat: "led" },
-                  { img: IMAGES.vehicle[2], label: "Vehicle Wrap", cat: "vehicle" },
-                  { img: IMAGES.wall[3], label: "Wall Branding", cat: "wall" },
-                ].map((item, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: (i + 1) * 0.08 }}
-                    className="aspect-square rounded-2xl overflow-hidden relative group cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
-                    data-testid={`img-portfolio-${i}`}
-                    data-pf-cat={item.cat}
-                    tabIndex={0}
-                    onClick={() => openLightbox(i + 1)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        openLightbox(i + 1);
-                      }
-                    }}
-                  >
-                    <PortfolioImage src={item.img} alt={item.label} />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                      <span className="text-white font-bold uppercase tracking-widest text-sm">{item.label}</span>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
+              {/* Non-featured items - fill remaining slots */}
+              {filteredNonFeaturedItems.slice(0, filteredFeaturedItem ? 4 : 5).map((item: any, i: number) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: (i + 1) * 0.08 }}
+                  className="aspect-square rounded-2xl overflow-hidden relative group cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
+                  data-testid={`img-portfolio-${i}`}
+                  data-pf-cat={item.cat}
+                  tabIndex={0}
+                  onClick={() => openLightbox(filteredFeaturedItem ? i + 1 : i)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      openLightbox(filteredFeaturedItem ? i + 1 : i);
+                    }
+                  }}
+                >
+                  <PortfolioImage src={item.img} alt={item.label} />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                    <span className="text-white font-bold uppercase tracking-widest text-sm">{item.label}</span>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
 
-              {/* Second row — exactly 4 items to fill the 4-col grid cleanly */}
+            {/* Second row - all aspect-square, consistent sizing */}
+            {filteredNonFeaturedItems.length > (filteredFeaturedItem ? 4 : 5) && (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
-                {[
-                  { img: IMAGES.portfolio[2], label: "Retail Signage", cat: "led" },
-                  { img: IMAGES.acrylic[1], label: "Acrylic Letters", cat: "acrylic" },
-                  { img: IMAGES.glow[4], label: "Neon Glow", cat: "glow" },
-                  { img: IMAGES.portfolio[5], label: "Corporate Lobby", cat: "acrylic" },
-                ].map((item, i) => (
+                {filteredNonFeaturedItems.slice(filteredFeaturedItem ? 4 : 5, filteredFeaturedItem ? 12 : 13).map((item: any, i: number) => (
                   <motion.div
-                    key={i}
+                    key={i + 100}
                     initial={{ opacity: 0 }}
                     whileInView={{ opacity: 1 }}
                     viewport={{ once: true }}
@@ -806,11 +781,11 @@ export default function Home() {
                     data-testid={`img-portfolio-row2-${i}`}
                     data-pf-cat={item.cat}
                     tabIndex={0}
-                    onClick={() => openLightbox(i + 5)}
+                    onClick={() => openLightbox((filteredFeaturedItem ? 5 : 5) + i)}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' || e.key === ' ') {
                         e.preventDefault();
-                        openLightbox(i + 5);
+                        openLightbox((filteredFeaturedItem ? 5 : 5) + i);
                       }
                     }}
                   >
@@ -821,38 +796,39 @@ export default function Home() {
                   </motion.div>
                 ))}
               </div>
-            </>
-          )}
+            )}
 
-          {/* Third row — vehicle wrap showcase - consistent aspect-square */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {IMAGES.vehicle.slice(3, 7).map((img, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.08 }}
-                className="aspect-square rounded-2xl overflow-hidden relative group cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
-                data-testid={`img-portfolio-vehicle-${i}`}
-                data-pf-cat="vehicle"
-                tabIndex={0}
-                onClick={() => openLightbox(i + 9)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    openLightbox(i + 9);
-                  }
-                }}
-              >
-                <PortfolioImage src={img} alt={`Vehicle wrap ${i + 1}`} />
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                  <span className="text-white font-bold uppercase tracking-widest text-sm">Vehicle Wrap</span>
-                </div>
-              </motion.div>
-            ))}
+            {/* Third row - remaining items */}
+            {filteredNonFeaturedItems.length > (filteredFeaturedItem ? 12 : 13) && (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {filteredNonFeaturedItems.slice(filteredFeaturedItem ? 12 : 13).map((item: any, i: number) => (
+                  <motion.div
+                    key={i + 200}
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.08 }}
+                    className="aspect-square rounded-2xl overflow-hidden relative group cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
+                    data-testid={`img-portfolio-row3-${i}`}
+                    data-pf-cat={item.cat}
+                    tabIndex={0}
+                    onClick={() => openLightbox((filteredFeaturedItem ? 13 : 13) + i)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        openLightbox((filteredFeaturedItem ? 13 : 13) + i);
+                      }
+                    }}
+                  >
+                    <PortfolioImage src={item.img} alt={item.label} />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                      <span className="text-white font-bold uppercase tracking-widest text-sm">{item.label}</span>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            )}
           </div>
-        </div>
         </div>
       </section>
 
@@ -1000,86 +976,94 @@ export default function Home() {
               </AnimatePresence>
             </div>
 
-            {/* Navigation Arrows - Mobile optimized with larger touch targets */}
-            <button
-              onClick={() => setTestimonialIndex((prev) => (prev - 1 + displayTestimonials.length) % displayTestimonials.length)}
-              className="absolute left-2 md:left-0 top-1/2 -translate-y-1/2 md:-translate-x-12 w-10 h-10 md:w-12 md:h-12 rounded-full bg-card border border-white/10 hover:border-primary/50 hover:bg-primary/10 transition-all flex items-center justify-center text-foreground/60 hover:text-primary touch-manipulation focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
-              aria-label="Previous testimonial"
-            >
-              ←
-            </button>
-            <button
-              onClick={() => setTestimonialIndex((prev) => (prev + 1) % displayTestimonials.length)}
-              className="absolute right-2 md:right-0 top-1/2 -translate-y-1/2 md:translate-x-12 w-10 h-10 md:w-12 md:h-12 rounded-full bg-card border border-white/10 hover:border-primary/50 hover:bg-primary/10 transition-all flex items-center justify-center text-foreground/60 hover:text-primary touch-manipulation focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
-              aria-label="Next testimonial"
-            >
-              →
-            </button>
-
-            {/* Dots Indicator */}
+            {/* Navigation Dots */}
             <div className="flex justify-center gap-2 mt-8">
-              {displayTestimonials.map((_, i) => (
+              {displayTestimonials.map((_, index) => (
                 <button
-                  key={i}
-                  onClick={() => setTestimonialIndex(i)}
-                  className={`w-2.5 h-2.5 rounded-full transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background ${
-                    i === testimonialIndex 
-                      ? "bg-primary w-8" 
-                      : "bg-white/20 hover:bg-white/40"
+                  key={index}
+                  onClick={() => setTestimonialIndex(index)}
+                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                    index === testimonialIndex
+                      ? "bg-primary w-8"
+                      : "bg-primary/30 hover:bg-primary/50"
                   }`}
-                  aria-label={`Go to testimonial ${i + 1}`}
+                  aria-label={`Go to testimonial ${index + 1}`}
                 />
               ))}
             </div>
+
+            {/* Navigation Arrows */}
+            <button
+              onClick={() => setTestimonialIndex((prev) => (prev - 1 + displayTestimonials.length) % displayTestimonials.length)}
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-16 w-12 h-12 rounded-full bg-background border border-border flex items-center justify-center text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+              aria-label="Previous testimonial"
+            >
+              <ChevronRight className="w-6 h-6 rotate-180" />
+            </button>
+            <button
+              onClick={() => setTestimonialIndex((prev) => (prev + 1) % displayTestimonials.length)}
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-16 w-12 h-12 rounded-full bg-background border border-border flex items-center justify-center text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+              aria-label="Next testimonial"
+            >
+              <ChevronRight className="w-6 h-6" />
+            </button>
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-24 relative">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="bg-gradient-to-br from-card to-background border border-white/10 rounded-3xl p-8 md:p-16 lg:p-20 text-center relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 blur-[100px]" />
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-secondary/20 blur-[100px]" />
-
-            <h2 className="text-4xl md:text-6xl font-display font-bold leading-tight mb-6 relative z-10">
-              READY TO BE SEEN?
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10 relative z-10">
-              Contact our team today for a free consultation and quote. Let's build something that
-              demands attention.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 relative z-10">
-              <Link href="/contact">
+      {/* CTA Section */}
+      <section className="py-24 relative overflow-hidden" id="cta">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background to-background" />
+        {/* Decorative elements */}
+        <div className="absolute top-0 left-0 w-96 h-96 bg-primary/10 blur-[120px] rounded-full" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-primary/10 blur-[120px] rounded-full" />
+        
+        <div className="container mx-auto px-4 md:px-6 relative z-10">
+          <div className="max-w-4xl mx-auto text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: prefersReducedMotion ? 0.01 : 0.6 }}
+            >
+              <h2 className="text-sm text-primary font-bold tracking-widest uppercase mb-4">Ready to Get Started?</h2>
+              <h3 className="text-4xl md:text-6xl font-display font-bold leading-tight mb-6">
+                LET'S BUILD<br />SOMETHING ICONIC.
+              </h3>
+              <p className="text-xl text-muted-foreground font-light mb-10 max-w-2xl mx-auto">
+                From concept to installation, we handle every detail. Your brand deserves to be seen — let's make it unforgettable.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button
                   size="lg"
-                  className="h-14 px-8 rounded-full text-lg font-bold uppercase tracking-wide bg-white text-black hover:bg-white/90 w-full sm:w-auto"
-                  data-testid="button-cta-contact"
+                  onClick={openQuote}
+                  className="h-14 px-8 rounded-full text-lg font-bold uppercase tracking-wide box-glow group"
+                  data-testid="button-cta-quote"
                 >
-                  Contact Us Now
+                  Get Your Free Quote
+                  <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
-              </Link>
-              <a href="tel:+916366525253">
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="h-14 px-8 rounded-full text-lg font-bold uppercase tracking-wide border-white/20 hover:bg-white/10 w-full sm:w-auto group"
-                  data-testid="button-cta-call"
-                >
-                  <PhoneCall className="mr-2 w-5 h-5 text-primary group-hover:animate-bounce" />
-                  +91 63665 25253
-                </Button>
-              </a>
-            </div>
+                <a href="tel:+916366525253">
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="h-14 px-8 rounded-full text-lg font-bold uppercase tracking-wide bg-white/5 border-white/20 hover:bg-white/10"
+                  >
+                    <PhoneCall className="mr-2 w-5 h-5" />
+                    Call Us Now
+                  </Button>
+                </a>
+              </div>
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Image Lightbox */}
+      {/* Lightbox */}
       <ImageLightbox
         images={lightboxImages}
-        currentIndex={lightboxIndex}
         isOpen={lightboxOpen}
+        currentIndex={lightboxIndex}
         onClose={() => setLightboxOpen(false)}
         onNavigate={setLightboxIndex}
       />
