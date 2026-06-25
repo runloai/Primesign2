@@ -2287,11 +2287,25 @@
             <div class="section-title-icon">🛠️</div>
             The Arsenal
           </h2>
-          <p class="section-desc">Manage your service offerings and their image galleries</p>
+          <p class="section-desc">Manage your service offerings, categories, and their image galleries</p>
         </div>
+        
+        <!-- Categories Management -->
         <div class="card mb-4">
           <div class="card-header">
-            <div class="card-title">Services</div>
+            <div class="card-title">📁 Categories</div>
+            <button class="btn btn-cyan btn-sm" onclick="addCategory()">+ Add Category</button>
+          </div>
+          <div class="card-body">
+            <div id="categoriesList"></div>
+            <p class="text-muted mt-3" style="font-size: 13px;">Categories appear in the navbar and service tabs. Changes are automatically reflected on the website.</p>
+          </div>
+        </div>
+        
+        <!-- Services Management -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <div class="card-title">🛠️ Services</div>
             <div style="display: flex; gap: 12px; align-items: center;">
               <div class="search-box" style="position: relative;">
                 <input type="text" id="servicesSearch" placeholder="Filter services..." 
@@ -3069,6 +3083,12 @@
           featured: false
         }
       ],
+      serviceCategories: [
+        { id: 'sign-boards', label: 'Sign Boards', icon: '🪧', description: 'Premium signage solutions for every business need' },
+        { id: 'promotional', label: 'Promotional Display', icon: '📢', description: 'Eye-catching display solutions for events & marketing' },
+        { id: 'digital', label: 'Digital Prints', icon: '🖨️', description: 'High-quality digital printing on various media' },
+        { id: 'commercial', label: 'Commercial', icon: '🏢', description: 'Professional printing for business needs' }
+      ],
       hero: {
         bgImage: "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/portfolio/01.webp",
         headline: "WE BUILD <br>UNFORGETTABLE<br>VISIBILITY.",
@@ -3240,6 +3260,7 @@
     function renderTab(tabName) {
       switch (tabName) {
         case 'arsenal':
+          renderCategories();
           renderServices();
           break;
         case 'portfolio':
@@ -3788,12 +3809,11 @@
       if (emptyState) emptyState.classList.add('hidden');
 
       // Group services by category
-      const CATEGORIES = {
-        'sign-boards': { label: 'Sign Boards', icon: '🪧' },
-        'promotional': { label: 'Promotional Display', icon: '📢' },
-        'digital': { label: 'Digital Prints', icon: '🖨️' },
-        'commercial': { label: 'Commercial', icon: '🏢' }
-      };
+      const categories = getCategories();
+      const categoriesMap = {};
+      categories.forEach(cat => {
+        categoriesMap[cat.id] = { label: cat.label, icon: cat.icon };
+      });
 
       const grouped = {};
       servicesToRender.forEach(s => {
@@ -3804,7 +3824,7 @@
 
       let html = '';
       for (const [catKey, catServices] of Object.entries(grouped)) {
-        const catInfo = CATEGORIES[catKey] || { label: 'Other', icon: '📋' };
+        const catInfo = categoriesMap[catKey] || { label: 'Other', icon: '📋' };
         html += `
           <div class="category-header">
             <span class="category-header-icon">${catInfo.icon}</span>
@@ -3846,10 +3866,8 @@
                 <div class="field-group">
                   <label class="field-label">Category</label>
                   <select class="field-select" onchange="updateService(${service.id}, 'category', this.value)">
-                    <option value="sign-boards" ${service.category === 'sign-boards' ? 'selected' : ''}>Sign Boards</option>
-                    <option value="promotional" ${service.category === 'promotional' ? 'selected' : ''}>Promotional Display</option>
-                    <option value="digital" ${service.category === 'digital' ? 'selected' : ''}>Digital Prints</option>
-                    <option value="commercial" ${service.category === 'commercial' ? 'selected' : ''}>Commercial</option>
+                    ${categories.map(cat => `<option value="${cat.id}" ${service.category === cat.id ? 'selected' : ''}>${cat.label}</option>`).join('')}
+                    <option value="other" ${service.category === 'other' || !service.category ? 'selected' : ''}>Other</option>
                   </select>
                 </div>
                 <div class="field-group">
@@ -4005,6 +4023,195 @@
 
     function closeGalleryModal() {
       document.getElementById('galleryModal').classList.remove('visible');
+    }
+
+    // ================================================
+    // CATEGORIES MANAGEMENT
+    // ================================================
+    function getDefaultCategories() {
+      return [
+        { id: 'sign-boards', label: 'Sign Boards', icon: '🪧', description: 'Premium signage solutions for every business need' },
+        { id: 'promotional', label: 'Promotional Display', icon: '📢', description: 'Eye-catching display solutions for events & marketing' },
+        { id: 'digital', label: 'Digital Prints', icon: '🖨️', description: 'High-quality digital printing on various media' },
+        { id: 'commercial', label: 'Commercial', icon: '🏢', description: 'Professional printing for business needs' }
+      ];
+    }
+
+    function getCategories() {
+      if (!config.serviceCategories || config.serviceCategories.length === 0) {
+        config.serviceCategories = getDefaultCategories();
+      }
+      return config.serviceCategories;
+    }
+
+    function renderCategories() {
+      const container = document.getElementById('categoriesList');
+      if (!container) return;
+
+      const categories = getCategories();
+      
+      let html = '';
+      categories.forEach((cat, index) => {
+        html += `
+          <div class="category-header" style="margin-bottom: 12px;">
+            <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
+              <span class="category-header-icon" style="font-size: 24px;">${cat.icon}</span>
+              <div>
+                <div style="font-weight: 600; color: var(--gold);">${cat.label}</div>
+                <div style="font-size: 12px; color: var(--text-muted);">${cat.description || ''}</div>
+                <div style="font-size: 11px; color: var(--text-muted); opacity: 0.7;">ID: ${cat.id}</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-outline btn-sm" onclick="editCategory(${index})">✏️ Edit</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteCategory(${index})">🗑️</button>
+            </div>
+          </div>
+        `;
+      });
+
+      html += `
+        <div style="margin-top: 16px; padding: 16px; background: var(--bg-tertiary); border-radius: var(--radius-md);">
+          <h4 style="margin-bottom: 12px; font-size: 14px; color: var(--text-secondary);">How categories work:</h4>
+          <ul style="font-size: 13px; color: var(--text-muted); padding-left: 20px; line-height: 1.8;">
+            <li>Categories appear in the main navigation dropdown</li>
+            <li>Services are grouped under their category in the Arsenal section</li>
+            <li>The category ID is used in URLs and should be lowercase with dashes</li>
+            <li>Changes are automatically reflected on the website</li>
+          </ul>
+        </div>
+      `;
+
+      container.innerHTML = html;
+    }
+
+    function addCategory() {
+      showCategoryModal();
+    }
+
+    function editCategory(index) {
+      const categories = getCategories();
+      showCategoryModal(categories[index], index);
+    }
+
+    function deleteCategory(index) {
+      const categories = getCategories();
+      const cat = categories[index];
+      
+      // Check if any services use this category
+      const servicesInCategory = config.services.filter(s => s.category === cat.id);
+      
+      let message = `Delete category "${cat.label}"?`;
+      if (servicesInCategory.length > 0) {
+        message += `\n\n⚠️ ${servicesInCategory.length} service(s) are currently in this category. They will be moved to 'Other'.`;
+      }
+      
+      showConfirmDialog({
+        title: 'Delete Category',
+        message: message,
+        icon: '🗑️',
+        type: 'danger',
+        confirmText: 'Delete',
+        confirmClass: 'btn-danger',
+        onConfirm: () => {
+          // Move services to 'other' category
+          servicesInCategory.forEach(s => s.category = 'other');
+          
+          categories.splice(index, 1);
+          renderCategories();
+          renderServices();
+          updateSaveIndicator(false);
+          showToast('Category deleted', 'success');
+        }
+      });
+    }
+
+    function showCategoryModal(category = null, editIndex = null) {
+      const isEdit = category !== null;
+      const title = isEdit ? 'Edit Category' : 'Add Category';
+      
+      const modalHtml = `
+        <div class="modal-overlay visible" id="categoryModal">
+          <div class="modal" style="max-width: 500px;">
+            <div class="modal-header">
+              <div class="modal-title">${isEdit ? '✏️' : '➕'} ${title}</div>
+              <button class="modal-close" onclick="closeCategoryModal()">✕</button>
+            </div>
+            <div class="modal-body">
+              <div class="field-group">
+                <label class="field-label required">Category ID</label>
+                <input type="text" class="field-input" id="catId" value="${isEdit ? category.id : ''}" placeholder="e.g., sign-boards" ${isEdit ? 'readonly' : ''}>
+                <div class="field-hint">Lowercase letters, numbers, and dashes only. Used in URLs and navbar.</div>
+              </div>
+              <div class="field-group">
+                <label class="field-label required">Display Name</label>
+                <input type="text" class="field-input" id="catLabel" value="${isEdit ? category.label : ''}" placeholder="e.g., Sign Boards">
+              </div>
+              <div class="field-group">
+                <label class="field-label">Icon (Emoji)</label>
+                <input type="text" class="field-input" id="catIcon" value="${isEdit ? category.icon : '📦'}" placeholder="📦">
+              </div>
+              <div class="field-group">
+                <label class="field-label">Description</label>
+                <textarea class="field-textarea" id="catDesc" rows="2" placeholder="Brief description of this category">${isEdit ? category.description || '' : ''}</textarea>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-outline" onclick="closeCategoryModal()">Cancel</button>
+              <button class="btn btn-gold" onclick="saveCategory(${editIndex !== null ? editIndex : 'null'})">💾 Save</button>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      const div = document.createElement('div');
+      div.id = 'categoryModalContainer';
+      div.innerHTML = modalHtml;
+      document.body.appendChild(div);
+    }
+
+    function closeCategoryModal() {
+      const modal = document.getElementById('categoryModalContainer');
+      if (modal) modal.remove();
+    }
+
+    function saveCategory(editIndex) {
+      const id = document.getElementById('catId').value.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+      const label = document.getElementById('catLabel').value.trim();
+      const icon = document.getElementById('catIcon').value.trim() || '📦';
+      const description = document.getElementById('catDesc').value.trim();
+      
+      if (!id || !label) {
+        showToast('Category ID and Display Name are required', 'error');
+        return;
+      }
+      
+      const categories = getCategories();
+      
+      // Check if ID already exists (for new categories)
+      if (editIndex === null && categories.find(c => c.id === id)) {
+        showToast('Category ID already exists', 'error');
+        return;
+      }
+      
+      const newCategory = { id, label, icon, description };
+      
+      if (editIndex !== null) {
+        const oldId = categories[editIndex].id;
+        categories[editIndex] = newCategory;
+        // Update services that use old category ID
+        config.services.forEach(s => {
+          if (s.category === oldId) s.category = id;
+        });
+      } else {
+        categories.push(newCategory);
+      }
+      
+      closeCategoryModal();
+      renderCategories();
+      renderServices();
+      updateSaveIndicator(false);
+      showToast(editIndex !== null ? 'Category updated' : 'Category added', 'success');
     }
 
     // ================================================
