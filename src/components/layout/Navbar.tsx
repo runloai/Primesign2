@@ -135,6 +135,13 @@ export default function Navbar() {
     } catch(e) {}
     return localStorage.getItem("primesign-logo") === "text";
   });
+
+  // Visitors: read logoType from config.json
+  useEffect(() => {
+    fetch("/config.json").then(r => r.json()).then(c => {
+      if (c.settings?.logoType === "text") setUseTextLogo(true);
+    }).catch(() => {});
+  }, []);
   const [location] = useLocation();
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [showTopBar, setShowTopBar] = useState(true);
