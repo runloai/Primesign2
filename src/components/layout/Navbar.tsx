@@ -25,9 +25,8 @@ const COLOR_SCHEMES = {
   "Lavender Dream": { p: "270 60% 55%", s: "330 50% 60%", b: "260 40% 97%", f: "260 25% 15%" },
 };
 
-// Hardcoded menu matching admin DEFAULT_CONFIG services exactly
-// When admin adds/removes services, update this list to keep in sync
-const SERVICE_MENU: Record<string, { name: string; href: string; filter: string; serviceId: string }[]> = {
+// Fallback menu used only when config.json fails to load
+const FALLBACK_SERVICE_MENU: Record<string, { name: string; href: string; filter: string; serviceId: string }[]> = {
   "SIGN BOARDS": [
     { name: "LED Signs", href: "/#services", filter: "sign-boards", serviceId: "led-signs" },
     { name: "Glow Signs", href: "/#services", filter: "sign-boards", serviceId: "glow-signs" },
@@ -132,11 +131,33 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scheme, setScheme] = useState("Obsidian Gold");
   const [useTextLogo, setUseTextLogo] = useState(false);
+  const [serviceMenu, setServiceMenu] = useState(FALLBACK_SERVICE_MENU);
 
   useEffect(() => {
     fetch("/config.json?t=" + Date.now()).then(r => r.json()).then(c => {
       if (c.settings?.logoType === "text") setUseTextLogo(true);
       if (c.settings?.scheme && COLOR_SCHEMES[c.settings.scheme]) setScheme(c.settings.scheme);
+      if (c.services && c.services.length > 0) {
+        const categoryTitles: Record<string, string> = {
+          "sign-boards": "SIGN BOARDS",
+          "vehicle": "VEHICLES",
+          "pvc-flex": "PVC & FLEX",
+          "promotional": "PROMOTIONAL DISPLAY",
+          "print": "DIGITAL PRINTS",
+          "apparel": "APPAREL",
+          "outdoor": "OUTDOOR",
+          "graphics": "GRAPHICS",
+        };
+        const grouped: Record<string, { name: string; href: string; filter: string; serviceId: string }[]> = {};
+        c.services.forEach((s: any) => {
+          const cat = s.category || "General";
+          const title = categoryTitles[cat] || cat.toUpperCase();
+          if (!grouped[title]) grouped[title] = [];
+          const serviceId = s.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '');
+          grouped[title].push({ name: s.name, href: "/#services", filter: cat, serviceId });
+        });
+        setServiceMenu(grouped);
+      }
     }).catch(() => {});
   }, []);
   const [location] = useLocation();
@@ -296,7 +317,7 @@ export default function Navbar() {
             {/* Multi-level Dropdown Menus */}
             <DropdownMenu
               title="SIGN BOARDS"
-              items={SERVICE_MENU["SIGN BOARDS"] || []}
+              items={serviceMenu["SIGN BOARDS"] || []}
               isOpen={openDropdown === "SIGN BOARDS"}
               onMouseEnter={() => handleDropdownEnter("SIGN BOARDS")}
               onMouseLeave={handleDropdownLeave}
@@ -304,7 +325,7 @@ export default function Navbar() {
             />
             <DropdownMenu
               title="PROMOTIONAL"
-              items={SERVICE_MENU["PROMOTIONAL DISPLAY"] || []}
+              items={serviceMenu["PROMOTIONAL DISPLAY"] || []}
               isOpen={openDropdown === "PROMOTIONAL DISPLAY"}
               onMouseEnter={() => handleDropdownEnter("PROMOTIONAL DISPLAY")}
               onMouseLeave={handleDropdownLeave}
@@ -312,7 +333,7 @@ export default function Navbar() {
             />
             <DropdownMenu
               title="VEHICLES"
-              items={SERVICE_MENU["VEHICLES"] || []}
+              items={serviceMenu["VEHICLES"] || []}
               isOpen={openDropdown === "VEHICLES"}
               onMouseEnter={() => handleDropdownEnter("VEHICLES")}
               onMouseLeave={handleDropdownLeave}
@@ -320,23 +341,15 @@ export default function Navbar() {
             />
             <DropdownMenu
               title="PVC & FLEX"
-              items={SERVICE_MENU["PVC & FLEX"] || []}
+              items={serviceMenu["PVC & FLEX"] || []}
               isOpen={openDropdown === "PVC & FLEX"}
               onMouseEnter={() => handleDropdownEnter("PVC & FLEX")}
               onMouseLeave={handleDropdownLeave}
               onClick={() => handleDropdownToggle("PVC & FLEX")}
             />
             <DropdownMenu
-              title="PROMOTIONAL"
-              items={SERVICE_MENU["PROMOTIONAL DISPLAY"] || []}
-              isOpen={openDropdown === "PROMOTIONAL DISPLAY"}
-              onMouseEnter={() => handleDropdownEnter("PROMOTIONAL DISPLAY")}
-              onMouseLeave={handleDropdownLeave}
-              onClick={() => handleDropdownToggle("PROMOTIONAL DISPLAY")}
-            />
-            <DropdownMenu
               title="DIGITAL PRINTS"
-              items={SERVICE_MENU["DIGITAL PRINTS"] || []}
+              items={serviceMenu["DIGITAL PRINTS"] || []}
               isOpen={openDropdown === "DIGITAL PRINTS"}
               onMouseEnter={() => handleDropdownEnter("DIGITAL PRINTS")}
               onMouseLeave={handleDropdownLeave}
@@ -344,7 +357,7 @@ export default function Navbar() {
             />
             <DropdownMenu
               title="APPAREL"
-              items={SERVICE_MENU["APPAREL"] || []}
+              items={serviceMenu["APPAREL"] || []}
               isOpen={openDropdown === "APPAREL"}
               onMouseEnter={() => handleDropdownEnter("APPAREL")}
               onMouseLeave={handleDropdownLeave}
@@ -417,42 +430,42 @@ export default function Navbar() {
                 {/* Mobile Dropdown - Sign Boards */}
                 <MobileDropdownSection 
                   title="SIGN BOARDS" 
-                  items={SERVICE_MENU["SIGN BOARDS"] || []} 
+                  items={serviceMenu["SIGN BOARDS"] || []} 
                   onItemClick={() => setIsMobileMenuOpen(false)}
                 />
                 
                 {/* Mobile Dropdown - Vehicles */}
                 <MobileDropdownSection 
                   title="VEHICLES" 
-                  items={SERVICE_MENU["VEHICLES"] || []} 
+                  items={serviceMenu["VEHICLES"] || []} 
                   onItemClick={() => setIsMobileMenuOpen(false)}
                 />
                 
                 {/* Mobile Dropdown - PVC & Flex */}
                 <MobileDropdownSection 
                   title="PVC & FLEX" 
-                  items={SERVICE_MENU["PVC & FLEX"] || []} 
+                  items={serviceMenu["PVC & FLEX"] || []} 
                   onItemClick={() => setIsMobileMenuOpen(false)}
                 />
                 
                 {/* Mobile Dropdown - Promotional */}
                 <MobileDropdownSection 
                   title="PROMOTIONAL DISPLAY" 
-                  items={SERVICE_MENU["PROMOTIONAL DISPLAY"] || []} 
+                  items={serviceMenu["PROMOTIONAL DISPLAY"] || []} 
                   onItemClick={() => setIsMobileMenuOpen(false)}
                 />
                 
                 {/* Mobile Dropdown - Digital Prints */}
                 <MobileDropdownSection 
                   title="DIGITAL PRINTS" 
-                  items={SERVICE_MENU["DIGITAL PRINTS"] || []} 
+                  items={serviceMenu["DIGITAL PRINTS"] || []} 
                   onItemClick={() => setIsMobileMenuOpen(false)}
                 />
                 
                 {/* Mobile Dropdown - Apparel */}
                 <MobileDropdownSection 
                   title="APPAREL" 
-                  items={SERVICE_MENU["APPAREL"] || []} 
+                  items={serviceMenu["APPAREL"] || []} 
                   onItemClick={() => setIsMobileMenuOpen(false)}
                 />
 

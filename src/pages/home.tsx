@@ -550,6 +550,41 @@ function getDynamicServiceCategories(): typeof SERVICES_CATEGORIES | null {
   return null;
 }
 
+// Category display names and descriptions
+const CATEGORY_DETAILS: Record<string, { title: string; description: string }> = {
+  "sign-boards": { title: "SIGN BOARDS", description: "Premium signage solutions for every business need" },
+  "vehicle": { title: "VEHICLES", description: "Vehicle branding and wrap solutions" },
+  "pvc-flex": { title: "PVC & FLEX", description: "Durable flex and PVC printing solutions" },
+  "promotional": { title: "PROMOTIONAL DISPLAY", description: "Eye-catching display solutions for events & marketing" },
+  "print": { title: "DIGITAL PRINTS", description: "High-quality digital printing services" },
+  "apparel": { title: "APPAREL", description: "Custom apparel and merchandise printing" },
+  "outdoor": { title: "OUTDOOR", description: "Large-format outdoor signage solutions" },
+  "graphics": { title: "GRAPHICS", description: "Custom graphics and branding solutions" },
+};
+
+// Build SERVICES_CATEGORIES dynamically from a services array (config.json or localStorage)
+function buildServiceCategoriesFromServices(services: ServiceConfig[]): typeof SERVICES_CATEGORIES {
+  const grouped = new Map<string, { id: string; title: string; description: string; icon: string; items: any[] }>();
+  services.forEach(s => {
+    const cat = s.category || "General";
+    if (!grouped.has(cat)) {
+      const details = CATEGORY_DETAILS[cat] || { title: cat.toUpperCase(), description: "Professional " + cat + " services" };
+      grouped.set(cat, { id: cat, title: details.title, description: details.description, icon: "sign", items: [] });
+    }
+    grouped.get(cat)!.items.push({
+      name: s.name,
+      desc: s.desc || "",
+      img: extractImageUrl(s.images?.[0] as any) || getServiceImage(s.name),
+      badge: s.badge === "popular" ? "Most Popular" : s.badge === "new" ? "New" : s.badge || undefined,
+    });
+  });
+  const order = ["sign-boards", "vehicle", "pvc-flex", "promotional", "print", "apparel", "outdoor", "graphics"];
+  return [
+    ...order.filter(catId => grouped.has(catId)).map(catId => grouped.get(catId)!),
+    ...Array.from(grouped.entries()).filter(([catId]) => !order.includes(catId)).map(([, val]) => val),
+  ];
+}
+
 // Service Image Gallery Carousel Component
 interface ServiceGalleryProps {
   images: string[];
@@ -1074,7 +1109,13 @@ export default function Home() {
 
   // Get service categories from config or fallback
   const dynamicServiceCategories = getDynamicServiceCategories();
-  const serviceCategories = dynamicServiceCategories || SERVICES_CATEGORIES;
+  const serviceCategories = useMemo(() => {
+    if (dynamicServiceCategories) return dynamicServiceCategories;
+    if (adminConfig?.services && adminConfig.services.length > 0) {
+      return buildServiceCategoriesFromServices(adminConfig.services);
+    }
+    return SERVICES_CATEGORIES;
+  }, [dynamicServiceCategories, adminConfig]);
 
   // Get hero data from config or fallback
   const heroBgImage = adminConfig?.hero?.bgImage || "/images/portfolio/01.webp";
