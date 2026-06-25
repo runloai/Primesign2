@@ -2145,6 +2145,7 @@
             <span id="saveText">All changes saved</span>
           </div>
           <button class="btn btn-gold btn-sm" onclick="saveConfig()" title="Save All Changes">💾 Save All</button>
+          <button class="btn btn-cyan btn-sm" onclick="publishConfig()" title="Generate config.json for sharing">🌍 Publish Config</button>
           <a href="/" class="btn btn-outline btn-sm" target="_blank">🌐 View Site</a>
           <button class="btn btn-outline btn-sm" onclick="doLogout()">Logout</button>
         </div>
@@ -2592,10 +2593,16 @@
             </div>
             <div class="card-body">
               <div class="field-group">
-                <label class="field-label">Export/Import</label>
+                <label class="field-label">Publish Config (Shared with all visitors)</label>
+                <div class="field-hint" style="margin-bottom: 12px;">Generate config.json to share your changes with all website visitors</div>
+                <button class="btn btn-cyan" onclick="publishConfig()">🌍 Publish Config</button>
+              </div>
+              <div class="field-group">
+                <label class="field-label">Backup / Restore (Private)</label>
+                <div class="field-hint" style="margin-bottom: 12px;">Export/Import your full admin configuration for backup purposes</div>
                 <div class="flex gap-3">
-                  <button class="btn btn-outline" onclick="exportData()">📤 Export JSON</button>
-                  <button class="btn btn-outline" onclick="document.getElementById('importFile').click()">📥 Import JSON</button>
+                  <button class="btn btn-outline" onclick="exportData()">📤 Export Backup</button>
+                  <button class="btn btn-outline" onclick="document.getElementById('importFile').click()">📥 Import Backup</button>
                   <input type="file" id="importFile" class="hidden" accept=".json" onchange="importData(event)">
                 </div>
               </div>
@@ -4995,6 +5002,51 @@
       a.click();
       URL.revokeObjectURL(url);
       showToast('Configuration exported', 'success');
+    }
+
+    // ================================================
+    // PUBLISH CONFIG - Generate config.json for sharing
+    // ================================================
+    function publishConfig() {
+      // Create a clean config object with only the data needed for the website
+      const publishConfig = {
+        contact: config.contact,
+        testimonials: config.testimonials,
+        services: config.services,
+        portfolio: config.portfolio,
+        hero: config.hero,
+        aboutImages: config.aboutImages,
+        advantageImages: config.advantageImages,
+        colorScheme: config.colorScheme,
+        serviceCategories: config.serviceCategories,
+        settings: config.settings,
+        // Add metadata
+        _publishedAt: new Date().toISOString(),
+        _version: '1.0'
+      };
+      
+      const dataStr = JSON.stringify(publishConfig, null, 2);
+      const blob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'config.json';
+      a.click();
+      URL.revokeObjectURL(url);
+      
+      // Show instructions to the user
+      showToast('🌍 Config downloaded! Place as public/config.json to share with visitors.', 'success', 8000);
+      
+      // Also show a modal with instructions
+      setTimeout(() => {
+        alert(`📋 PUBLISH INSTRUCTIONS:
+
+1. Place the downloaded "config.json" in your project's "public/" folder
+2. Commit and push to your GitHub repository
+3. The website will automatically read from /config.json for all visitors
+
+💡 TIP: Admin's localStorage config acts as "preview" mode - visitors see the config.json version, admins see their local changes first.`);
+      }, 100);
     }
 
     async function importData(event) {

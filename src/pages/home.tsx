@@ -45,9 +45,14 @@ interface PortfolioConfig {
   featured?: boolean;
 }
 
-// Helper function to read admin config from localStorage
-function getAdminConfig(): { portfolio?: PortfolioConfig[]; hero?: any; services?: ServiceConfig[]; testimonials?: Testimonial[] } | null {
+// Shared config cache
+let sharedConfig: { portfolio?: PortfolioConfig[]; hero?: any; services?: ServiceConfig[]; testimonials?: Testimonial[]; contact?: any; settings?: any; aboutImages?: any[]; advantageImages?: any[]; colorScheme?: any; serviceCategories?: any[] } | null = null;
+let sharedConfigFetched = false;
+
+// Helper function to read admin config from localStorage (preview mode)
+function getAdminConfig(): { portfolio?: PortfolioConfig[]; hero?: any; services?: ServiceConfig[]; testimonials?: Testimonial[]; contact?: any; settings?: any; aboutImages?: any[]; advantageImages?: any[]; colorScheme?: any; serviceCategories?: any[] } | null {
   try {
+    // Admin/localStorage config takes priority for preview mode
     const stored = localStorage.getItem("primesign-config");
     if (stored) {
       const config = JSON.parse(stored);
@@ -56,6 +61,12 @@ function getAdminConfig(): { portfolio?: PortfolioConfig[]; hero?: any; services
         hero: config.hero,
         services: config.services,
         testimonials: config.testimonials,
+        contact: config.contact,
+        settings: config.settings,
+        aboutImages: config.aboutImages,
+        advantageImages: config.advantageImages,
+        colorScheme: config.colorScheme,
+        serviceCategories: config.serviceCategories,
       };
     }
   } catch (e) {
@@ -63,6 +74,61 @@ function getAdminConfig(): { portfolio?: PortfolioConfig[]; hero?: any; services
   }
   return null;
 }
+
+// Helper to fetch shared config from config.json (public shared config)
+async function fetchSharedConfig(): Promise<{ portfolio?: PortfolioConfig[]; hero?: any; services?: ServiceConfig[]; testimonials?: Testimonial[]; contact?: any; settings?: any; aboutImages?: any[]; advantageImages?: any[]; colorScheme?: any; serviceCategories?: any[] } | null> {
+  if (sharedConfigFetched) return sharedConfig;
+  
+  try {
+    const response = await fetch('/config.json', { 
+      method: 'GET',
+      headers: { 'Accept': 'application/json' }
+    });
+    
+    if (response.ok) {
+      const config = await response.json();
+      sharedConfig = {
+        portfolio: config.portfolio,
+        hero: config.hero,
+        services: config.services,
+        testimonials: config.testimonials,
+        contact: config.contact,
+        settings: config.settings,
+        aboutImages: config.aboutImages,
+        advantageImages: config.advantageImages,
+        colorScheme: config.colorScheme,
+        serviceCategories: config.serviceCategories,
+      };
+    }
+  } catch (e) {
+    // Silent fail - shared config not available
+  }
+  
+  sharedConfigFetched = true;
+  return sharedConfig;
+}
+
+// Get effective config (localStorage overrides shared config for admin preview)
+async function getEffectiveConfig(): Promise<{ portfolio?: PortfolioConfig[]; hero?: any; services?: ServiceConfig[]; testimonials?: Testimonial[]; contact?: any; settings?: any; aboutImages?: any[]; advantageImages?: any[]; colorScheme?: any; serviceCategories?: any[] } | null> {
+  // First fetch the shared config from config.json
+  const shared = await fetchSharedConfig();
+  // Then check for admin/localStorage override (preview mode)
+  const admin = getAdminConfig();
+  // Admin/localStorage override takes priority for preview
+  return admin || shared;
+}
+
+// Synchronous version for backward compatibility (fallback only)
+function getEffectiveConfigSync(): { portfolio?: PortfolioConfig[]; hero?: any; services?: ServiceConfig[]; testimonials?: Testimonial[]; contact?: any; settings?: any; aboutImages?: any[]; advantageImages?: any[]; colorScheme?: any; serviceCategories?: any[] } | null {
+  // First try localStorage/admin config (preview)
+  const admin = getAdminConfig();
+  if (admin) return admin;
+  // Fall back to cached shared config
+  return sharedConfig;
+}
+
+// Fetch config on module load (silent - doesn't block rendering)
+fetchSharedConfig().catch(() => {});
 
 const BASE = "https://raw.githubusercontent.com/runloai/PrimeSign/main/data";
 
@@ -404,7 +470,7 @@ const testimonials = [
   },
 ];
 
-// Helper to get dynamic testimonials from localStorage
+// Helper to get dynamic testimonials from config/localStorage (preview mode only)
 function getDynamicTestimonials(): Testimonial[] | null {
   try {
     const stored = localStorage.getItem("primesign-config");
@@ -455,7 +521,7 @@ function getCategoryFromServiceName(serviceName: string): string {
   return firstWord || "led";
 }
 
-// Helper to get dynamic services from admin config
+// Helper to get dynamic services from admin config (preview mode only)
 function getDynamicServices(): any[] | null {
   try {
     const stored = localStorage.getItem("primesign-config");
@@ -486,7 +552,7 @@ function getDynamicServices(): any[] | null {
   return null;
 }
 
-// Build services categories from admin config
+// Build services categories from admin config (preview mode only)
 function getDynamicServiceCategories(): typeof SERVICES_CATEGORIES | null {
   try {
     const stored = localStorage.getItem("primesign-config");
@@ -997,18 +1063,21 @@ export default function Home() {
     if (stored) { sessionStorage.removeItem("arsenal-category"); return stored; }
     return "sign-boards";
   });
-  const [adminConfig, setAdminConfig] = useState<{ portfolio?: PortfolioConfig[]; hero?: any; testimonials?: Testimonial[]; services?: ServiceConfig[] } | null>(null);
+  const [adminConfig, setAdminConfig] = useState<{ portfolio?: PortfolioConfig[]; hero?: any; testimonials?: Testimonial[]; services?: ServiceConfig[]; contact?: any; settings?: any; aboutImages?: any[]; advantageImages?: any[]; colorScheme?: any; serviceCategories?: any[] } | null>(null);
   const [testimonialIndex, setTestimonialIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const prefersReducedMotion = useReducedMotion();
 
-  // Load admin config from localStorage on mount
+  // Load config from localStorage (preview) or config.json (shared) on mount
   useEffect(() => {
-    const config = getAdminConfig();
-    if (config) {
-      setAdminConfig(config);
-    }
+    const loadConfig = async () => {
+      const config = await getEffectiveConfig();
+      if (config) {
+        setAdminConfig(config);
+      }
+    };
+    loadConfig();
   }, []);
 
   // Get services from config or fallback to hardcoded

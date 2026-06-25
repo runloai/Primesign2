@@ -1,0 +1,70 @@
+{
+  "contact": {
+    "phones": ["+91 6366525253", "+91 8861848284", "080 49595599"],
+    "emails": ["primesign2021@gmail.com"],
+    "address": "#35, Ramamurthy Nagar Signal, T C Palya Main Road, Bangalore 560016",
+    "whatsapp": "+91 6366525253",
+    "youtube": "https://www.youtube.com/@PrimesignBangalore",
+    "instagram": "https://www.instagram.com/primesignpvtltd/",
+    "facebook": "https://www.facebook.com/primesign.in",
+    "mapsUrl": "https://maps.google.com/?q=Primesign+Ramamurthy+Nagar+Bangalore",
+    "sendFileLabel": "Send Your File",
+    "sendFileNumber": "+91 6366525253"
+  },
+  "testimonials": [
+    {
+      "id": 1,
+      "name": "Rajesh K.",
+      "role": "Restaurant Owner, Indiranagar",
+      "text": "Primesign completely transformed our storefront. The 3D LED letters are incredibly bright and the finishing is flawless. Highly professional team.",
+      "rating": 5,
+      "avatar": ""
+    },
+    {
+      "id": 2,
+      "name": "Priya M.",
+      "role": "Facility Manager, Whitefield",
+      "text": "We needed massive corporate branding for our new tech park. Primesign delivered ahead of schedule with exceptional quality. Their attention to detail is unmatched.",
+      "rating": 5,
+      "avatar": ""
+    },
+    {
+      "id": 3,
+      "name": "Arjun S.",
+      "role": "Cafe Founder, Koramangala",
+      "text": "The custom neon sign they built for our cafe has become the main photo spot for our customers. Fast, affordable, and brilliant execution.",
+      "rating": 5,
+      "avatar": ""
+    }
+  ],
+  "services": [],
+  "portfolio": [],
+  "hero": {
+    "bgImage": "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/portfolio/01.webp",
+    "badge": "Bangalore's Premier Signage Studio",
+    "headline": "WE BUILD <br>UNFORGETTABLE<br>VISIBILITY.",
+    "subtitle": "From bold LED boards to precision 3D channel letters. We engineer high-impact signage that lights up Bangalore and makes your brand impossible to ignore.",
+    "stats": {
+      "projects": "500+",
+      "years": "5+",
+      "satisfaction": "100%",
+      "location": "Bangalore"
+    }
+  },
+  "aboutImages": [
+    "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/glow/3.webp",
+    "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/wall/3.webp",
+    "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/led/2.webp",
+    "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/square/ledsign.webp"
+  ],
+  "settings": {
+    "siteTitle": "PrimeSign - Premier Signage Studio Bangalore",
+    "siteDescription": "Premium LED signs, glow signs, acrylic signage and vehicle wraps in Bangalore.",
+    "logoType": "text",
+    "workingHours": "Mon - Sat: 9:00 AM - 7:00 PM<br>Sunday: Closed",
+    "aboutDescription": "Founded in 2021, PrimeSign Private Limited has rapidly become Bangalore's go-to studio for premium signage and architectural branding. We don't just print signs — we engineer visibility.",
+    "helpText": "Ready to transform your brand visibility? Let's discuss your project."
+  },
+  "_publishedAt": "2025-01-15T00:00:00.000Z",
+  "_version": "1.0"
+}
