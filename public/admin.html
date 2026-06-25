@@ -4984,8 +4984,7 @@
     // ================================================
     // PUBLISH CONFIG - Generate config.json for sharing
     // ================================================
-    function publishConfig() {
-      // Create a clean config object with only the data needed for the website
+    async function publishConfig() {
       const publishConfig = {
         contact: config.contact,
         testimonials: config.testimonials,
@@ -4997,23 +4996,35 @@
         colorScheme: config.colorScheme,
         serviceCategories: config.serviceCategories,
         settings: config.settings,
-        // Add metadata
         _publishedAt: new Date().toISOString(),
         _version: '1.0'
       };
       
-      const dataStr = JSON.stringify(publishConfig, null, 2);
-      const blob = new Blob([dataStr], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'config.json';
-      a.click();
-      URL.revokeObjectURL(url);
-      
-      // Show instructions to the user
-      showToast('🌍 Config downloaded! Place as public/config.json to share with visitors.', 'success', 8000);
-      
+      try {
+        const resp = await fetch("/api/publish", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(publishConfig)
+        });
+        if (resp.ok) {
+          const result = await resp.json();
+          showToast(`🌍 Published! ${result.services} services now live for all visitors. Commit config.json to GitHub for Netlify.`, 'success', 8000);
+        } else {
+          throw new Error("Publish failed");
+        }
+      } catch(e) {
+        // Fallback: download the file
+        const dataStr = JSON.stringify(publishConfig, null, 2);
+        const blob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'config.json';
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast('⬇️ Downloaded config.json. Place in public/ folder and commit to GitHub.', 'warning', 8000);
+      }
+    }
       // Also show a modal with instructions
       setTimeout(() => {
         alert(`📋 PUBLISH INSTRUCTIONS:
