@@ -25,43 +25,43 @@ const COLOR_SCHEMES = {
   "Lavender Dream": { p: "270 60% 55%", s: "330 50% 60%", b: "260 40% 97%", f: "260 25% 15%" },
 };
 
-// Service categories structure matching primesign.in
+// Service categories structure matching primesign.in - now with scroll-to-filter
 const SERVICE_MENU = {
   "SIGN BOARDS": [
-    { name: "Non-Light Sign Board", href: "/services/non-light-sign-board" },
-    { name: "3D LED Letters", href: "/services/3d-led-letters" },
-    { name: "Glow Sign Board", href: "/services/glow-sign-board" },
-    { name: "Acrylic Sign Board", href: "/services/acrylic-sign-board" },
-    { name: "PVC/SS Letter Sign", href: "/services/pvc-ss-letter-sign" },
-    { name: "Hoardings", href: "/services/hoardings" },
-    { name: "One Way Vision", href: "/services/one-way-vision" },
-    { name: "Gloss Branding", href: "/services/gloss-branding" },
-    { name: "Wall Graphics", href: "/services/wall-graphics" },
+    { name: "Non-Light Sign Board", href: "/#services", filter: "sign-boards" },
+    { name: "3D LED Letters", href: "/#services", filter: "sign-boards" },
+    { name: "Glow Sign Board", href: "/#services", filter: "sign-boards" },
+    { name: "Acrylic Sign Board", href: "/#services", filter: "sign-boards" },
+    { name: "PVC/SS Letter Sign", href: "/#services", filter: "sign-boards" },
+    { name: "Hoardings", href: "/#services", filter: "sign-boards" },
+    { name: "One Way Vision", href: "/#services", filter: "sign-boards" },
+    { name: "Gloss Branding", href: "/#services", filter: "sign-boards" },
+    { name: "Wall Graphics", href: "/#services", filter: "sign-boards" },
   ],
   "PROMOTIONAL DISPLAY": [
-    { name: "Tents", href: "/services/tents" },
-    { name: "Roll Up Standees", href: "/services/roll-up-standees" },
-    { name: "Promo Display", href: "/services/promo-display" },
+    { name: "Tents", href: "/#services", filter: "promotional" },
+    { name: "Roll Up Standees", href: "/#services", filter: "promotional" },
+    { name: "Promo Display", href: "/#services", filter: "promotional" },
   ],
   "DIGITAL PRINTS": [
-    { name: "Posters", href: "/services/posters" },
-    { name: "Visiting Cards", href: "/services/visiting-cards" },
-    { name: "ID Cards", href: "/services/id-cards" },
-    { name: "T-Shirts", href: "/services/t-shirts" },
-    { name: "Mugs", href: "/services/mugs" },
-    { name: "Invitations", href: "/services/invitations" },
-    { name: "Certificates", href: "/services/certificates" },
+    { name: "Posters", href: "/#services", filter: "digital" },
+    { name: "Visiting Cards", href: "/#services", filter: "digital" },
+    { name: "ID Cards", href: "/#services", filter: "digital" },
+    { name: "T-Shirts", href: "/#services", filter: "digital" },
+    { name: "Mugs", href: "/#services", filter: "digital" },
+    { name: "Invitations", href: "/#services", filter: "digital" },
+    { name: "Certificates", href: "/#services", filter: "digital" },
   ],
   "COMMERCIAL PRINTS": [
-    { name: "Quick Printing", href: "/services/quick-printing" },
-    { name: "Flex Format", href: "/services/flex-format" },
-    { name: "Digital Offset", href: "/services/digital-offset" },
+    { name: "Quick Printing", href: "/#services", filter: "commercial" },
+    { name: "Flex Format", href: "/#services", filter: "commercial" },
+    { name: "Digital Offset", href: "/#services", filter: "commercial" },
   ],
 };
 
 interface DropdownMenuProps {
   title: string;
-  items: { name: string; href: string }[];
+  items: { name: string; href: string; filter?: string }[];
   isOpen: boolean;
   onMouseEnter: () => void;
   onMouseLeave: () => void;

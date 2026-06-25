@@ -991,7 +991,7 @@ function ContactSection({ prefersReducedMotion }: { prefersReducedMotion: boolea
 export default function Home() {
   const { open: openQuote } = useQuoteModal();
   const [heroIndex, setHeroIndex] = useState(0);
-  const [portfolioFilter, setPortfolioFilter] = useState<string | null>(null);
+  const [portfolioFilter] = useState<string | null>(null);
   const [activeServiceCategory, setActiveServiceCategory] = useState<string>("sign-boards");
   const [adminConfig, setAdminConfig] = useState<{ portfolio?: PortfolioConfig[]; hero?: any; testimonials?: Testimonial[]; services?: ServiceConfig[] } | null>(null);
   const [testimonialIndex, setTestimonialIndex] = useState(0);
@@ -1148,15 +1148,9 @@ export default function Home() {
     setLightboxOpen(true);
   };
 
-  const filteredFeaturedItem = useMemo(() => {
-    if (!portfolioFilter) return featuredItem;
-    return featuredItem && featuredItem.cat === portfolioFilter ? featuredItem : null;
-  }, [featuredItem, portfolioFilter]);
+  const filteredFeaturedItem = useMemo(() => featuredItem, [featuredItem]);
 
-  const filteredNonFeaturedItems = useMemo(() => {
-    if (!portfolioFilter) return nonFeaturedItems;
-    return nonFeaturedItems.filter(item => item.cat === portfolioFilter);
-  }, [nonFeaturedItems, portfolioFilter]);
+  const filteredNonFeaturedItems = useMemo(() => nonFeaturedItems, [nonFeaturedItems]);
 
   // Get current category services
   const currentCategory = serviceCategories.find(c => c.id === activeServiceCategory) || serviceCategories[0];
@@ -1425,36 +1419,6 @@ export default function Home() {
             </a>
           </div>
 
-          {/* Portfolio filter buttons */}
-          <div 
-            className="flex flex-wrap gap-2 md:gap-3 mb-8 md:mb-10 justify-center md:justify-start"
-            role="tablist"
-            aria-label="Portfolio categories"
-          >
-            <button 
-              onClick={() => setPortfolioFilter(null)}
-              role="tab"
-              aria-selected={!portfolioFilter}
-              className={`px-4 md:px-5 py-2 rounded-full text-xs md:text-sm font-bold uppercase tracking-wider transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background ${
-                !portfolioFilter
-                  ? "bg-primary text-primary-foreground" : "bg-white/5 text-white/60 hover:bg-white/10"}`}
-            >
-              All
-            </button>
-            {portfolioCategories.map(cat => (
-              <button 
-                key={cat}
-                onClick={() => setPortfolioFilter(cat)}
-                role="tab"
-                aria-selected={portfolioFilter === cat}
-                className={`px-4 md:px-5 py-2 rounded-full text-xs md:text-sm font-bold uppercase tracking-wider transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background ${
-                  portfolioFilter === cat
-                    ? "bg-primary text-primary-foreground" : "bg-white/5 text-white/60 hover:bg-white/10"}`}
-              >
-                {cat.charAt(0).toUpperCase() + cat.slice(1)}
-              </button>
-            ))}
-          </div>
 
           {/* Portfolio Grid */}
           <div id="portfolio-grid" role="tabpanel" aria-label="Portfolio gallery">
