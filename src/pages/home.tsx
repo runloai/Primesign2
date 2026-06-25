@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { Link } from "wouter";
-import { ArrowRight, CheckCircle2, ChevronLeft, ChevronRight, PhoneCall, Star } from "lucide-react";
+import { ArrowRight, CheckCircle2, ChevronLeft, ChevronRight, PhoneCall, Star, Phone, Mail, Clock, MapPin, Send, Upload, CheckCircle, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuoteModal } from "@/context/QuoteModalContext";
 import { PortfolioImage } from "@/components/ui/image-with-skeleton";
@@ -1203,6 +1203,111 @@ export default function Home() {
             >
               <ChevronRight className="w-6 h-6" />
             </button>
+          </div>
+        </div>
+      </section>
+
+      {/* CONTACT FORM SECTION */}
+      <section id="contact" className="py-24 bg-card relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent opacity-50" />
+        
+        <div className="container mx-auto px-4 md:px-6 relative z-10">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <h2 className="text-sm text-primary font-bold tracking-widest uppercase mb-4">Get In Touch</h2>
+            <h3 className="text-4xl md:text-5xl font-display font-bold leading-tight mb-6">
+              READY TO START YOUR PROJECT?
+            </h3>
+            <p className="text-lg text-muted-foreground">
+              Fill out the form below and we'll get back to you within 24 hours with a free quote.
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-5 gap-12 max-w-6xl mx-auto">
+            {/* Contact Info Sidebar */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: prefersReducedMotion ? 0.01 : 0.6 }}
+              className="lg:col-span-2 space-y-8"
+            >
+              <div className="space-y-6">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                    <Phone className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-foreground mb-1">Phone</h4>
+                    <a href="tel:+916366525253" className="text-muted-foreground hover:text-primary transition-colors">
+                      +91 6366 525 253
+                    </a>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                    <Mail className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-foreground mb-1">Email</h4>
+                    <a href="mailto:info@primesign.in" className="text-muted-foreground hover:text-primary transition-colors">
+                      info@primesign.in
+                    </a>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                    <Clock className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-foreground mb-1">Working Hours</h4>
+                    <p className="text-muted-foreground">Mon - Sat: 9:00 AM - 9:00 PM</p>
+                    <p className="text-muted-foreground">Sunday: Closed</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                    <MapPin className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-foreground mb-1">Location</h4>
+                    <p className="text-muted-foreground">Bangalore, Karnataka, India</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Quick WhatsApp Button */}
+              <div className="p-6 bg-gradient-to-br from-green-500/10 to-green-600/10 border border-green-500/20 rounded-2xl">
+                <h4 className="font-semibold text-foreground mb-2">Prefer WhatsApp?</h4>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Chat with us directly for quick responses
+                </p>
+                <a
+                  href="https://wa.me/916366525253?text=Hello%20PrimeSign%2C%20I%20would%20like%20to%20know%20more%20about%20your%20services"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-full font-semibold transition-colors"
+                >
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.6 6.32A7.85 7.85 0 0 0 12 4a7.94 7.94 0 0 0-6.88 12.23l-1.02 3.72 3.81-1a7.93 7.93 0 0 0 3.76.94 7.85 7.85 0 0 0 7.8-7.8 7.7 7.7 0 0 0-1.07-4.04l.02-.03Zm-2.28 7.3c-.09.25-.6.48-.83.51-.23.04-.45.1-.81-.1a10.6 10.6 0 0 1-2.59-1.39c-.72-.5-1.55-1.35-1.83-1.85-.27-.5-.06-.77.2-1.02.21-.2.46-.53.7-.8l.08-.1c.23-.28.28-.46.42-.77.14-.3.07-.57-.03-.8a4.82 4.82 0 0 0-.68-1.17c-.18-.24-.38-.5-.54-.62-.3-.22-.63-.31-.99-.33l-.05.02c-.3 0-.65.1-.99.3-.33.19-.63.52-.83.82-.36.53-.5 1.12-.48 1.72v.03c.03.55.21 1.09.56 1.55 1.04 1.75 2.22 2.9 3.7 3.6.59.3 1.14.47 1.65.6.5.12.95.1 1.33.04.4-.07.75-.26 1.04-.47.29-.22.53-.5.7-.82l.04-.08c.11-.23.11-.44.07-.59-.05-.15-.16-.27-.31-.38Z"/>
+                  </svg>
+                  Chat on WhatsApp
+                </a>
+              </div>
+            </motion.div>
+
+            {/* Contact Form */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: prefersReducedMotion ? 0.01 : 0.6, delay: 0.1 }}
+              className="lg:col-span-3"
+            >
+              <ContactForm />
+            </motion.div>
           </div>
         </div>
       </section>
