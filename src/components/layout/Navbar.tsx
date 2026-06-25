@@ -606,8 +606,10 @@ function MobileDropdownSection({ title, items, onItemClick }: MobileDropdownSect
     if (item && 'filter' in item && item.filter) {
       // Navigate to services with filter
       setLocation('/#services');
-      // Store filter in sessionStorage to be picked up by services section
-      sessionStorage.setItem('serviceFilter', item.filter as string);
+      // Store filter in sessionStorage to be picked up by services section initializer
+      sessionStorage.setItem('arsenal-category', item.filter as string);
+      // Also dispatch custom event for SPA navigation (home component listens for this)
+      window.dispatchEvent(new CustomEvent("arsenal-filter", { detail: item.filter }));
     } else {
       setLocation(href);
     }

@@ -3748,6 +3748,7 @@
         uploadZone.querySelector('.upload-title').classList.remove('hidden');
         uploadZone.querySelector('.upload-subtitle').classList.remove('hidden');
       }
+      renderHeroStats();
     }
 
     async function fileToDataUrl(file) {
@@ -5145,7 +5146,9 @@
 
     function setColorScheme(scheme) {
       localStorage.setItem(SCHEME_KEY, scheme);
+      config.settings.scheme = scheme;
       renderColors();
+      updateSaveIndicator(false);
       showToast(`Color scheme changed to ${scheme}`, 'success');
     }
 
@@ -5164,7 +5167,6 @@
       }
 
       renderLogoPreview();
-      renderHeroStats();
     }
 
     function renderLogoPreview() {

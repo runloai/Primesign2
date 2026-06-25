@@ -848,7 +848,11 @@
     "logoUrl": "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/logo/logo.webp",
     "scheme": "Obsidian Gold",
     "whatsappNumber": "+91 6366525253",
-    "whatsappMessage": "Hi Primesign! I want to share a file for my signage project."
+    "whatsappMessage": "Hi Primesign! I want to share a file for my signage project.",
+    "workingHours": "Mon - Sat: 9:00 AM - 7:00 PM<br>Sunday: Closed",
+    "aboutDescription": "Founded in 2021, Primesign Private Limited has rapidly become Bangalore's go-to studio for premium signage and architectural branding. We don't just print signs — we engineer visibility.",
+    "helpText": "Ready to transform your brand visibility? Let's discuss your project.",
+    "mapsUrl": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d248849.8865401047!2d77.46612999155236!3d12.953945337580189!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae1670c9b44e6d%3A0xf8dfc3e8517e4a3e!2sBangalore%2C%20Karnataka!5e0!3m2!1sen!2sin!4v1703123456789!5m2!1sen!2sin"
   },
   "_publishedAt": "2026-06-25T17:00:24.936Z",
   "_version": "1.0"
