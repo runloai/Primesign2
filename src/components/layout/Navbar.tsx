@@ -134,13 +134,25 @@ function DropdownMenu({ title, items, isOpen, onMouseEnter, onMouseLeave, onClic
 
 export default function Navbar() {
   const { open } = useQuoteModal();
-  const [serviceMenu, setServiceMenu] = useState<Record<string, any[]>>(cachedMenu || {});
-  
+  // Try synchronous localStorage first, then async config.json fallback
+  const [serviceMenu, setServiceMenu] = useState<Record<string, any[]>>(() => {
+    try {
+      const stored = localStorage.getItem("primesign-config");
+      if (stored) {
+        const config = JSON.parse(stored);
+        if (config.services?.length > 0) return buildMenuFromServices(config.services);
+      }
+    } catch(e) {}
+    return {};
+  });
+
   useEffect(() => {
     if (Object.keys(serviceMenu).length === 0) {
       loadMenuFromConfig().then(menu => {
-        cachedMenu = menu;
-        setServiceMenu(menu);
+        if (Object.keys(menu).length > 0) {
+          cachedMenu = menu;
+          setServiceMenu(menu);
+        }
       });
     }
   }, []);
