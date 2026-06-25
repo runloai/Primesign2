@@ -1129,6 +1129,42 @@
       gap: 16px;
     }
 
+    .category-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      margin-top: 8px;
+      margin-bottom: 4px;
+      background: var(--bg-tertiary);
+      border-radius: var(--radius-md);
+      border-left: 3px solid var(--gold);
+    }
+
+    .category-header:first-child {
+      margin-top: 0;
+    }
+
+    .category-header-icon {
+      font-size: 18px;
+    }
+
+    .category-header-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--gold);
+    }
+
+    .category-header-count {
+      font-size: 12px;
+      color: var(--text-muted);
+      background: var(--bg-secondary);
+      padding: 2px 10px;
+      border-radius: 12px;
+      margin-left: auto;
+    }
+
     .service-card {
       background: var(--bg-primary);
       border: 1px solid var(--border-primary);
@@ -2468,6 +2504,23 @@
 
           <div class="card">
             <div class="card-header">
+              <div class="card-title"><span class="card-title-icon">💬</span> WhatsApp Settings</div>
+            </div>
+            <div class="card-body">
+              <div class="field-group">
+                <label class="field-label">WhatsApp Number</label>
+                <input type="text" class="field-input" data-path="settings.whatsappNumber" placeholder="+91 6366525253">
+              </div>
+              <div class="field-group">
+                <label class="field-label">Preset Message</label>
+                <textarea class="field-textarea" data-path="settings.whatsappMessage" rows="3" placeholder="Hi Primesign! I want to share a file for my signage project."></textarea>
+                <div class="field-hint">This message is pre-filled when users click the WhatsApp contact button</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
               <div class="card-title"><span class="card-title-icon">💾</span> Data Management</div>
             </div>
             <div class="card-body">
@@ -2959,7 +3012,9 @@
       },
       settings: {
         logoType: "image",
-        scheme: "Obsidian Gold"
+        scheme: "Obsidian Gold",
+        whatsappNumber: "+91 6366525253",
+        whatsappMessage: "Hi Primesign! I want to share a file for my signage project."
       }
     };
 
