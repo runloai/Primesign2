@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { Link } from "wouter";
-import { ArrowRight, CheckCircle2, ChevronLeft, ChevronRight, PhoneCall, Star, MapPin, Mail, Clock, Upload, Send, SiWhatsapp } from "lucide-react";
+import { ArrowRight, CheckCircle2, ChevronLeft, ChevronRight, X, PhoneCall, Star, MapPin, Mail, Clock, Upload, Send, SiWhatsapp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -1152,6 +1152,62 @@ export default function Home() {
 
   const filteredNonFeaturedItems = useMemo(() => nonFeaturedItems, [nonFeaturedItems]);
 
+  // Service detail state
+  const [selectedService, setSelectedService] = useState<{ name: string; desc: string; images: string[] } | null>(null);
+  const [selectedServiceImageIndex, setSelectedServiceImageIndex] = useState(0);
+
+  // Build a name-to-images lookup from displayServices
+  const serviceImagesLookup = useMemo(() => {
+    const map = new Map<string, string[]>();
+    (displayServices || []).forEach((s: any) => {
+      if (s.title) {
+        const key = s.title.toLowerCase().replace(/\s+/g, ' ').trim();
+        map.set(key, (s.images || []).filter(Boolean));
+      }
+    });
+    return map;
+  }, [displayServices]);
+
+  const getServiceImages = useCallback((serviceName: string, fallbackImg?: string): string[] => {
+    const normalized = serviceName.toLowerCase().replace(/\s+/g, ' ').trim();
+    const exact = serviceImagesLookup.get(normalized);
+    if (exact && exact.length > 0) return exact;
+    const noTrailS = normalized.replace(/s$/, '');
+    for (const [key, imgs] of serviceImagesLookup) {
+      if (key.replace(/s$/, '') === noTrailS && imgs.length > 0) return imgs;
+      if (key.includes(noTrailS) || noTrailS.includes(key)) {
+        if (imgs.length > 0) return imgs;
+      }
+    }
+    return fallbackImg ? [fallbackImg] : [IMAGES.led[0]];
+  }, [serviceImagesLookup]);
+
+  const openServiceDetail = useCallback((item: { name: string; desc: string; img?: string }) => {
+    const images = getServiceImages(item.name, item.img);
+    setSelectedService({ name: item.name, desc: item.desc, images });
+    setSelectedServiceImageIndex(0);
+  }, [getServiceImages]);
+
+  // Keyboard navigation for service detail
+  useEffect(() => {
+    if (!selectedService) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setSelectedService(null);
+      if (e.key === 'ArrowRight') {
+        setSelectedServiceImageIndex(prev => (prev + 1) % selectedService.images.length);
+      }
+      if (e.key === 'ArrowLeft') {
+        setSelectedServiceImageIndex(prev => (prev - 1 + selectedService.images.length) % selectedService.images.length);
+      }
+    };
+    window.addEventListener('keydown', handleKey);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      window.removeEventListener('keydown', handleKey);
+      document.body.style.overflow = '';
+    };
+  }, [selectedService]);
+
   // Get current category services
   const currentCategory = serviceCategories.find(c => c.id === activeServiceCategory) || serviceCategories[0];
 
@@ -1361,7 +1417,7 @@ export default function Home() {
                 transition={{ duration: prefersReducedMotion ? 0.01 : 0.5, delay: index * 0.05 }}
                 className="group relative bg-card rounded-2xl overflow-hidden border border-white/5 hover:border-primary/50 hover:shadow-[0_0_40px_rgba(240,168,48,0.15)] transition-all duration-500 cursor-pointer"
                 onClick={() => {
-                  openQuote();
+                  openServiceDetail(service);
                 }}
               >
                 {service.badge && (
@@ -1385,6 +1441,12 @@ export default function Home() {
                   <p className="text-muted-foreground text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     {service.desc}
                   </p>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); openServiceDetail(service); }}
+                    className="mt-2 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary hover:text-primary/80 transition-colors opacity-0 group-hover:opacity-100"
+                  >
+                    See Work →
+                  </button>
                 </div>
               </motion.div>
             ))}
@@ -1695,6 +1757,129 @@ export default function Home() {
         onClose={() => setLightboxOpen(false)}
         onNavigate={setLightboxIndex}
       />
+
+      {/* Service Detail Overlay */}
+      <AnimatePresence>
+        {selectedService && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-[100] flex flex-col bg-black/95 backdrop-blur-sm"
+            onClick={() => setSelectedService(null)}
+            role="dialog"
+            aria-modal="true"
+            aria-label={`${selectedService.name} detail view`}
+          >
+            {/* Back button */}
+            <div className="absolute top-4 left-4 z-20">
+              <button
+                onClick={(e) => { e.stopPropagation(); setSelectedService(null); }}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white text-sm font-bold uppercase tracking-wider"
+              >
+                <ChevronLeft className="w-4 h-4" />
+                Back to Arsenal
+              </button>
+            </div>
+
+            {/* Close button */}
+            <button
+              onClick={(e) => { e.stopPropagation(); setSelectedService(null); }}
+              className="absolute top-4 right-4 z-20 p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
+              aria-label="Close detail view"
+            >
+              <X className="w-6 h-6 text-white" />
+            </button>
+
+            {/* Service info */}
+            <div className="text-center pt-20 pb-4 px-4 z-10">
+              <h3 className="text-2xl md:text-3xl font-display font-bold text-white mb-2">
+                {selectedService.name}
+              </h3>
+              <p className="text-muted-foreground text-sm md:text-base max-w-xl mx-auto mb-2">
+                {selectedService.desc}
+              </p>
+              <span className="inline-block text-xs font-bold uppercase tracking-wider text-primary bg-primary/10 px-3 py-1 rounded-full">
+                {selectedService.images.length} Image{selectedService.images.length !== 1 ? 's' : ''}
+              </span>
+            </div>
+
+            {/* Image gallery */}
+            <div className="flex-1 relative flex items-center justify-center px-4 pb-4">
+              {/* Counter */}
+              <div className="absolute top-4 right-4 md:right-8 z-10 px-4 py-2 rounded-full bg-black/60 text-white text-sm font-medium">
+                {selectedServiceImageIndex + 1} / {selectedService.images.length}
+              </div>
+
+              {/* Prev arrow */}
+              {selectedService.images.length > 1 && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); setSelectedServiceImageIndex(prev => (prev - 1 + selectedService.images.length) % selectedService.images.length); }}
+                  className="absolute left-4 z-10 p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
+                  aria-label="Previous image"
+                >
+                  <ChevronLeft className="w-6 h-6 text-white" />
+                </button>
+              )}
+
+              {/* Main image */}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={selectedServiceImageIndex}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
+                  className="relative max-w-[90vw] max-h-[60vh] flex items-center justify-center"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <img
+                    src={selectedService.images[selectedServiceImageIndex]}
+                    alt={`${selectedService.name} - Image ${selectedServiceImageIndex + 1}`}
+                    className="max-w-full max-h-[60vh] object-contain rounded-lg"
+                  />
+                </motion.div>
+              </AnimatePresence>
+
+              {/* Next arrow */}
+              {selectedService.images.length > 1 && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); setSelectedServiceImageIndex(prev => (prev + 1) % selectedService.images.length); }}
+                  className="absolute right-4 z-10 p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
+                  aria-label="Next image"
+                >
+                  <ChevronRight className="w-6 h-6 text-white" />
+                </button>
+              )}
+
+              {/* Thumbnail strip */}
+              {selectedService.images.length > 1 && (
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex gap-2 max-w-[80vw] overflow-x-auto px-4 py-2 rounded-full bg-black/60 backdrop-blur-sm">
+                  {selectedService.images.map((img, idx) => (
+                    <button
+                      key={idx}
+                      onClick={(e) => { e.stopPropagation(); setSelectedServiceImageIndex(idx); }}
+                      className={`flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden border-2 transition-all focus:outline-none focus:ring-2 focus:ring-primary ${
+                        idx === selectedServiceImageIndex
+                          ? 'border-primary ring-2 ring-primary/50'
+                          : 'border-transparent opacity-60 hover:opacity-100'
+                      }`}
+                      aria-label={`Go to image ${idx + 1}`}
+                    >
+                      <img
+                        src={img}
+                        alt={`Thumbnail ${idx + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
