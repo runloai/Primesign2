@@ -1,9 +1,19 @@
 import { SiWhatsapp } from "react-icons/si";
+import { useState, useEffect } from "react";
 
 export default function FloatingWhatsApp() {
-  // Preset message for WhatsApp
-  const presetMessage = encodeURIComponent("Hello PrimeSign, I'd like to know more about your signage services. Can you help me with a quote?");
-  const whatsappUrl = `https://wa.me/916366525253?text=${presetMessage}`;
+  const [waNumber, setWaNumber] = useState("916366525253");
+  const [waMessage, setWaMessage] = useState("Hello PrimeSign, I'd like to know more about your signage services. Can you help me with a quote?");
+
+  useEffect(() => {
+    fetch("/config.json?t=" + Date.now()).then(r => r.json()).then(c => {
+      if (c.contact?.phones?.[0]) setWaNumber(c.contact.phones[0].replace(/[^\d]/g, ''));
+      if (c.settings?.whatsappMessage) setWaMessage(c.settings.whatsappMessage);
+    }).catch(() => {});
+  }, []);
+
+  const presetMessage = encodeURIComponent(waMessage);
+  const whatsappUrl = `https://wa.me/${waNumber}?text=${presetMessage}`;
 
   return (
     <a

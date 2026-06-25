@@ -18,6 +18,15 @@ class PublishHandler(http.server.SimpleHTTPRequestHandler):
             try:
                 length = int(self.headers.get("Content-Length", 0))
                 data = json.loads(self.rfile.read(length))
+                # Don't overwrite with empty data
+                if not data.get("services") and not data.get("contact"):
+                    svc_count = json.load(open(os.path.join(PUBLIC_DIR, "config.json"))).get("services", [])
+                    self.send_response(400)
+                    self.send_header("Content-Type", "application/json")
+                    self.end_headers()
+                    self.wfile.write(json.dumps({"error": "empty payload", "existing_services": len(svc_count)}).encode())
+                    print(f"❌ Rejected empty publish")
+                    return
                 # Write to both public/ and dist/
                 for d in [PUBLIC_DIR, DIST_DIR]:
                     os.makedirs(d, exist_ok=True)

@@ -4261,9 +4261,13 @@
     function getDefaultCategories() {
       return [
         { id: 'sign-boards', label: 'Sign Boards', icon: '🪧', description: 'Premium signage solutions for every business need' },
+        { id: 'vehicle', label: 'Vehicles', icon: '🚗', description: 'Vehicle branding and wrap solutions' },
+        { id: 'pvc-flex', label: 'PVC & Flex', icon: '📋', description: 'Durable flex and PVC printing solutions' },
+        { id: 'outdoor', label: 'Outdoor', icon: '🏗️', description: 'Large-format outdoor signage solutions' },
+        { id: 'graphics', label: 'Graphics', icon: '🎨', description: 'Custom graphics and branding solutions' },
         { id: 'promotional', label: 'Promotional Display', icon: '📢', description: 'Eye-catching display solutions for events & marketing' },
-        { id: 'digital', label: 'Digital Prints', icon: '🖨️', description: 'High-quality digital printing on various media' },
-        { id: 'commercial', label: 'Commercial', icon: '🏢', description: 'Professional printing for business needs' }
+        { id: 'print', label: 'Digital Prints', icon: '🖨️', description: 'High-quality digital printing on various media' },
+        { id: 'apparel', label: 'Apparel', icon: '👕', description: 'Custom apparel and merchandise printing' }
       ];
     }
 
@@ -4553,6 +4557,11 @@
               <option value="wall" ${item.category === 'wall' ? 'selected' : ''}>Wall Branding</option>
               <option value="vehicle" ${item.category === 'vehicle' ? 'selected' : ''}>Vehicle Wraps</option>
               <option value="pvc" ${item.category === 'pvc' ? 'selected' : ''}>PVC & Flex</option>
+              <option value="outdoor" ${item.category === 'outdoor' ? 'selected' : ''}>Outdoor</option>
+              <option value="graphics" ${item.category === 'graphics' ? 'selected' : ''}>Graphics</option>
+              <option value="promotional" ${item.category === 'promotional' ? 'selected' : ''}>Promotional</option>
+              <option value="print" ${item.category === 'print' ? 'selected' : ''}>Digital Prints</option>
+              <option value="apparel" ${item.category === 'apparel' ? 'selected' : ''}>Apparel</option>
             </select>
           </div>
           <div class="portfolio-actions">

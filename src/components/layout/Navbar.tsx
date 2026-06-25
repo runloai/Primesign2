@@ -132,12 +132,14 @@ export default function Navbar() {
   const [useTextLogo, setUseTextLogo] = useState(false);
   const [logoSrc, setLogoSrc] = useState("https://raw.githubusercontent.com/runloai/PrimeSign/main/data/logo/logo.webp");
   const [serviceMenu, setServiceMenu] = useState(FALLBACK_SERVICE_MENU);
+  const [configContact, setConfigContact] = useState<{ phones?: string[]; emails?: string[]; facebook?: string; instagram?: string; youtube?: string } | null>(null);
 
   useEffect(() => {
     fetch("/config.json?t=" + Date.now()).then(r => r.json()).then(c => {
       if (c.settings?.logoType === "text") setUseTextLogo(true);
       if (c.settings?.logoUrl) setLogoSrc(c.settings.logoUrl);
       if (c.settings?.scheme && COLOR_SCHEMES[c.settings.scheme]) setScheme(c.settings.scheme);
+      if (c.contact) setConfigContact(c.contact);
       if (c.services && c.services.length > 0) {
         const categoryTitles: Record<string, string> = {
           "sign-boards": "SIGN BOARDS",
@@ -489,29 +491,29 @@ export default function Navbar() {
                 {/* Mobile Contact Info */}
                 <div className="mt-8 pt-8 border-t border-white/10 space-y-4">
                   <a 
-                    href="tel:+916366525253" 
+                    href={`tel:${configContact?.phones?.[0]?.replace(/\s/g, '') || '+916366525253'}`} 
                     className="flex items-center gap-3 text-foreground/70 hover:text-primary transition-colors"
                   >
                     <Phone className="w-5 h-5 text-primary" />
-                    <span>+91 6366 525 253</span>
+                    <span>{configContact?.phones?.[0] || '+91 6366 525 253'}</span>
                   </a>
                   <a 
-                    href="mailto:info@primesign.in" 
+                    href={`mailto:${configContact?.emails?.[0] || 'primesign2021@gmail.com'}`} 
                     className="flex items-center gap-3 text-foreground/70 hover:text-primary transition-colors"
                   >
                     <Mail className="w-5 h-5 text-primary" />
-                    <span>info@primesign.in</span>
+                    <span>{configContact?.emails?.[0] || 'primesign2021@gmail.com'}</span>
                   </a>
                   <div className="flex items-center gap-3 text-foreground/70">
                     <Clock className="w-5 h-5 text-primary" />
-                    <span>Mon-Sat, 9am-9pm</span>
+                    <span>Mon-Sat, 9am-7pm</span>
                   </div>
                 </div>
 
                 {/* Mobile Social Links */}
                 <div className="flex items-center gap-4 mt-6">
                   <a 
-                    href="https://facebook.com/primesign" 
+                    href={configContact?.facebook || 'https://www.facebook.com/primesign.in'} 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="p-3 bg-white/5 rounded-lg text-foreground/60 hover:text-primary hover:bg-white/10 transition-colors"
@@ -519,7 +521,7 @@ export default function Navbar() {
                     <Facebook className="w-5 h-5" />
                   </a>
                   <a 
-                    href="https://instagram.com/primesign" 
+                    href={configContact?.instagram || 'https://www.instagram.com/primesignpvtltd/'} 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="p-3 bg-white/5 rounded-lg text-foreground/60 hover:text-primary hover:bg-white/10 transition-colors"
@@ -527,7 +529,7 @@ export default function Navbar() {
                     <Instagram className="w-5 h-5" />
                   </a>
                   <a 
-                    href="https://youtube.com/@PrimesignBangalore" 
+                    href={configContact?.youtube || 'https://www.youtube.com/@PrimesignBangalore'} 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="p-3 bg-white/5 rounded-lg text-foreground/60 hover:text-primary hover:bg-white/10 transition-colors"

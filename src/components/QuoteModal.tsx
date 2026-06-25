@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Send, CheckSquare, Square } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -48,6 +48,13 @@ const BUDGET_RANGES = [
 
 export default function QuoteModal() {
   const { isOpen, close } = useQuoteModal();
+  const [waNumber, setWaNumber] = useState("916366525253");
+
+  useEffect(() => {
+    fetch("/config.json?t=" + Date.now()).then(r => r.json()).then(c => {
+      if (c.contact?.phones?.[0]) setWaNumber(c.contact.phones[0].replace(/[^\d]/g, ''));
+    }).catch(() => {});
+  }, []);
 
   const [form, setForm] = useState({
     name: "",
@@ -87,7 +94,7 @@ export default function QuoteModal() {
       .filter(Boolean)
       .join("\n");
 
-    const url = `https://wa.me/916366525253?text=${encodeURIComponent(lines)}`;
+    const url = `https://wa.me/${waNumber}?text=${encodeURIComponent(lines)}`;
     window.open(url, "_blank");
     setSubmitted(true);
   };
