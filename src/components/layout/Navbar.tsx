@@ -117,9 +117,13 @@ function DropdownMenu({ title, items, isOpen, onMouseEnter, onMouseLeave, onClic
                   if (item.filter) {
                     sessionStorage.setItem("arsenal-category", item.filter);
                     window.dispatchEvent(new CustomEvent("arsenal-filter", { detail: item.filter }));
+                    if (item.serviceId) {
+                      setTimeout(() => {
+                        window.dispatchEvent(new CustomEvent("scroll-to-service", { detail: { category: item.filter, serviceId: item.serviceId } }));
+                      }, 100);
+                    }
                   }
-                  const el = document.getElementById("services");
-                  if (el) setTimeout(() => el.scrollIntoView({ behavior: "smooth" }), 50);
+                  document.getElementById("services")?.scrollIntoView({ behavior: "smooth" });
                 }}
                 className="block px-4 py-2.5 text-sm text-foreground/80 hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
               >

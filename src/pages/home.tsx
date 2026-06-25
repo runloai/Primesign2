@@ -1029,14 +1029,24 @@ export default function Home() {
     loadConfig();
   }, []);
 
-  // Listen for navbar dropdown category changes
+  // Listen for navbar dropdown category changes + specific service scroll
   useEffect(() => {
     const handler = (e: CustomEvent) => {
       setActiveServiceCategory(e.detail);
       document.getElementById("services")?.scrollIntoView({ behavior: "smooth" });
     };
+    const svcHandler = (e: CustomEvent) => {
+      setActiveServiceCategory(e.detail.category);
+      setTimeout(() => {
+        document.getElementById(`svc-${e.detail.serviceId}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 100);
+    };
     window.addEventListener("arsenal-filter", handler as EventListener);
-    return () => window.removeEventListener("arsenal-filter", handler as EventListener);
+    window.addEventListener("scroll-to-service", svcHandler as EventListener);
+    return () => {
+      window.removeEventListener("arsenal-filter", handler as EventListener);
+      window.removeEventListener("scroll-to-service", svcHandler as EventListener);
+    };
   }, []);
 
   // Get services from config or fallback to hardcoded
@@ -1443,6 +1453,7 @@ export default function Home() {
             {currentCategory.items.map((service, index) => (
               <motion.div
                 key={service.name}
+                id={`svc-${service.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '')}`}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
