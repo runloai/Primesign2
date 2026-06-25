@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { Link } from "wouter";
-import { ArrowRight, CheckCircle2, ChevronLeft, ChevronRight, X, PhoneCall, Star, MapPin, Mail, Clock, Upload, Send, SiWhatsapp } from "lucide-react";
+import { ArrowRight, CheckCircle2, ChevronLeft, ChevronRight, X, PhoneCall, Star, MapPin, Mail, Clock, Upload, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -907,11 +907,12 @@ function ContactSection({ prefersReducedMotion, adminConfig }: { prefersReducedM
 
                 <div>
                   <Label htmlFor="email" className="text-sm font-medium text-muted-foreground mb-2 block">
-                    Email Address
+                    Email Address *
                   </Label>
                   <Input
                     id="email"
                     type="email"
+                    required
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     placeholder="you@example.com"
@@ -1796,14 +1797,14 @@ export default function Home() {
             {/* Navigation Arrows */}
             <button
               onClick={() => setTestimonialIndex((prev) => (prev - 1 + displayTestimonials.length) % displayTestimonials.length)}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-16 w-12 h-12 rounded-full bg-background border border-border flex items-center justify-center text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+              className="testimonial-arrow absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-16 w-12 h-12 rounded-full bg-background border border-border flex items-center justify-center text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
               aria-label="Previous testimonial"
             >
               <ChevronLeft className="w-6 h-6" />
             </button>
             <button
               onClick={() => setTestimonialIndex((prev) => (prev + 1) % displayTestimonials.length)}
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-16 w-12 h-12 rounded-full bg-background border border-border flex items-center justify-center text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+              className="testimonial-arrow absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-16 w-12 h-12 rounded-full bg-background border border-border flex items-center justify-center text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
               aria-label="Next testimonial"
             >
               <ChevronRight className="w-6 h-6" />

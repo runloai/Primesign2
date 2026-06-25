@@ -211,6 +211,34 @@
   }
 }
 
+/* Prevent horizontal scroll on all viewports */
+html {
+  overflow-x: hidden;
+  width: 100%;
+}
+body, #root {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+/* Ensure images and media don't overflow */
+img, video, iframe {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Small screen improvements */
+@media (max-width: 420px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  h1, .hero-heading {
+    word-break: break-word;
+    hyphens: none;
+  }
+}
+
 /* Mobile-specific improvements */
 @media (max-width: 768px) {
   /* Ensure all clickable elements are at least 44px on mobile */
@@ -236,6 +264,30 @@
     .portfolio-item .group-hover\:scale-105 {
       transform: none !important;
     }
+  }
+}
+
+/* Very small screens: single-column portfolio grid */
+@media (max-width: 400px) {
+  #portfolio-grid .grid-cols-2 {
+    grid-template-columns: 1fr;
+  }
+  #portfolio-grid .col-span-2 {
+    grid-column: span 1;
+  }
+  #portfolio-grid .row-span-2 {
+    grid-row: span 1;
+  }
+  #portfolio-grid .aspect-square {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+/* Testimonials arrow buttons: ensure visible on mobile */
+@media (max-width: 768px) {
+  .testimonial-arrow {
+    width: 2.5rem;
+    height: 2.5rem;
   }
 }
 

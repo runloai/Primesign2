@@ -1,10 +1,43 @@
 import { motion } from "framer-motion";
-import { Mail, MapPin, Phone, Clock, Send } from "lucide-react";
+import { Mail, MapPin, Phone, Clock, Send, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
 
 export default function ContactPage() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+    service: "",
+    message: "",
+  });
+  const [file, setFile] = useState<File | null>(null);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const lines = [
+      `*New Enquiry - PrimeSign*`,
+      ``,
+      `*Name:* ${formData.name}`,
+      `*Email:* ${formData.email}`,
+      `*Phone:* ${formData.phone}`,
+      formData.address ? `*Address:* ${formData.address}` : null,
+      formData.service ? `*Service Required:* ${formData.service}` : null,
+      ``,
+      `*Message:*`,
+      formData.message,
+      file ? `\n*Attachment:* ${file.name}` : null,
+    ].filter(Boolean).join("\n");
+
+    const waNumber = "916366525253";
+    const url = `https://wa.me/${waNumber}?text=${encodeURIComponent(lines)}`;
+    window.open(url, "_blank");
+  };
+
   return (
     <div className="min-h-screen pt-24 pb-20">
       <div className="container mx-auto px-4 md:px-6">
@@ -88,36 +121,81 @@ export default function ContactPage() {
           >
             <div className="bg-card border border-white/5 rounded-3xl p-8 md:p-10 shadow-xl">
               <h2 className="text-2xl font-display font-bold uppercase tracking-wider mb-8">Send an Enquiry</h2>
-              <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+              <form className="space-y-6" onSubmit={handleSubmit}>
                 <div className="grid sm:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Name</label>
-                    <Input placeholder="John Doe" className="h-12 bg-background border-white/10" />
+                    <Label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Name *</Label>
+                    <Input
+                      required
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      placeholder="John Doe"
+                      className="h-12 bg-background border-white/10"
+                    />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Phone Number</label>
-                    <Input placeholder="+91 00000 00000" className="h-12 bg-background border-white/10" />
+                    <Label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Phone Number *</Label>
+                    <Input
+                      type="tel"
+                      required
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      placeholder="+91 00000 00000"
+                      className="h-12 bg-background border-white/10"
+                    />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Service Required</label>
-                  <select className="flex h-12 w-full items-center justify-between rounded-md border border-white/10 bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
-                    <option value="" disabled selected hidden>Select a service</option>
-                    <option value="led">LED Signs</option>
-                    <option value="3d">3D Channel Letters</option>
-                    <option value="neon">Neon Signs</option>
-                    <option value="acrylic">Acrylic Signs</option>
-                    <option value="hoarding">Outdoor Hoardings</option>
-                    <option value="corporate">Corporate Branding</option>
-                    <option value="other">Other</option>
-                  </select>
+                  <Label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Email Address *</Label>
+                  <Input
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    placeholder="you@example.com"
+                    className="h-12 bg-background border-white/10"
+                  />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Project Details</label>
-                  <Textarea placeholder="Tell us about your requirements..." className="min-h-[120px] bg-background border-white/10 resize-none" />
+                  <Label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Address / Location</Label>
+                  <Input
+                    value={formData.address}
+                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                    placeholder="Your address or area in Bangalore"
+                    className="h-12 bg-background border-white/10"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Message *</Label>
+                  <Textarea
+                    required
+                    value={formData.message}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                    placeholder="Tell us about your project requirements..."
+                    className="min-h-[120px] bg-background border-white/10 resize-none"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Attachment (Optional)</Label>
+                  <Input
+                    type="file"
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        setFile(e.target.files[0]);
+                      }
+                    }}
+                    accept="image/*,.pdf,.doc,.docx"
+                    className="h-12 bg-background border-white/10 file:bg-primary/10 file:text-primary file:border-0 file:rounded-md"
+                  />
+                  {file && (
+                    <p className="text-xs text-muted-foreground mt-2 flex items-center gap-2">
+                      <Upload className="w-3 h-3" />
+                      {file.name}
+                    </p>
+                  )}
                 </div>
                 <Button type="submit" size="lg" className="w-full h-14 rounded-full font-bold uppercase tracking-wide text-lg box-glow">
-                  Submit Enquiry <Send className="ml-2 w-5 h-5" />
+                  Send via WhatsApp <Send className="ml-2 w-5 h-5" />
                 </Button>
               </form>
             </div>

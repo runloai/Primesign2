@@ -554,35 +554,6 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* WhatsApp Floating Button */}
-      <a
-        href={`https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MESSAGE}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 z-[100] group"
-        aria-label="Chat on WhatsApp"
-      >
-        <div className="relative">
-          {/* Pulse Animation */}
-          <div className="absolute inset-0 bg-green-500 rounded-full animate-ping opacity-20" />
-          
-          {/* Button */}
-          <div className="relative w-14 h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center shadow-lg shadow-green-500/30 hover:shadow-green-500/50 hover:scale-110 transition-all duration-300">
-            <svg 
-              className="w-7 h-7 text-white" 
-              viewBox="0 0 24 24" 
-              fill="currentColor"
-            >
-              <path d="M17.6 6.32A7.85 7.85 0 0 0 12 4a7.94 7.94 0 0 0-6.88 12.23l-1.02 3.72 3.81-1a7.93 7.93 0 0 0 3.76.94 7.85 7.85 0 0 0 7.8-7.8 7.7 7.7 0 0 0-1.07-4.04l.02-.03Zm-2.28 7.3c-.09.25-.6.48-.83.51-.23.04-.45.1-.81-.1a10.6 10.6 0 0 1-2.59-1.39c-.72-.5-1.55-1.35-1.83-1.85-.27-.5-.06-.77.2-1.02.21-.2.46-.53.7-.8l.08-.1c.23-.28.28-.46.42-.77.14-.3.07-.57-.03-.8a4.82 4.82 0 0 0-.68-1.17c-.18-.24-.38-.5-.54-.62-.3-.22-.63-.31-.99-.33l-.05.02c-.3 0-.65.1-.99.3-.33.19-.63.52-.83.82-.36.53-.5 1.12-.48 1.72v.03c.03.55.21 1.09.56 1.55 1.04 1.75 2.22 2.9 3.7 3.6.59.3 1.14.47 1.65.6.5.12.95.1 1.33.04.4-.07.75-.26 1.04-.47.29-.22.53-.5.7-.82l.04-.08c.11-.23.11-.44.07-.59-.05-.15-.16-.27-.31-.38Z"/>
-            </svg>
-          </div>
-          
-          {/* Tooltip */}
-          <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-card border border-white/10 rounded-lg text-sm font-medium text-foreground whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-            Chat on WhatsApp
-          </div>
-        </div>
-      </a>
     </>
   );
 }
