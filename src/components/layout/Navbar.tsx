@@ -240,21 +240,21 @@ export default function Navbar() {
             <div className="hidden md:flex items-center gap-6">
               <div className="flex items-center gap-2 text-foreground/60">
                 <Clock className="w-3.5 h-3.5 text-primary" />
-                <span>Mon-Sat, 9am-9pm</span>
+                <span>Mon-Sat, 9am-7pm</span>
               </div>
               <a 
-                href="tel:+916366525253" 
+                href={`tel:${configContact?.phones?.[0]?.replace(/\s/g, '') || '+916366525253'}`} 
                 className="flex items-center gap-2 text-foreground/60 hover:text-primary transition-colors"
               >
                 <Phone className="w-3.5 h-3.5 text-primary" />
-                <span>+91 6366 525 253</span>
+                <span>{configContact?.phones?.[0] || '+91 6366 525 253'}</span>
               </a>
               <a 
-                href="mailto:info@primesign.in" 
+                href={`mailto:${configContact?.emails?.[0] || 'primesign2021@gmail.com'}`} 
                 className="hidden lg:flex items-center gap-2 text-foreground/60 hover:text-primary transition-colors"
               >
                 <Mail className="w-3.5 h-3.5 text-primary" />
-                <span>info@primesign.in</span>
+                <span>{configContact?.emails?.[0] || 'primesign2021@gmail.com'}</span>
               </a>
             </div>
 
@@ -262,7 +262,7 @@ export default function Navbar() {
             <div className="flex items-center gap-1 ml-auto">
               <span className="hidden sm:inline text-foreground/40 mr-2">Follow us:</span>
               <a 
-                href="https://facebook.com/primesign" 
+                href={configContact?.facebook || 'https://www.facebook.com/primesign.in'} 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="p-2 text-foreground/60 hover:text-primary hover:bg-white/5 rounded-lg transition-colors"
@@ -271,7 +271,7 @@ export default function Navbar() {
                 <Facebook className="w-4 h-4" />
               </a>
               <a 
-                href="https://instagram.com/primesign" 
+                href={configContact?.instagram || 'https://www.instagram.com/primesignpvtltd/'} 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="p-2 text-foreground/60 hover:text-primary hover:bg-white/5 rounded-lg transition-colors"
@@ -279,7 +279,7 @@ export default function Navbar() {
                 <Instagram className="w-4 h-4" />
               </a>
               <a 
-                href="https://youtube.com/@PrimesignBangalore" 
+                href={configContact?.youtube || 'https://www.youtube.com/@PrimesignBangalore'} 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="p-2 text-foreground/60 hover:text-primary hover:bg-white/5 rounded-lg transition-colors"
