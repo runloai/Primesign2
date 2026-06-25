@@ -30,33 +30,31 @@ const COLOR_SCHEMES = {
 const SERVICE_MENU: Record<string, { name: string; href: string; filter: string; serviceId: string }[]> = {
   "SIGN BOARDS": [
     { name: "LED Signs", href: "/#services", filter: "sign-boards", serviceId: "led-signs" },
+    { name: "Glow Signs", href: "/#services", filter: "sign-boards", serviceId: "glow-signs" },
+    { name: "Acrylic Signs", href: "/#services", filter: "sign-boards", serviceId: "acrylic-signs" },
+    { name: "Wall Branding", href: "/#services", filter: "sign-boards", serviceId: "wall-branding" },
     { name: "Non-Light Sign Board", href: "/#services", filter: "sign-boards", serviceId: "non-light-sign-board" },
     { name: "3D LED Letters", href: "/#services", filter: "sign-boards", serviceId: "3d-led-letters" },
-    { name: "Glow Signs", href: "/#services", filter: "sign-boards", serviceId: "glow-signs" },
     { name: "Glow Sign Board", href: "/#services", filter: "sign-boards", serviceId: "glow-sign-board" },
-    { name: "Acrylic Signs", href: "/#services", filter: "sign-boards", serviceId: "acrylic-signs" },
     { name: "Acrylic Sign Board", href: "/#services", filter: "sign-boards", serviceId: "acrylic-sign-board" },
-    { name: "PVC & Flex", href: "/#services", filter: "pvc-flex", serviceId: "pvc-flex" },
     { name: "PVC/SS Letter Sign", href: "/#services", filter: "sign-boards", serviceId: "pvc-ss-letter-sign" },
-    { name: "Hoardings", href: "/#services", filter: "sign-boards", serviceId: "hoardings" },
-    { name: "One Way Vision", href: "/#services", filter: "sign-boards", serviceId: "one-way-vision" },
-    { name: "Gloss Branding", href: "/#services", filter: "sign-boards", serviceId: "gloss-branding" },
-    { name: "Wall Branding", href: "/#services", filter: "wall", serviceId: "wall-branding" },
-    { name: "Wall Graphics", href: "/#services", filter: "sign-boards", serviceId: "wall-graphics" },
     { name: "Vehicle Wraps", href: "/#services", filter: "vehicle", serviceId: "vehicle-wraps" },
+    { name: "PVC & Flex", href: "/#services", filter: "pvc-flex", serviceId: "pvc-flex" },
+    { name: "Hoardings", href: "/#services", filter: "outdoor", serviceId: "hoardings" },
+    { name: "One Way Vision", href: "/#services", filter: "graphics", serviceId: "one-way-vision" },
+    { name: "Gloss Branding", href: "/#services", filter: "graphics", serviceId: "gloss-branding" },
+    { name: "Wall Graphics", href: "/#services", filter: "graphics", serviceId: "wall-graphics" },
   ],
   "PROMOTIONAL DISPLAY": [
     { name: "Promotional Tents", href: "/#services", filter: "promotional", serviceId: "promotional-tents" },
     { name: "Roll Up Standees", href: "/#services", filter: "promotional", serviceId: "roll-up-standees" },
   ],
   "DIGITAL PRINTS": [
-    { name: "Posters", href: "/#services", filter: "digital", serviceId: "posters" },
-    { name: "Visiting Cards", href: "/#services", filter: "digital", serviceId: "visiting-cards" },
-    { name: "ID Cards", href: "/#services", filter: "digital", serviceId: "id-cards" },
-    { name: "T-Shirts", href: "/#services", filter: "digital", serviceId: "t-shirts" },
-  ],
-  "COMMERCIAL PRINTS": [
-    { name: "Quick Printing", href: "/#services", filter: "commercial", serviceId: "quick-printing" },
+    { name: "Posters", href: "/#services", filter: "print", serviceId: "posters" },
+    { name: "Visiting Cards", href: "/#services", filter: "print", serviceId: "visiting-cards" },
+    { name: "ID Cards", href: "/#services", filter: "print", serviceId: "id-cards" },
+    { name: "T-Shirts", href: "/#services", filter: "apparel", serviceId: "t-shirts" },
+    { name: "Quick Printing", href: "/#services", filter: "print", serviceId: "quick-printing" },
   ],
 };
 
@@ -309,40 +307,6 @@ export default function Navbar() {
               onClick={() => handleDropdownToggle("DIGITAL PRINTS")}
             />
             
-            {/* Commercial Prints Dropdown (smaller) */}
-            <div 
-              className="relative"
-              onMouseEnter={() => handleDropdownEnter("COMMERCIAL")}
-              onMouseLeave={handleDropdownLeave}
-            >
-              <button
-                onClick={() => handleDropdownToggle("COMMERCIAL")}
-                className="flex items-center gap-1 text-sm font-medium text-foreground/80 hover:text-primary transition-colors uppercase tracking-wider font-display focus:outline-none py-2"
-              >
-                COMMERCIAL
-                <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${openDropdown === "COMMERCIAL" ? 'rotate-180' : ''}`} />
-              </button>
-              <div
-                className={`absolute top-full left-0 pt-2 transition-all duration-200 ${
-                  openDropdown === "COMMERCIAL" ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2 pointer-events-none'
-                }`}
-              >
-                <div className="bg-card/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl overflow-hidden w-[200px]">
-                  <div className="p-2">
-                    {(SERVICE_MENU["COMMERCIAL PRINTS"] || []).map((item) => (
-                      <Link
-                        key={item.name}
-                        href={item.href}
-                        className="block px-4 py-2.5 text-sm text-foreground/80 hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
-                      >
-                        {item.name}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
             {/* Direct Links */}
             <Link
               href="/#portfolio"
