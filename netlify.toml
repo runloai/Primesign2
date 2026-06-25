@@ -4,6 +4,13 @@
   functions = "netlify/functions"
 
 [[redirects]]
+  from = "/index.html"
+  to = "/index.html"
+  status = 200
+  [redirects.headers]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+
+[[redirects]]
   from = "/admin.html"
   to = "/admin.html"
   status = 200
