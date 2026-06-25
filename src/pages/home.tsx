@@ -1,12 +1,16 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { Link } from "wouter";
-import { ArrowRight, CheckCircle2, ChevronLeft, ChevronRight, PhoneCall, Star, Phone, Mail, Clock, MapPin, Send, Upload, CheckCircle, AlertCircle } from "lucide-react";
+import { ArrowRight, CheckCircle2, ChevronLeft, ChevronRight, PhoneCall, Star, MapPin, Mail, Clock, Upload, Send, SiWhatsapp } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { useQuoteModal } from "@/context/QuoteModalContext";
 import { PortfolioImage } from "@/components/ui/image-with-skeleton";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { ImageLightbox } from "@/components/ImageLightbox";
+import { SiWhatsapp as WhatsAppIcon } from "react-icons/si";
 
 // Types for admin config
 interface Testimonial {
@@ -30,6 +34,7 @@ interface ServiceConfig {
   desc?: string;
   badge?: string;
   images?: ServiceImage[] | string[];
+  category?: string;
 }
 
 interface PortfolioConfig {
@@ -71,17 +76,11 @@ const HERO_SLIDES = [
 
 const IMAGES = {
   hero: `${BASE}/portfolio/01.webp`,
-  // Glow / illuminated signs
   glow: Array.from({ length: 10 }, (_, i) => `${BASE}/glow/${i + 1}.webp`),
-  // LED signs
   led: Array.from({ length: 5 }, (_, i) => `${BASE}/led/${i + 1}.webp`),
-  // Acrylic signs
   acrylic: Array.from({ length: 4 }, (_, i) => `${BASE}/acrylic/${i + 1}.webp`),
-  // Vehicle wraps
   vehicle: Array.from({ length: 11 }, (_, i) => `${BASE}/vehicle/${i + 1}.webp`),
-  // Wall signage
   wall: Array.from({ length: 11 }, (_, i) => `${BASE}/wall/${i + 1}.webp`),
-  // Square format shots
   square: [
     `${BASE}/square/1.webp`,
     `${BASE}/square/2.webp`,
@@ -98,9 +97,7 @@ const IMAGES = {
     `${BASE}/square/resto-square.webp`,
     `${BASE}/square/spa-square.webp`,
   ],
-  // PVC
   pvc: `${BASE}/pvc/1.webp`,
-  // Portfolio
   portfolio: [
     `${BASE}/portfolio/01.webp`,
     `${BASE}/portfolio/03.webp`,
@@ -123,9 +120,71 @@ const IMAGES = {
     `${BASE}/portfolio/4.webp`,
     `${BASE}/portfolio/7.webp`,
   ],
-  // Client logos
   clients: Array.from({ length: 10 }, (_, i) => `${BASE}/clients/${i + 1}.webp`),
 };
+
+// ============ EXPANDED SERVICES (4 CATEGORIES, 20+ SERVICES) ============
+const SERVICES_CATEGORIES = [
+  {
+    id: "sign-boards",
+    title: "SIGN BOARDS",
+    description: "Premium signage solutions for every business need",
+    icon: "sign",
+    items: [
+      { name: "Non-Light Sign Boards", desc: "Elegant non-illuminated signage for day visibility", img: IMAGES.acrylic[0] },
+      { name: "3D LED Letters", desc: "Dimensional illuminated letters with stunning depth", img: IMAGES.led[0], badge: "Popular" },
+      { name: "Glow Sign Boards", desc: "Backlit signs that shine through the night", img: IMAGES.glow[0] },
+      { name: "Acrylic Signs", desc: "Premium acrylic with precision-cut finishes", img: IMAGES.acrylic[1] },
+      { name: "PVC/SS Letters", desc: "Durable metal and PVC letter solutions", img: IMAGES.pvc },
+      { name: "Outdoor Hoardings", desc: "Large-format outdoor advertising displays", img: IMAGES.portfolio[5] },
+      { name: "One Way Vision", desc: "See-through vinyl for windows & vehicles", img: IMAGES.vehicle[2] },
+      { name: "Gloss Branding", desc: "High-gloss premium finish signage", img: IMAGES.square[8] },
+      { name: "Wall Graphics", desc: "Custom wall murals and graphics", img: IMAGES.wall[0] },
+    ]
+  },
+  {
+    id: "promotional",
+    title: "PROMOTIONAL DISPLAY",
+    description: "Eye-catching display solutions for events & marketing",
+    icon: "display",
+    items: [
+      { name: "Promo Tents", desc: "Branded tents for events and exhibitions", img: IMAGES.portfolio[3] },
+      { name: "Roll Up Standees", desc: "Portable retractable banner stands", img: IMAGES.portfolio[4] },
+      { name: "Promo Displays", desc: "Custom promotional fixtures and kiosks", img: IMAGES.portfolio[6] },
+      { name: "Table Top Displays", desc: "Compact counter-top branding solutions", img: IMAGES.square[3] },
+      { name: "Canopy Branding", desc: "Branded canopies for outdoor events", img: IMAGES.portfolio[7] },
+    ]
+  },
+  {
+    id: "digital",
+    title: "DIGITAL PRINTS",
+    description: "High-quality digital printing on various media",
+    icon: "print",
+    items: [
+      { name: "Posters & Banners", desc: "Vibrant large-format posters", img: IMAGES.wall[3] },
+      { name: "Visiting Cards", desc: "Premium business card printing", img: IMAGES.square[4] },
+      { name: "ID Cards", desc: "Employee & access ID card solutions", img: IMAGES.square[5] },
+      { name: "T-Shirt Printing", desc: "Custom apparel and uniform branding", img: IMAGES.square[6] },
+      { name: "Mug Printing", desc: "Personalized promotional mugs", img: IMAGES.square[7] },
+      { name: "Invitations", desc: "Elegant event invitation designs", img: IMAGES.acrylic[2] },
+      { name: "Certificates", desc: "Premium certificate printing", img: IMAGES.square[2] },
+      { name: "Photo Printing", desc: "High-resolution photo prints", img: IMAGES.led[1] },
+    ]
+  },
+  {
+    id: "commercial",
+    title: "COMMERCIAL PRINTING",
+    description: "Professional printing for business needs",
+    icon: "commercial",
+    items: [
+      { name: "Quick Print", desc: "Fast turnaround digital printing", img: IMAGES.portfolio[8] },
+      { name: "Flex Format", desc: "Large flex banner printing", img: IMAGES.portfolio[9] },
+      { name: "Digital Offset", desc: "High-volume quality printing", img: IMAGES.portfolio[10] },
+      { name: "Brochures", desc: "Multi-fold marketing brochures", img: IMAGES.portfolio[11] },
+      { name: "Flyers & Leaflets", desc: "Promotional handout materials", img: IMAGES.portfolio[12] },
+    ]
+  }
+];
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 40 },
@@ -144,7 +203,7 @@ const staggerContainer = {
   visible: (prefersReducedMotion: boolean) => ({
     opacity: 1,
     transition: { 
-      staggerChildren: prefersReducedMotion ? 0 : 0.2 
+      staggerChildren: prefersReducedMotion ? 0 : 0.1 
     }
   }),
 };
@@ -248,64 +307,15 @@ function getDynamicTestimonials(): Testimonial[] | null {
       }
     }
   } catch (e) {
-    // Silent fail - testimonials not available
+    // Silent fail
   }
   return null;
 }
 
-// Helper to extract image URL from service image (handles both string and object formats)
+// Helper to extract image URL from service image
 function extractImageUrl(img: ServiceImage | string): string {
   if (typeof img === 'string') return img;
   return img?.url || '';
-}
-
-// Helper to get dynamic services from localStorage with FULL IMAGE ARRAY support
-function getDynamicServices(): any[] | null {
-  try {
-    const stored = localStorage.getItem("primesign-config");
-    if (stored) {
-      const config = JSON.parse(stored);
-      if (config.services && config.services.length > 0) {
-        // Map admin service format to main site format with full image arrays
-        return config.services
-          .filter((s: ServiceConfig) => s.name) // Only include services with names
-          .map((s: ServiceConfig) => {
-            // Extract all images from the service gallery
-            const serviceImages = s.images && s.images.length > 0
-              ? s.images.map((img: ServiceImage | string) => extractImageUrl(img)).filter(Boolean)
-              : [getServiceImage(s.name)]; // Fallback to category-based image
-            
-            return {
-              title: s.name,
-              desc: s.desc || "",
-              // Store ALL images for the gallery carousel
-              images: serviceImages,
-              // First image as thumbnail
-              thumbnail: serviceImages[0] || getServiceImage(s.name),
-              tag: s.badge === "popular" ? "Most Popular" : s.badge === "new" ? "New" : null,
-              category: getCategoryFromServiceName(s.name),
-            };
-          });
-      }
-    }
-  } catch (e) {
-    // Silent fail - services not available
-  }
-  return null;
-}
-
-// Extract category from service name
-function getCategoryFromServiceName(serviceName: string): string {
-  const name = serviceName.toLowerCase();
-  if (name.includes("led")) return "led";
-  if (name.includes("glow")) return "glow";
-  if (name.includes("acrylic")) return "acrylic";
-  if (name.includes("wall")) return "wall";
-  if (name.includes("vehicle")) return "vehicle";
-  if (name.includes("pvc") || name.includes("flex")) return "pvc";
-  // Use the first word of the service name as category
-  const firstWord = name.split(/\s+/)[0];
-  return firstWord || "led";
 }
 
 // Helper to get fallback image for service category
@@ -318,6 +328,88 @@ function getServiceImage(serviceName: string): string {
   if (name.includes("vehicle")) return IMAGES.vehicle[0];
   if (name.includes("pvc") || name.includes("flex")) return IMAGES.pvc;
   return IMAGES.led[0];
+}
+
+// Extract category from service name
+function getCategoryFromServiceName(serviceName: string): string {
+  const name = serviceName.toLowerCase();
+  if (name.includes("led")) return "led";
+  if (name.includes("glow")) return "glow";
+  if (name.includes("acrylic")) return "acrylic";
+  if (name.includes("wall")) return "wall";
+  if (name.includes("vehicle")) return "vehicle";
+  if (name.includes("pvc") || name.includes("flex")) return "pvc";
+  const firstWord = name.split(/\s+/)[0];
+  return firstWord || "led";
+}
+
+// Helper to get dynamic services from admin config
+function getDynamicServices(): any[] | null {
+  try {
+    const stored = localStorage.getItem("primesign-config");
+    if (stored) {
+      const config = JSON.parse(stored);
+      if (config.services && config.services.length > 0) {
+        return config.services
+          .filter((s: ServiceConfig) => s.name)
+          .map((s: ServiceConfig) => {
+            const serviceImages = s.images && s.images.length > 0
+              ? s.images.map((img: ServiceImage | string) => extractImageUrl(img)).filter(Boolean)
+              : [getServiceImage(s.name)];
+            
+            return {
+              title: s.name,
+              desc: s.desc || "",
+              images: serviceImages,
+              thumbnail: serviceImages[0] || getServiceImage(s.name),
+              tag: s.badge === "popular" ? "Most Popular" : s.badge === "new" ? "New" : null,
+              category: getCategoryFromServiceName(s.name),
+            };
+          });
+      }
+    }
+  } catch (e) {
+    // Silent fail
+  }
+  return null;
+}
+
+// Build services categories from admin config
+function getDynamicServiceCategories(): typeof SERVICES_CATEGORIES | null {
+  try {
+    const stored = localStorage.getItem("primesign-config");
+    if (stored) {
+      const config = JSON.parse(stored);
+      if (config.serviceCategories && config.serviceCategories.length > 0) {
+        return config.serviceCategories;
+      }
+      if (config.services && config.services.length > 0) {
+        // Group services by category
+        const grouped: Record<string, any[]> = {};
+        config.services.forEach((s: ServiceConfig) => {
+          const cat = s.category || "General";
+          if (!grouped[cat]) grouped[cat] = [];
+          grouped[cat].push(s);
+        });
+        
+        return Object.entries(grouped).map(([catName, items], idx) => ({
+          id: catName.toLowerCase().replace(/\s+/g, '-'),
+          title: catName.toUpperCase(),
+          description: "Professional " + catName.toLowerCase() + " services",
+          icon: "sign",
+          items: items.map((s: any) => ({
+            name: s.name,
+            desc: s.desc || "",
+            img: s.images?.[0]?.url || s.images?.[0] || IMAGES.led[0],
+            badge: s.badge
+          }))
+        }));
+      }
+    }
+  } catch (e) {
+    // Silent fail
+  }
+  return null;
 }
 
 // Service Image Gallery Carousel Component
@@ -333,11 +425,9 @@ function ServiceImageGallery({ images, serviceTitle, prefersReducedMotion }: Ser
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const autoScrollRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Ensure we have at least one image
   const displayImages = images.length > 0 ? images : [IMAGES.led[0]];
   const totalImages = displayImages.length;
 
-  // Auto-scroll every 3-4 seconds
   useEffect(() => {
     if (isHovering || totalImages <= 1) return;
     
@@ -352,7 +442,6 @@ function ServiceImageGallery({ images, serviceTitle, prefersReducedMotion }: Ser
     };
   }, [isHovering, totalImages]);
 
-  // Scroll to current index
   useEffect(() => {
     if (scrollContainerRef.current) {
       const scrollAmount = currentIndex * scrollContainerRef.current.offsetWidth;
@@ -377,7 +466,6 @@ function ServiceImageGallery({ images, serviceTitle, prefersReducedMotion }: Ser
     setCurrentIndex(index);
   };
 
-  // Only show navigation if we have multiple images
   const showNavigation = totalImages > 1;
 
   return (
@@ -386,7 +474,6 @@ function ServiceImageGallery({ images, serviceTitle, prefersReducedMotion }: Ser
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
-      {/* Horizontal scroll container */}
       <div 
         ref={scrollContainerRef}
         className="flex w-full h-full overflow-hidden scroll-smooth"
@@ -408,12 +495,11 @@ function ServiceImageGallery({ images, serviceTitle, prefersReducedMotion }: Ser
         ))}
       </div>
 
-      {/* Arrow buttons - visible on hover or always for touch devices */}
       {showNavigation && (
         <>
           <button
             onClick={goToPrev}
-            className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/60 backdrop-blur-sm text-white flex items-center justify-center opacity-0 hover:opacity-100 focus:opacity-100 transition-opacity duration-200 hover:bg-black/80 z-10 group-hover:opacity-100"
+            className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/60 backdrop-blur-sm text-white flex items-center justify-center opacity-0 hover:opacity-100 focus:opacity-100 transition-opacity duration-200 hover:bg-black/80 z-10"
             aria-label="Previous image"
             style={{ opacity: isHovering ? 1 : undefined }}
           >
@@ -430,7 +516,6 @@ function ServiceImageGallery({ images, serviceTitle, prefersReducedMotion }: Ser
         </>
       )}
 
-      {/* Dot indicators */}
       {showNavigation && (
         <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-10">
           {displayImages.map((_, idx) => (
@@ -448,7 +533,6 @@ function ServiceImageGallery({ images, serviceTitle, prefersReducedMotion }: Ser
         </div>
       )}
 
-      {/* Image counter */}
       {showNavigation && (
         <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white text-xs font-medium px-2 py-1 rounded-full z-10">
           {currentIndex + 1} / {totalImages}
@@ -458,324 +542,346 @@ function ServiceImageGallery({ images, serviceTitle, prefersReducedMotion }: Ser
   );
 }
 
-// Contact Form Component
-function ContactForm() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    address: '',
-    message: '',
-  });
-  const [file, setFile] = useState<File | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const [errors, setErrors] = useState<Record<string, string>>({});
+// Client Logos Carousel Component
+function ClientLogosCarousel({ prefersReducedMotion }: { prefersReducedMotion: boolean }) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [isPaused, setIsPaused] = useState(false);
+  
+  const clients = IMAGES.clients;
+  // Double the logos for seamless loop
+  const displayClients = [...clients, ...clients];
 
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {};
+  useEffect(() => {
+    if (prefersReducedMotion || isPaused) return;
     
-    if (!formData.name.trim()) {
-      newErrors.name = 'Name is required';
-    }
-    
-    if (!formData.phone.trim()) {
-      newErrors.phone = 'Phone number is required';
-    } else if (!/^[\d\s\-+()]{10,}$/.test(formData.phone)) {
-      newErrors.phone = 'Please enter a valid phone number';
-    }
-    
-    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
-    }
-    
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+    const scrollContainer = scrollRef.current;
+    if (!scrollContainer) return;
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    // Clear error when user types
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
-    }
-  };
+    let animationId: number;
+    let scrollPos = 0;
+    const speed = 0.5;
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0];
-    if (selectedFile) {
-      // Validate file size (max 5MB)
-      if (selectedFile.size > 5 * 1024 * 1024) {
-        setErrors(prev => ({ ...prev, file: 'File size must be less than 5MB' }));
-        return;
+    const animate = () => {
+      if (!isPaused && scrollContainer) {
+        scrollPos += speed;
+        // Reset when we've scrolled through half (the duplicated set)
+        const maxScroll = scrollContainer.scrollWidth / 2;
+        if (scrollPos >= maxScroll) {
+          scrollPos = 0;
+        }
+        scrollContainer.scrollLeft = scrollPos;
       }
-      // Validate file type
-      const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg', 'application/pdf'];
-      if (!allowedTypes.includes(selectedFile.type)) {
-        setErrors(prev => ({ ...prev, file: 'Only images (JPG, PNG, WebP) and PDF files are allowed' }));
-        return;
-      }
-      setFile(selectedFile);
-      setErrors(prev => ({ ...prev, file: '' }));
-    }
-  };
+      animationId = requestAnimationFrame(animate);
+    };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!validateForm()) {
-      return;
-    }
-
-    setIsSubmitting(true);
-    setSubmitStatus('idle');
-
-    // Simulate form submission with timeout
-    try {
-      // In a real implementation, you would send the data to your backend
-      // const formDataToSend = new FormData();
-      // Object.entries(formData).forEach(([key, value]) => {
-      //   formDataToSend.append(key, value);
-      // });
-      // if (file) {
-      //   formDataToSend.append('file', file);
-      // }
-      // const response = await fetch('/api/contact', {
-      //   method: 'POST',
-      //   body: formDataToSend,
-      // });
-
-      await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate API call
-      
-      setSubmitStatus('success');
-      setFormData({ name: '', email: '', phone: '', address: '', message: '' });
-      setFile(null);
-      
-      // Reset success message after 5 seconds
-      setTimeout(() => setSubmitStatus('idle'), 5000);
-    } catch (error) {
-      setSubmitStatus('error');
-      setTimeout(() => setSubmitStatus('idle'), 5000);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+    animationId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationId);
+  }, [isPaused, prefersReducedMotion]);
 
   return (
-    <div className="bg-background/50 border border-white/10 rounded-2xl p-6 md:p-8">
-      <form onSubmit={handleSubmit} className="space-y-5">
-        {/* Name & Email Row */}
-        <div className="grid sm:grid-cols-2 gap-5">
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
-              Full Name <span className="text-primary">*</span>
-            </label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className={`w-full px-4 py-3 bg-background/50 border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all ${
-                errors.name ? 'border-red-500 focus:ring-red-500/50' : 'border-white/10 hover:border-primary/30 focus:border-primary'
-              }`}
-              placeholder="John Doe"
-            />
-            {errors.name && (
-              <p className="mt-1 text-xs text-red-500 flex items-center gap-1">
-                <AlertCircle className="w-3 h-3" />
-                {errors.name}
-              </p>
-            )}
-          </div>
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
-              Email Address
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className={`w-full px-4 py-3 bg-background/50 border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all ${
-                errors.email ? 'border-red-500 focus:ring-red-500/50' : 'border-white/10 hover:border-primary/30 focus:border-primary'
-              }`}
-              placeholder="john@example.com"
-            />
-            {errors.email && (
-              <p className="mt-1 text-xs text-red-500 flex items-center gap-1">
-                <AlertCircle className="w-3 h-3" />
-                {errors.email}
-              </p>
-            )}
-          </div>
-        </div>
-
-        {/* Phone & Address Row */}
-        <div className="grid sm:grid-cols-2 gap-5">
-          <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-foreground mb-2">
-              Phone Number <span className="text-primary">*</span>
-            </label>
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              className={`w-full px-4 py-3 bg-background/50 border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all ${
-                errors.phone ? 'border-red-500 focus:ring-red-500/50' : 'border-white/10 hover:border-primary/30 focus:border-primary'
-              }`}
-              placeholder="+91 98765 43210"
-            />
-            {errors.phone && (
-              <p className="mt-1 text-xs text-red-500 flex items-center gap-1">
-                <AlertCircle className="w-3 h-3" />
-                {errors.phone}
-              </p>
-            )}
-          </div>
-          <div>
-            <label htmlFor="address" className="block text-sm font-medium text-foreground mb-2">
-              Address / Location
-            </label>
-            <input
-              type="text"
-              id="address"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              className="w-full px-4 py-3 bg-background/50 border border-white/10 rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary hover:border-primary/30 transition-all"
-              placeholder="Bangalore, Karnataka"
+    <div 
+      className="relative w-full overflow-hidden py-8"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
+      {/* Gradient masks */}
+      <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-card to-transparent z-10 pointer-events-none" />
+      <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-card to-transparent z-10 pointer-events-none" />
+      
+      <div 
+        ref={scrollRef}
+        className="flex gap-12 items-center overflow-x-hidden"
+        style={{ scrollBehavior: 'auto' }}
+      >
+        {displayClients.map((src, i) => (
+          <div 
+            key={i}
+            className="flex-shrink-0 w-32 h-16 flex items-center justify-center"
+          >
+            <img
+              src={src}
+              alt={`Client ${(i % clients.length) + 1}`}
+              className="h-12 w-full object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
+              loading="lazy"
             />
           </div>
-        </div>
-
-        {/* Message */}
-        <div>
-          <label htmlFor="message" className="block text-sm font-medium text-foreground mb-2">
-            Message / Project Details
-          </label>
-          <textarea
-            id="message"
-            name="message"
-            rows={4}
-            value={formData.message}
-            onChange={handleChange}
-            className="w-full px-4 py-3 bg-background/50 border border-white/10 rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary hover:border-primary/30 transition-all resize-none"
-            placeholder="Tell us about your project requirements..."
-          />
-        </div>
-
-        {/* File Upload */}
-        <div>
-          <label className="block text-sm font-medium text-foreground mb-2">
-            Upload Reference (Optional)
-          </label>
-          <div className="relative">
-            <input
-              type="file"
-              id="file"
-              accept="image/jpeg,image/png,image/webp,image/jpg,application/pdf"
-              onChange={handleFileChange}
-              className="hidden"
-            />
-            <label
-              htmlFor="file"
-              className={`flex items-center justify-center gap-3 px-4 py-4 border-2 border-dashed rounded-xl cursor-pointer transition-all ${
-                file 
-                  ? 'border-primary/50 bg-primary/5 text-primary' 
-                  : 'border-white/20 hover:border-primary/30 hover:bg-white/5'
-              }`}
-            >
-              {file ? (
-                <>
-                  <CheckCircle className="w-5 h-5 text-primary" />
-                  <span className="text-sm">{file.name}</span>
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setFile(null);
-                    }}
-                    className="text-xs text-red-400 hover:text-red-500 underline"
-                  >
-                    Remove
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Upload className="w-5 h-5 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">
-                    Drop a file here or click to upload (Max 5MB)
-                  </span>
-                </>
-              )}
-            </label>
-            {errors.file && (
-              <p className="mt-1 text-xs text-red-500 flex items-center gap-1">
-                <AlertCircle className="w-3 h-3" />
-                {errors.file}
-              </p>
-            )}
-          </div>
-        </div>
-
-        {/* Submit Status Messages */}
-        {submitStatus === 'success' && (
-          <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-xl flex items-center gap-3">
-            <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-            <div>
-              <p className="font-medium text-green-500">Thank you!</p>
-              <p className="text-sm text-green-400/80">We'll get back to you within 24 hours.</p>
-            </div>
-          </div>
-        )}
-
-        {submitStatus === 'error' && (
-          <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center gap-3">
-            <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
-            <div>
-              <p className="font-medium text-red-500">Oops!</p>
-              <p className="text-sm text-red-400/80">Something went wrong. Please try again or contact us directly.</p>
-            </div>
-          </div>
-        )}
-
-        {/* Submit Button */}
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="w-full flex items-center justify-center gap-2 px-8 py-4 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full font-bold uppercase tracking-wide transition-all disabled:opacity-50 disabled:cursor-not-allowed box-glow"
-        >
-          {isSubmitting ? (
-            <>
-              <div className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-              Sending...
-            </>
-          ) : (
-            <>
-              <Send className="w-5 h-5" />
-              Send Message
-            </>
-          )}
-        </button>
-
-        <p className="text-center text-xs text-muted-foreground">
-          By submitting this form, you agree to our privacy policy and terms of service.
-        </p>
-      </form>
+        ))}
+      </div>
     </div>
   );
 }
 
+// Contact Form Component
+function ContactSection({ prefersReducedMotion }: { prefersReducedMotion: boolean }) {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+    message: "",
+  });
+  const [file, setFile] = useState<File | null>(null);
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Format message for WhatsApp
+    const lines = [
+      `*New Contact Form Submission - PrimeSign*`,
+      ``,
+      `*Name:* ${formData.name}`,
+      `*Email:* ${formData.email}`,
+      `*Phone:* ${formData.phone}`,
+      formData.address ? `*Address:* ${formData.address}` : null,
+      ``,
+      `*Message:*`,
+      formData.message,
+      file ? `\n*Attachment:* ${file.name}` : null,
+    ].filter(Boolean).join("\n");
+
+    const url = `https://wa.me/916366525253?text=${encodeURIComponent(lines)}`;
+    window.open(url, "_blank");
+    setSubmitted(true);
+    setTimeout(() => setSubmitted(false), 3000);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
+    }
+  };
+
+  return (
+    <section id="contact" className="py-24 bg-card relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 blur-[120px] rounded-full" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-cyan-500/5 blur-[120px] rounded-full" />
+      
+      <div className="container mx-auto px-4 md:px-6 relative z-10">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <h2 className="text-sm text-primary font-bold tracking-widest uppercase mb-4">Contact Us</h2>
+          <h3 className="text-4xl md:text-5xl font-display font-bold leading-tight">GET IN TOUCH</h3>
+          <p className="text-muted-foreground mt-4 text-lg">
+            Ready to transform your brand visibility? Let's discuss your project.
+          </p>
+        </div>
+
+        <div className="grid lg:grid-cols-2 gap-12">
+          {/* Contact Form */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: prefersReducedMotion ? 0.01 : 0.6 }}
+            className="bg-background/50 backdrop-blur-sm p-8 rounded-2xl border border-white/5"
+          >
+            {submitted ? (
+              <div className="flex flex-col items-center justify-center py-16 text-center">
+                <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center mb-6">
+                  <Send className="w-9 h-9 text-primary" />
+                </div>
+                <h4 className="text-2xl font-display font-bold mb-3">Message Sent!</h4>
+                <p className="text-muted-foreground">Redirecting you to WhatsApp...</p>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid sm:grid-cols-2 gap-6">
+                  <div>
+                    <Label htmlFor="name" className="text-sm font-medium text-muted-foreground mb-2 block">
+                      Full Name *
+                    </Label>
+                    <Input
+                      id="name"
+                      required
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      placeholder="John Doe"
+                      className="bg-background/60 border-white/10 focus:border-primary/60"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="phone" className="text-sm font-medium text-muted-foreground mb-2 block">
+                      Phone Number *
+                    </Label>
+                    <Input
+                      id="phone"
+                      type="tel"
+                      required
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      placeholder="+91 98765 43210"
+                      className="bg-background/60 border-white/10 focus:border-primary/60"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="email" className="text-sm font-medium text-muted-foreground mb-2 block">
+                    Email Address
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    placeholder="you@example.com"
+                    className="bg-background/60 border-white/10 focus:border-primary/60"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="address" className="text-sm font-medium text-muted-foreground mb-2 block">
+                    Address / Location
+                  </Label>
+                  <Input
+                    id="address"
+                    value={formData.address}
+                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                    placeholder="Your address or area in Bangalore"
+                    className="bg-background/60 border-white/10 focus:border-primary/60"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="message" className="text-sm font-medium text-muted-foreground mb-2 block">
+                    Message *
+                  </Label>
+                  <Textarea
+                    id="message"
+                    required
+                    value={formData.message}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                    placeholder="Tell us about your project requirements..."
+                    rows={5}
+                    className="bg-background/60 border-white/10 focus:border-primary/60 resize-none"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="file" className="text-sm font-medium text-muted-foreground mb-2 block">
+                    Attachment (Optional)
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      id="file"
+                      type="file"
+                      onChange={handleFileChange}
+                      accept="image/*,.pdf,.doc,.docx"
+                      className="bg-background/60 border-white/10 focus:border-primary/60 file:bg-primary/10 file:text-primary file:border-0 file:rounded-md"
+                    />
+                    {file && (
+                      <p className="text-xs text-muted-foreground mt-2 flex items-center gap-2">
+                        <Upload className="w-3 h-3" />
+                        {file.name}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Button
+                    type="submit"
+                    size="lg"
+                    className="flex-1 h-12 rounded-full font-bold uppercase tracking-wide box-glow"
+                  >
+                    <Send className="w-4 h-4 mr-2" />
+                    Send via WhatsApp
+                  </Button>
+                  <a
+                    href="https://wa.me/916366525253?text=Hello%20PrimeSign%2C%20I%27d%20like%20to%20know%20more%20about%20your%20services."
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1"
+                  >
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="lg"
+                      className="w-full h-12 rounded-full font-bold uppercase tracking-wide border-[#25D366] text-[#25D366] hover:bg-[#25D366]/10"
+                    >
+                      <WhatsAppIcon className="w-5 h-5 mr-2" />
+                      Chat on WhatsApp
+                    </Button>
+                  </a>
+                </div>
+              </form>
+            )}
+          </motion.div>
+
+          {/* Contact Info & Map */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: prefersReducedMotion ? 0.01 : 0.6 }}
+            className="space-y-8"
+          >
+            {/* Contact Details */}
+            <div className="grid sm:grid-cols-2 gap-6">
+              <div className="bg-background/50 backdrop-blur-sm p-6 rounded-xl border border-white/5 hover:border-primary/30 transition-colors">
+                <MapPin className="w-8 h-8 text-primary mb-4" />
+                <h4 className="font-bold text-lg mb-2">Visit Us</h4>
+                <p className="text-muted-foreground text-sm">
+                  PrimeSign Private Limited<br />
+                  Bangalore, Karnataka<br />
+                  India
+                </p>
+              </div>
+              <div className="bg-background/50 backdrop-blur-sm p-6 rounded-xl border border-white/5 hover:border-primary/30 transition-colors">
+                <PhoneCall className="w-8 h-8 text-primary mb-4" />
+                <h4 className="font-bold text-lg mb-2">Call Us</h4>
+                <p className="text-muted-foreground text-sm">
+                  <a href="tel:+916366525253" className="hover:text-primary transition-colors">
+                    +91 63665 25253
+                  </a>
+                </p>
+              </div>
+              <div className="bg-background/50 backdrop-blur-sm p-6 rounded-xl border border-white/5 hover:border-primary/30 transition-colors">
+                <Mail className="w-8 h-8 text-primary mb-4" />
+                <h4 className="font-bold text-lg mb-2">Email Us</h4>
+                <p className="text-muted-foreground text-sm">
+                  <a href="mailto:hello@primesign.in" className="hover:text-primary transition-colors">
+                    hello@primesign.in
+                  </a>
+                </p>
+              </div>
+              <div className="bg-background/50 backdrop-blur-sm p-6 rounded-xl border border-white/5 hover:border-primary/30 transition-colors">
+                <Clock className="w-8 h-8 text-primary mb-4" />
+                <h4 className="font-bold text-lg mb-2">Working Hours</h4>
+                <p className="text-muted-foreground text-sm">
+                  Mon - Sat: 9:00 AM - 7:00 PM<br />
+                  Sunday: Closed
+                </p>
+              </div>
+            </div>
+
+            {/* Google Maps Embed */}
+            <div className="rounded-2xl overflow-hidden border border-white/10 h-64">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d248849.8865401047!2d77.46612999155236!3d12.953945337580189!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae1670c9b44e6d%3A0xf8dfc3e8517e4a3e!2sBangalore%2C%20Karnataka!5e0!3m2!1sen!2sin!4v1703123456789!5m2!1sen!2sin"
+                width="100%"
+                height="100%"
+                style={{ border: 0, filter: 'grayscale(100%) invert(92%) contrast(83%)' }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="PrimeSign Location"
+              />
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// Main Home Component
 export default function Home() {
   const { open: openQuote } = useQuoteModal();
   const [heroIndex, setHeroIndex] = useState(0);
   const [portfolioFilter, setPortfolioFilter] = useState<string | null>(null);
-  const [adminConfig, setAdminConfig] = useState<{ portfolio?: PortfolioConfig[]; hero?: any; testimonials?: Testimonial[]; services?: ServiceConfig[]; aboutImages?: any[]; advantageImages?: any[] } | null>(null);
+  const [activeServiceCategory, setActiveServiceCategory] = useState<string>("sign-boards");
+  const [adminConfig, setAdminConfig] = useState<{ portfolio?: PortfolioConfig[]; hero?: any; testimonials?: Testimonial[]; services?: ServiceConfig[] } | null>(null);
   const [testimonialIndex, setTestimonialIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
@@ -793,7 +899,6 @@ export default function Home() {
   const dynamicServices = getDynamicServices();
   const rawDisplayServices = dynamicServices || adminConfig?.services || services;
   
-  // Normalize services to have consistent image arrays
   const displayServices = useMemo(() => {
     return rawDisplayServices.map((s: any) => ({
       ...s,
@@ -802,17 +907,21 @@ export default function Home() {
     }));
   }, [rawDisplayServices]);
 
-  // Get hero data from config or fallback to hardcoded
+  // Get service categories from config or fallback
+  const dynamicServiceCategories = getDynamicServiceCategories();
+  const serviceCategories = dynamicServiceCategories || SERVICES_CATEGORIES;
+
+  // Get hero data from config or fallback
   const heroBgImage = adminConfig?.hero?.bgImage || IMAGES.portfolio[0];
   const heroBadgeText = adminConfig?.hero?.badge || "Bangalore's Premier Signage Studio";
   const heroHeadline = adminConfig?.hero?.headline;
   const heroSubtitle = adminConfig?.hero?.subtitle || "From bold LED boards to precision 3D channel letters. We engineer high-impact signage that lights up Bangalore and makes your brand impossible to ignore.";
 
-  // Get testimonials from config or fallback to hardcoded
+  // Get testimonials from config or fallback
   const dynamicTestimonials = getDynamicTestimonials();
   const displayTestimonials = dynamicTestimonials || adminConfig?.testimonials || testimonials;
 
-  // Auto-rotate testimonials every 6 seconds
+  // Auto-rotate testimonials
   useEffect(() => {
     const timer = setInterval(() => {
       setTestimonialIndex((prev) => (prev + 1) % displayTestimonials.length);
@@ -820,9 +929,8 @@ export default function Home() {
     return () => clearInterval(timer);
   }, [displayTestimonials.length]);
 
-  // Get portfolio items - PRIORITIZE service galleries for portfolio source
+  // Get portfolio items
   const getPortfolioItems = () => {
-    // First, try to build portfolio from service galleries (sync with services)
     if (displayServices && displayServices.length > 0) {
       const serviceGalleryItems: { img: string; label: string; cat: string; featured: boolean }[] = [];
       
@@ -830,14 +938,13 @@ export default function Home() {
         const serviceImages = service.images || [];
         const category = service.category || getCategoryFromServiceName(service.title);
         
-        // Add each image from the service gallery as a portfolio item
         serviceImages.forEach((img: string, imgIdx: number) => {
           if (img) {
             serviceGalleryItems.push({
               img,
               label: imgIdx === 0 ? `${service.title} - Featured` : `${service.title} - Sample`,
               cat: category,
-              featured: serviceIdx === 0 && imgIdx === 0, // First service's first image is featured
+              featured: serviceIdx === 0 && imgIdx === 0,
             });
           }
         });
@@ -848,7 +955,6 @@ export default function Home() {
       }
     }
     
-    // Fallback: use admin portfolio config
     if (adminConfig?.portfolio && adminConfig.portfolio.length > 0) {
       return adminConfig.portfolio
         .filter((item: PortfolioConfig) => item.url)
@@ -860,7 +966,6 @@ export default function Home() {
         }));
     }
     
-    // Final fallback: hardcoded portfolio
     return [
       { img: IMAGES.portfolio[0], label: "Storefront LED Branding", cat: "led", featured: true },
       { img: IMAGES.glow[3], label: "Glow Sign", cat: "glow", featured: false },
@@ -876,7 +981,6 @@ export default function Home() {
 
   const allPortfolioItems = getPortfolioItems();
   
-  // Separate featured and non-featured items
   const featuredItem = useMemo(() => {
     return allPortfolioItems.find(item => item.featured) || null;
   }, [allPortfolioItems]);
@@ -885,23 +989,14 @@ export default function Home() {
     return allPortfolioItems.filter(item => !item.featured);
   }, [allPortfolioItems]);
 
-  // Get about images from config or fallback to hardcoded
   const aboutImages = adminConfig?.aboutImages && adminConfig.aboutImages.length >= 4
     ? adminConfig.aboutImages.slice(0, 4).map((img: any) => img.url || img)
     : [IMAGES.glow[2], IMAGES.wall[2], IMAGES.led[1], IMAGES.square[10]];
 
-  // Get advantage/reasons from config or fallback to hardcoded
   const displayReasons = adminConfig?.advantageImages && adminConfig.advantageImages.length >= 6
     ? adminConfig.advantageImages.slice(0, 6).map((img: any) => img.label || img.toString())
     : reasons;
 
-  // Get advantage images (optional icons) from config
-  const advantageImages = adminConfig?.advantageImages && adminConfig.advantageImages.length >= 6
-    ? adminConfig.advantageImages.slice(0, 6).map((img: any) => img.url).filter(Boolean)
-    : [];
-
-  // Extract unique categories from services for portfolio filter buttons
-  // PRESERVE ADMIN ORDER - no sorting, maintain exact service order
   const portfolioCategories = useMemo(() => {
     const categories: string[] = [];
     const seen = new Set<string>();
@@ -921,11 +1016,8 @@ export default function Home() {
     return () => clearInterval(timer);
   }, []);
 
-  // Build lightbox images array from all portfolio sources
   const getLightboxImages = useCallback(() => {
     const images: { src: string; alt: string; label: string }[] = [];
-    
-    // Add all portfolio items (featured first, then others)
     const items = [];
     if (featuredItem) items.push(featuredItem);
     items.push(...nonFeaturedItems);
@@ -944,7 +1036,6 @@ export default function Home() {
     setLightboxOpen(true);
   };
 
-  // Filter items based on selected category
   const filteredFeaturedItem = useMemo(() => {
     if (!portfolioFilter) return featuredItem;
     return featuredItem && featuredItem.cat === portfolioFilter ? featuredItem : null;
@@ -955,24 +1046,19 @@ export default function Home() {
     return nonFeaturedItems.filter(item => item.cat === portfolioFilter);
   }, [nonFeaturedItems, portfolioFilter]);
 
-  // Calculate lightbox index for featured item
-  const getFeaturedLightboxIndex = useCallback(() => {
-    if (!featuredItem) return 0;
-    return 0; // Featured item is always first in lightbox
-  }, [featuredItem]);
+  // Get current category services
+  const currentCategory = serviceCategories.find(c => c.id === activeServiceCategory) || serviceCategories[0];
 
   return (
     <div className="w-full">
-      {/* HERO */}
+      {/* ============ HERO SECTION ============ */}
       <section className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden pt-20">
-        {/* Full-bleed static background */}
         <div className="absolute inset-0 z-0">
           <img
             src={heroBgImage}
             alt="Primesign signage"
             className="absolute inset-0 w-full h-full object-cover"
           />
-          {/* Layered overlay — light enough to show the image, dark enough to read text */}
           <div className="absolute inset-0 bg-black/45" />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-r from-background/70 via-transparent to-transparent" />
@@ -1018,6 +1104,20 @@ export default function Home() {
                 Get a Free Quote
                 <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
+              <a 
+                href="https://wa.me/916366525253?text=Hello%20PrimeSign%2C%20I%27d%20like%20to%20get%20a%20quote%20for%20signage%20services."
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="h-12 sm:h-14 px-6 sm:px-8 rounded-full text-sm sm:text-lg font-bold uppercase tracking-wide bg-white/5 border-[#25D366] text-[#25D366] hover:bg-[#25D366]/10 w-full sm:w-auto"
+                >
+                  <WhatsAppIcon className="w-5 h-5 mr-2" />
+                  WhatsApp Us
+                </Button>
+              </a>
               <a href="#portfolio">
                 <Button
                   variant="outline"
@@ -1045,7 +1145,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ABOUT */}
+      {/* ============ ABOUT SECTION ============ */}
       <section id="about" className="py-24 bg-card relative">
         <div className="container mx-auto px-4 md:px-6">
           <div className="grid md:grid-cols-2 gap-16 items-center">
@@ -1104,73 +1204,101 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SERVICES */}
+      {/* ============ EXPANDED SERVICES SECTION ============ */}
       <section id="services" className="py-24 relative overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
         <div className="container mx-auto px-4 md:px-6 relative z-10">
-          <div className="text-center max-w-3xl mx-auto mb-20">
+          <div className="text-center max-w-3xl mx-auto mb-12">
             <h2 className="text-sm text-primary font-bold tracking-widest uppercase mb-4">Our Expertise</h2>
-            <h3 className="text-4xl md:text-6xl font-display font-bold leading-tight">THE ARSENAL</h3>
+            <h3 className="text-4xl md:text-6xl font-display font-bold leading-tight mb-4">THE ARSENAL</h3>
+            <p className="text-muted-foreground text-lg">
+              Comprehensive signage solutions across {serviceCategories.length} categories
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8" role="list" aria-label="Services">
-            {displayServices.map((service: any, index: number) => (
+          {/* Category Tabs */}
+          <div className="flex flex-wrap justify-center gap-2 mb-12">
+            {serviceCategories.map((category) => (
+              <button
+                key={category.id}
+                onClick={() => setActiveServiceCategory(category.id)}
+                className={`px-6 py-3 rounded-full text-sm font-bold uppercase tracking-wider transition-all duration-300 ${
+                  activeServiceCategory === category.id
+                    ? "bg-primary text-primary-foreground shadow-[0_0_20px_rgba(240,168,48,0.3)]"
+                    : "bg-white/5 text-white/70 hover:bg-white/10 hover:text-white"
+                }`}
+              >
+                {category.title}
+              </button>
+            ))}
+          </div>
+
+          {/* Active Category Description */}
+          <div className="text-center mb-10">
+            <p className="text-muted-foreground text-lg">{currentCategory.description}</p>
+          </div>
+
+          {/* Services Grid */}
+          <motion.div
+            key={activeServiceCategory}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: prefersReducedMotion ? 0.01 : 0.4 }}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+          >
+            {currentCategory.items.map((service, index) => (
               <motion.div
-                key={service.title}
+                key={service.name}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: prefersReducedMotion ? 0.01 : 0.5, delay: index * 0.1 }}
-                className="group relative bg-card rounded-2xl overflow-hidden border border-white/5 hover:border-primary/50 hover:shadow-[0_0_40px_rgba(240,168,48,0.15)] transition-all duration-500 ease-out focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 focus-within:ring-offset-background"
-                data-testid={`card-service-${index}`}
-                role="listitem"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    setPortfolioFilter(service.category);
-                    document.getElementById("portfolio")?.scrollIntoView({ behavior: "smooth" });
-                  }
+                transition={{ duration: prefersReducedMotion ? 0.01 : 0.5, delay: index * 0.05 }}
+                className="group relative bg-card rounded-2xl overflow-hidden border border-white/5 hover:border-primary/50 hover:shadow-[0_0_40px_rgba(240,168,48,0.15)] transition-all duration-500 cursor-pointer"
+                onClick={() => {
+                  openQuote();
                 }}
               >
-                {service.tag && (
-                  <div className="absolute top-4 right-4 z-20 bg-primary text-primary-foreground text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full" aria-label={`Tag: ${service.tag}`}>
-                    {service.tag}
+                {service.badge && (
+                  <div className="absolute top-3 right-3 z-20 bg-primary text-primary-foreground text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full">
+                    {service.badge}
                   </div>
                 )}
-                {/* Image Gallery Carousel */}
                 <div className="aspect-[4/3] overflow-hidden">
-                  <ServiceImageGallery
-                    images={service.images || [service.thumbnail || service.img]}
-                    serviceTitle={service.title}
-                    prefersReducedMotion={prefersReducedMotion}
+                  <img
+                    src={service.img}
+                    alt={service.name}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    loading="lazy"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent flex flex-col justify-end p-8 transition-all duration-300 group-hover:backdrop-blur-sm">
-                  <h4 className="text-2xl font-display font-bold mb-2 group-hover:text-primary transition-colors">
-                    {service.title}
+                <div className="absolute bottom-0 left-0 right-0 p-5">
+                  <h4 className="text-lg font-display font-bold mb-1 group-hover:text-primary transition-colors">
+                    {service.name}
                   </h4>
-                  <p className="text-muted-foreground text-sm leading-relaxed mb-4 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                  <p className="text-muted-foreground text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     {service.desc}
                   </p>
-                  <button
-                    onClick={() => {
-                      setPortfolioFilter(service.category);
-                      document.getElementById("portfolio")?.scrollIntoView({ behavior: "smooth" });
-                    }}
-                    aria-label={`Explore ${service.title} catalogue`}
-                    className="inline-flex items-center text-sm font-bold uppercase tracking-wider text-white hover:text-primary transition-colors cursor-pointer bg-transparent border-none p-0 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background rounded-sm"
-                  >
-                    Explore Catalogue <ChevronRight className="ml-1 w-4 h-4" aria-hidden="true" />
-                  </button>
                 </div>
               </motion.div>
             ))}
+          </motion.div>
+
+          {/* View All CTA */}
+          <div className="text-center mt-12">
+            <Button
+              size="lg"
+              onClick={openQuote}
+              className="h-12 px-8 rounded-full font-bold uppercase tracking-wide box-glow"
+            >
+              Get Quote for Any Service
+              <ArrowRight className="ml-2 w-4 h-4" />
+            </Button>
           </div>
         </div>
       </section>
 
-      {/* PORTFOLIO */}
+      {/* ============ PORTFOLIO SECTION ============ */}
       <section id="portfolio" className="py-24 bg-background relative border-t border-white/5">
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-6">
@@ -1185,7 +1313,7 @@ export default function Home() {
             </a>
           </div>
 
-          {/* Portfolio filter buttons - dynamically from services categories + All */}
+          {/* Portfolio filter buttons */}
           <div 
             className="flex flex-wrap gap-2 md:gap-3 mb-8 md:mb-10 justify-center md:justify-start"
             role="tablist"
@@ -1195,8 +1323,6 @@ export default function Home() {
               onClick={() => setPortfolioFilter(null)}
               role="tab"
               aria-selected={!portfolioFilter}
-              aria-controls="portfolio-grid"
-              tabIndex={0}
               className={`px-4 md:px-5 py-2 rounded-full text-xs md:text-sm font-bold uppercase tracking-wider transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background ${
                 !portfolioFilter
                   ? "bg-primary text-primary-foreground" : "bg-white/5 text-white/60 hover:bg-white/10"}`}
@@ -1209,8 +1335,6 @@ export default function Home() {
                 onClick={() => setPortfolioFilter(cat)}
                 role="tab"
                 aria-selected={portfolioFilter === cat}
-                aria-controls="portfolio-grid"
-                tabIndex={0}
                 className={`px-4 md:px-5 py-2 rounded-full text-xs md:text-sm font-bold uppercase tracking-wider transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background ${
                   portfolioFilter === cat
                     ? "bg-primary text-primary-foreground" : "bg-white/5 text-white/60 hover:bg-white/10"}`}
@@ -1220,35 +1344,24 @@ export default function Home() {
             ))}
           </div>
 
-          {/* Main masonry-style grid with featured hero support */}
+          {/* Portfolio Grid */}
           <div id="portfolio-grid" role="tabpanel" aria-label="Portfolio gallery">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
-              {/* Featured item - appears first and spans 2x2 */}
               {filteredFeaturedItem && (
                 <motion.div
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
                   viewport={{ once: true }}
-                  className="col-span-2 row-span-2 aspect-square rounded-2xl overflow-hidden relative group cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
-                  data-testid="img-portfolio-featured"
-                  data-pf-cat={filteredFeaturedItem.cat}
-                  tabIndex={0}
+                  className="col-span-2 row-span-2 aspect-square rounded-2xl overflow-hidden relative group cursor-pointer"
                   onClick={() => openLightbox(0)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      openLightbox(0);
-                    }
-                  }}
                 >
                   <PortfolioImage src={filteredFeaturedItem.img} alt={filteredFeaturedItem.label} />
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
                     <span className="text-white font-display font-bold uppercase tracking-widest text-lg">{filteredFeaturedItem.label}</span>
                   </div>
                 </motion.div>
               )}
 
-              {/* Non-featured items - fill remaining slots */}
               {filteredNonFeaturedItems.slice(0, filteredFeaturedItem ? 4 : 5).map((item: any, i: number) => (
                 <motion.div
                   key={i}
@@ -1256,29 +1369,19 @@ export default function Home() {
                   whileInView={{ opacity: 1 }}
                   viewport={{ once: true }}
                   transition={{ delay: (i + 1) * 0.08 }}
-                  className="aspect-square rounded-2xl overflow-hidden relative group cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
-                  data-testid={`img-portfolio-${i}`}
-                  data-pf-cat={item.cat}
-                  tabIndex={0}
+                  className="aspect-square rounded-2xl overflow-hidden relative group cursor-pointer"
                   onClick={() => openLightbox(filteredFeaturedItem ? i + 1 : i)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      openLightbox(filteredFeaturedItem ? i + 1 : i);
-                    }
-                  }}
                 >
                   <PortfolioImage src={item.img} alt={item.label} />
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
                     <span className="text-white font-bold uppercase tracking-widest text-sm">{item.label}</span>
                   </div>
                 </motion.div>
               ))}
             </div>
 
-            {/* Second row - all aspect-square, consistent sizing */}
             {filteredNonFeaturedItems.length > (filteredFeaturedItem ? 4 : 5) && (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {filteredNonFeaturedItems.slice(filteredFeaturedItem ? 4 : 5, filteredFeaturedItem ? 12 : 13).map((item: any, i: number) => (
                   <motion.div
                     key={i + 100}
@@ -1286,48 +1389,8 @@ export default function Home() {
                     whileInView={{ opacity: 1 }}
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.08 }}
-                    className="aspect-square rounded-2xl overflow-hidden relative group cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
-                    data-testid={`img-portfolio-row2-${i}`}
-                    data-pf-cat={item.cat}
-                    tabIndex={0}
+                    className="aspect-square rounded-2xl overflow-hidden relative group cursor-pointer"
                     onClick={() => openLightbox((filteredFeaturedItem ? 5 : 5) + i)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        openLightbox((filteredFeaturedItem ? 5 : 5) + i);
-                      }
-                    }}
-                  >
-                    <PortfolioImage src={item.img} alt={item.label} />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                      <span className="text-white font-bold uppercase tracking-widest text-sm">{item.label}</span>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            )}
-
-            {/* Third row - remaining items */}
-            {filteredNonFeaturedItems.length > (filteredFeaturedItem ? 12 : 13) && (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {filteredNonFeaturedItems.slice(filteredFeaturedItem ? 12 : 13).map((item: any, i: number) => (
-                  <motion.div
-                    key={i + 200}
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.08 }}
-                    className="aspect-square rounded-2xl overflow-hidden relative group cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
-                    data-testid={`img-portfolio-row3-${i}`}
-                    data-pf-cat={item.cat}
-                    tabIndex={0}
-                    onClick={() => openLightbox((filteredFeaturedItem ? 13 : 13) + i)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        openLightbox((filteredFeaturedItem ? 13 : 13) + i);
-                      }
-                    }}
                   >
                     <PortfolioImage src={item.img} alt={item.label} />
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
@@ -1341,37 +1404,18 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CLIENTS STRIP */}
+      {/* ============ CLIENT LOGOS CAROUSEL SECTION ============ */}
       <section className="py-16 bg-card border-t border-white/5">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <h2 className="text-sm text-primary font-bold tracking-widest uppercase mb-2">Trusted By</h2>
             <h3 className="text-2xl md:text-3xl font-display font-bold">OUR CLIENTS</h3>
           </div>
-          <div className="grid grid-cols-3 md:grid-cols-5 gap-6 items-center">
-            {IMAGES.clients.map((src, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.05 }}
-                className="flex items-center justify-center p-3 rounded-xl bg-background/50 hover:bg-background transition-colors"
-                data-testid={`img-client-${i}`}
-              >
-                <img
-                  src={src}
-                  alt={`Client logo ${i + 1}`}
-                  loading="lazy"
-                  className="h-12 w-full object-contain opacity-70 hover:opacity-100 transition-opacity grayscale hover:grayscale-0"
-                />
-              </motion.div>
-            ))}
-          </div>
+          <ClientLogosCarousel prefersReducedMotion={prefersReducedMotion} />
         </div>
       </section>
 
-      {/* WHY CHOOSE US */}
+      {/* ============ WHY CHOOSE US / ADVANTAGES ============ */}
       <section id="why-us" className="py-24 bg-card text-card-foreground relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-white/20 via-transparent to-transparent opacity-50" />
         <div className="container mx-auto px-4 md:px-6 relative z-10">
@@ -1394,7 +1438,6 @@ export default function Home() {
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.1 }}
                     className="flex items-start gap-3"
-                    data-testid={`item-reason-${i}`}
                   >
                     <CheckCircle2 className="w-6 h-6 shrink-0 mt-0.5" />
                     <span className="font-bold text-lg">{reason}</span>
@@ -1419,7 +1462,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* TESTIMONIALS CAROUSEL */}
+      {/* ============ TESTIMONIALS SECTION ============ */}
       <section id="testimonials" className="py-24 bg-card overflow-hidden">
         <div className="container mx-auto px-4 md:px-6">
           <div className="text-center max-w-3xl mx-auto mb-16">
@@ -1440,7 +1483,6 @@ export default function Home() {
 
           {/* Carousel Container */}
           <div className="relative max-w-4xl mx-auto">
-            {/* Carousel Slides */}
             <div className="overflow-hidden">
               <AnimatePresence mode="wait">
                 <motion.div
@@ -1453,28 +1495,24 @@ export default function Home() {
                 >
                   <div className="text-primary text-8xl font-serif leading-none absolute top-4 left-8 opacity-10">"</div>
                   
-                  {/* Avatar */}
                   {displayTestimonials[testimonialIndex]?.avatar && (
                     <img 
                       src={displayTestimonials[testimonialIndex].avatar} 
-                      alt={displayTestimonials[testimonialIndex]?.name || displayTestimonials[testimonialIndex]?.author || "Client"}
+                      alt={displayTestimonials[testimonialIndex]?.name || "Client"}
                       className="w-20 h-20 rounded-full object-cover mx-auto mb-6 border-4 border-primary/20"
                     />
                   )}
                   
-                  {/* Rating */}
                   <div className="flex justify-center gap-1 mb-6">
                     {Array.from({ length: displayTestimonials[testimonialIndex]?.rating || 5 }).map((_, s) => (
                       <Star key={s} className="w-5 h-5 fill-primary text-primary" />
                     ))}
                   </div>
                   
-                  {/* Quote */}
                   <p className="text-xl md:text-2xl text-foreground/90 font-light leading-relaxed mb-8 max-w-2xl mx-auto relative z-10">
                     {displayTestimonials[testimonialIndex]?.text}
                   </p>
                   
-                  {/* Author */}
                   <div>
                     <div className="font-bold text-foreground font-display uppercase tracking-wider text-lg">
                       {displayTestimonials[testimonialIndex]?.name || displayTestimonials[testimonialIndex]?.author}
@@ -1520,115 +1558,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CONTACT FORM SECTION */}
-      <section id="contact" className="py-24 bg-card relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent opacity-50" />
-        
-        <div className="container mx-auto px-4 md:px-6 relative z-10">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-sm text-primary font-bold tracking-widest uppercase mb-4">Get In Touch</h2>
-            <h3 className="text-4xl md:text-5xl font-display font-bold leading-tight mb-6">
-              READY TO START YOUR PROJECT?
-            </h3>
-            <p className="text-lg text-muted-foreground">
-              Fill out the form below and we'll get back to you within 24 hours with a free quote.
-            </p>
-          </div>
+      {/* ============ CONTACT SECTION ============ */}
+      <ContactSection prefersReducedMotion={prefersReducedMotion} />
 
-          <div className="grid lg:grid-cols-5 gap-12 max-w-6xl mx-auto">
-            {/* Contact Info Sidebar */}
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: prefersReducedMotion ? 0.01 : 0.6 }}
-              className="lg:col-span-2 space-y-8"
-            >
-              <div className="space-y-6">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                    <Phone className="w-5 h-5 text-primary" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-foreground mb-1">Phone</h4>
-                    <a href="tel:+916366525253" className="text-muted-foreground hover:text-primary transition-colors">
-                      +91 6366 525 253
-                    </a>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                    <Mail className="w-5 h-5 text-primary" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-foreground mb-1">Email</h4>
-                    <a href="mailto:info@primesign.in" className="text-muted-foreground hover:text-primary transition-colors">
-                      info@primesign.in
-                    </a>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                    <Clock className="w-5 h-5 text-primary" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-foreground mb-1">Working Hours</h4>
-                    <p className="text-muted-foreground">Mon - Sat: 9:00 AM - 9:00 PM</p>
-                    <p className="text-muted-foreground">Sunday: Closed</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                    <MapPin className="w-5 h-5 text-primary" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-foreground mb-1">Location</h4>
-                    <p className="text-muted-foreground">Bangalore, Karnataka, India</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Quick WhatsApp Button */}
-              <div className="p-6 bg-gradient-to-br from-green-500/10 to-green-600/10 border border-green-500/20 rounded-2xl">
-                <h4 className="font-semibold text-foreground mb-2">Prefer WhatsApp?</h4>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Chat with us directly for quick responses
-                </p>
-                <a
-                  href="https://wa.me/916366525253?text=Hello%20PrimeSign%2C%20I%20would%20like%20to%20know%20more%20about%20your%20services"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-full font-semibold transition-colors"
-                >
-                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M17.6 6.32A7.85 7.85 0 0 0 12 4a7.94 7.94 0 0 0-6.88 12.23l-1.02 3.72 3.81-1a7.93 7.93 0 0 0 3.76.94 7.85 7.85 0 0 0 7.8-7.8 7.7 7.7 0 0 0-1.07-4.04l.02-.03Zm-2.28 7.3c-.09.25-.6.48-.83.51-.23.04-.45.1-.81-.1a10.6 10.6 0 0 1-2.59-1.39c-.72-.5-1.55-1.35-1.83-1.85-.27-.5-.06-.77.2-1.02.21-.2.46-.53.7-.8l.08-.1c.23-.28.28-.46.42-.77.14-.3.07-.57-.03-.8a4.82 4.82 0 0 0-.68-1.17c-.18-.24-.38-.5-.54-.62-.3-.22-.63-.31-.99-.33l-.05.02c-.3 0-.65.1-.99.3-.33.19-.63.52-.83.82-.36.53-.5 1.12-.48 1.72v.03c.03.55.21 1.09.56 1.55 1.04 1.75 2.22 2.9 3.7 3.6.59.3 1.14.47 1.65.6.5.12.95.1 1.33.04.4-.07.75-.26 1.04-.47.29-.22.53-.5.7-.82l.04-.08c.11-.23.11-.44.07-.59-.05-.15-.16-.27-.31-.38Z"/>
-                  </svg>
-                  Chat on WhatsApp
-                </a>
-              </div>
-            </motion.div>
-
-            {/* Contact Form */}
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: prefersReducedMotion ? 0.01 : 0.6, delay: 0.1 }}
-              className="lg:col-span-3"
-            >
-              <ContactForm />
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
+      {/* ============ CTA SECTION ============ */}
       <section className="py-24 relative overflow-hidden" id="cta">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background to-background" />
-        {/* Decorative elements */}
         <div className="absolute top-0 left-0 w-96 h-96 bg-primary/10 blur-[120px] rounded-full" />
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-primary/10 blur-[120px] rounded-full" />
         
@@ -1652,19 +1587,22 @@ export default function Home() {
                   size="lg"
                   onClick={openQuote}
                   className="h-14 px-8 rounded-full text-lg font-bold uppercase tracking-wide box-glow group"
-                  data-testid="button-cta-quote"
                 >
                   Get Your Free Quote
                   <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
-                <a href="tel:+916****5253">
+                <a 
+                  href="https://wa.me/916366525253?text=Hello%20PrimeSign%2C%20I%27d%20like%20to%20discuss%20a%20project%20with%20you."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <Button
                     variant="outline"
                     size="lg"
-                    className="h-14 px-8 rounded-full text-lg font-bold uppercase tracking-wide bg-white/5 border-white/20 hover:bg-white/10"
+                    className="h-14 px-8 rounded-full text-lg font-bold uppercase tracking-wide border-[#25D366] text-[#25D366] hover:bg-[#25D366]/10"
                   >
-                    <PhoneCall className="mr-2 w-5 h-5" />
-                    Call Us Now
+                    <WhatsAppIcon className="mr-2 w-5 h-5" />
+                    WhatsApp Us
                   </Button>
                 </a>
               </div>
