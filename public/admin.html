@@ -4504,12 +4504,12 @@
 
       if (!config.portfolio || config.portfolio.length === 0) {
         container.classList.add('hidden');
-        empty.classList.remove('hidden');
+        if (empty) empty.classList.remove('hidden');
         return;
       }
 
+      if (empty) empty.classList.add('hidden');
       container.classList.remove('hidden');
-      empty.classList.add('hidden');
 
       container.innerHTML = config.portfolio.map((item, index) => `
         <div class="portfolio-card ${item.featured ? 'featured' : ''} ${selectedPortfolioIds.has(item.id) ? 'selected' : ''}">

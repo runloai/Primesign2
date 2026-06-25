@@ -29,6 +29,8 @@
   from = "/assets/*"
   to = "/assets/:splat"
   status = 200
+  [redirects.headers]
+    Cache-Control = "no-cache, no-store, must-revalidate"
 
 [[redirects]]
   from = "/api/*"
