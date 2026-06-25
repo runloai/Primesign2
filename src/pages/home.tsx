@@ -1080,6 +1080,16 @@ export default function Home() {
     loadConfig();
   }, []);
 
+  // Listen for navbar dropdown category changes
+  useEffect(() => {
+    const handler = (e: CustomEvent) => {
+      setActiveServiceCategory(e.detail);
+      document.getElementById("services")?.scrollIntoView({ behavior: "smooth" });
+    };
+    window.addEventListener("arsenal-filter", handler as EventListener);
+    return () => window.removeEventListener("arsenal-filter", handler as EventListener);
+  }, []);
+
   // Get services from config or fallback to hardcoded
   const dynamicServices = getDynamicServices();
   const rawDisplayServices = dynamicServices || adminConfig?.services || services;
