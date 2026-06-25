@@ -586,7 +586,7 @@ export default function Navbar() {
 // Mobile Dropdown Section Component
 interface MobileDropdownSectionProps {
   title: string;
-  items: { name: string; href: string; filter?: string }[];
+  items: { name: string; href: string; filter?: string; serviceId?: string }[];
   onItemClick: () => void;
 }
 
@@ -606,10 +606,16 @@ function MobileDropdownSection({ title, items, onItemClick }: MobileDropdownSect
     if (item && 'filter' in item && item.filter) {
       // Navigate to services with filter
       setLocation('/#services');
-      // Store filter in sessionStorage to be picked up by services section initializer
       sessionStorage.setItem('arsenal-category', item.filter as string);
-      // Also dispatch custom event for SPA navigation (home component listens for this)
       window.dispatchEvent(new CustomEvent("arsenal-filter", { detail: item.filter }));
+      // Scroll to specific service if serviceId exists
+      if ('serviceId' in item && item.serviceId) {
+        setTimeout(() => {
+          window.dispatchEvent(new CustomEvent("scroll-to-service", { 
+            detail: { category: item.filter, serviceId: item.serviceId } 
+          }));
+        }, 150);
+      }
     } else {
       setLocation(href);
     }
