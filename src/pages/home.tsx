@@ -1142,10 +1142,11 @@ export default function Home() {
         const serviceImages = service.images || [];
         const category = service.category || getCategoryFromServiceName(service.title);
         
-        serviceImages.forEach((img: string, imgIdx: number) => {
-          if (img) {
+        serviceImages.forEach((img: any, imgIdx: number) => {
+          const imgUrl = extractImageUrl(img);
+          if (imgUrl) {
             serviceGalleryItems.push({
-              img,
+              img: imgUrl,
               label: imgIdx === 0 ? `${service.title} - Featured` : `${service.title} - Sample`,
               cat: category,
               featured: serviceIdx === 0 && imgIdx === 0,
