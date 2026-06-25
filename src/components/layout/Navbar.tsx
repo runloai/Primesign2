@@ -97,6 +97,9 @@ function DropdownMenu({ title, items, isOpen, onMouseEnter, onMouseLeave, onClic
               <Link
                 key={item.name}
                 href={item.href}
+                onClick={() => {
+                  if (item.filter) sessionStorage.setItem("arsenal-category", item.filter);
+                }}
                 className="block px-4 py-2.5 text-sm text-foreground/80 hover:text-primary hover:bg-primary/10 rounded-lg transition-all"
               >
                 {item.name}

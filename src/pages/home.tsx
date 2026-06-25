@@ -992,7 +992,11 @@ export default function Home() {
   const { open: openQuote } = useQuoteModal();
   const [heroIndex, setHeroIndex] = useState(0);
   const [portfolioFilter] = useState<string | null>(null);
-  const [activeServiceCategory, setActiveServiceCategory] = useState<string>("sign-boards");
+  const [activeServiceCategory, setActiveServiceCategory] = useState<string>(() => {
+    const stored = sessionStorage.getItem("arsenal-category");
+    if (stored) { sessionStorage.removeItem("arsenal-category"); return stored; }
+    return "sign-boards";
+  });
   const [adminConfig, setAdminConfig] = useState<{ portfolio?: PortfolioConfig[]; hero?: any; testimonials?: Testimonial[]; services?: ServiceConfig[] } | null>(null);
   const [testimonialIndex, setTestimonialIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
