@@ -1,7 +1,13 @@
 {
   "contact": {
-    "phones": ["+91 6366525253", "+91 8861848284", "080 49595599"],
-    "emails": ["primesign2021@gmail.com"],
+    "phones": [
+      "+91 6366525253",
+      "+91 8861848284",
+      "080 49595599"
+    ],
+    "emails": [
+      "primesign2021@gmail.com"
+    ],
     "address": "#35, Ramamurthy Nagar Signal, T C Palya Main Road, Bangalore 560016",
     "whatsapp": "+91 6366525253",
     "youtube": "https://www.youtube.com/@PrimesignBangalore",
@@ -37,7 +43,404 @@
       "avatar": ""
     }
   ],
-  "services": [],
+  "services": [
+    {
+      "name": "Glow Signs",
+      "desc": "",
+      "badge": "",
+      "category": "sign-boards",
+      "images": [
+        {
+          "url": "/images/glow/1.webp",
+          "label": "Glow Signs - Image 1"
+        },
+        {
+          "url": "/images/glow/2.webp",
+          "label": "Glow Signs - Image 2"
+        },
+        {
+          "url": "/images/glow/3.webp",
+          "label": "Glow Signs - Image 3"
+        },
+        {
+          "url": "/images/glow/4.webp",
+          "label": "Glow Signs - Image 4"
+        },
+        {
+          "url": "/images/glow/5.webp",
+          "label": "Glow Signs - Image 5"
+        }
+      ]
+    },
+    {
+      "name": "Acrylic Signs",
+      "desc": "",
+      "badge": "",
+      "category": "sign-boards",
+      "images": [
+        {
+          "url": "/images/acrylic/1.webp",
+          "label": "Acrylic Signs - Image 1"
+        },
+        {
+          "url": "/images/acrylic/2.webp",
+          "label": "Acrylic Signs - Image 2"
+        },
+        {
+          "url": "/images/acrylic/3.webp",
+          "label": "Acrylic Signs - Image 3"
+        },
+        {
+          "url": "/images/acrylic/4.webp",
+          "label": "Acrylic Signs - Image 4"
+        }
+      ]
+    },
+    {
+      "name": "Wall Branding",
+      "desc": "",
+      "badge": "",
+      "category": "sign-boards",
+      "images": [
+        {
+          "url": "/images/wall/1.webp",
+          "label": "Wall Branding - Image 1"
+        },
+        {
+          "url": "/images/wall/2.webp",
+          "label": "Wall Branding - Image 2"
+        },
+        {
+          "url": "/images/wall/3.webp",
+          "label": "Wall Branding - Image 3"
+        },
+        {
+          "url": "/images/wall/4.webp",
+          "label": "Wall Branding - Image 4"
+        },
+        {
+          "url": "/images/wall/5.webp",
+          "label": "Wall Branding - Image 5"
+        }
+      ]
+    },
+    {
+      "name": "Vehicle Wraps",
+      "desc": "",
+      "badge": "",
+      "category": "sign-boards",
+      "images": [
+        {
+          "url": "/images/vehicle/1.webp",
+          "label": "Vehicle Wraps - Image 1"
+        },
+        {
+          "url": "/images/vehicle/2.webp",
+          "label": "Vehicle Wraps - Image 2"
+        },
+        {
+          "url": "/images/vehicle/3.webp",
+          "label": "Vehicle Wraps - Image 3"
+        },
+        {
+          "url": "/images/vehicle/4.webp",
+          "label": "Vehicle Wraps - Image 4"
+        }
+      ]
+    },
+    {
+      "name": "PVC & Flex",
+      "desc": "",
+      "badge": "",
+      "category": "sign-boards",
+      "images": [
+        {
+          "url": "/images/pvc/1.webp",
+          "label": "PVC & Flex - Image 1"
+        }
+      ]
+    },
+    {
+      "name": "Non-Light Sign Board",
+      "desc": "",
+      "badge": "",
+      "category": "sign-boards",
+      "images": [
+        {
+          "url": "/images/led/1.webp",
+          "label": "Non-Light Sign Board - Image 1"
+        },
+        {
+          "url": "/images/led/2.webp",
+          "label": "Non-Light Sign Board - Image 2"
+        },
+        {
+          "url": "/images/led/3.webp",
+          "label": "Non-Light Sign Board - Image 3"
+        }
+      ]
+    },
+    {
+      "name": "3D LED Letters",
+      "desc": "",
+      "badge": "",
+      "category": "sign-boards",
+      "images": [
+        {
+          "url": "/images/led/1.webp",
+          "label": "3D LED Letters - Image 1"
+        },
+        {
+          "url": "/images/led/2.webp",
+          "label": "3D LED Letters - Image 2"
+        },
+        {
+          "url": "/images/led/3.webp",
+          "label": "3D LED Letters - Image 3"
+        },
+        {
+          "url": "/images/led/4.webp",
+          "label": "3D LED Letters - Image 4"
+        }
+      ]
+    },
+    {
+      "name": "Glow Sign Board",
+      "desc": "",
+      "badge": "",
+      "category": "sign-boards",
+      "images": [
+        {
+          "url": "/images/glow/1.webp",
+          "label": "Glow Sign Board - Image 1"
+        },
+        {
+          "url": "/images/glow/2.webp",
+          "label": "Glow Sign Board - Image 2"
+        },
+        {
+          "url": "/images/glow/3.webp",
+          "label": "Glow Sign Board - Image 3"
+        }
+      ]
+    },
+    {
+      "name": "Acrylic Sign Board",
+      "desc": "",
+      "badge": "",
+      "category": "sign-boards",
+      "images": [
+        {
+          "url": "/images/acrylic/1.webp",
+          "label": "Acrylic Sign Board - Image 1"
+        },
+        {
+          "url": "/images/acrylic/2.webp",
+          "label": "Acrylic Sign Board - Image 2"
+        },
+        {
+          "url": "/images/acrylic/3.webp",
+          "label": "Acrylic Sign Board - Image 3"
+        }
+      ]
+    },
+    {
+      "name": "PVC/SS Letter Sign",
+      "desc": "",
+      "badge": "",
+      "category": "sign-boards",
+      "images": [
+        {
+          "url": "/images/pvc/1.webp",
+          "label": "PVC/SS Letter Sign - Image 1"
+        }
+      ]
+    },
+    {
+      "name": "Hoardings",
+      "desc": "",
+      "badge": "",
+      "category": "sign-boards",
+      "images": [
+        {
+          "url": "/images/wall/1.webp",
+          "label": "Hoardings - Image 1"
+        },
+        {
+          "url": "/images/wall/2.webp",
+          "label": "Hoardings - Image 2"
+        },
+        {
+          "url": "/images/wall/3.webp",
+          "label": "Hoardings - Image 3"
+        }
+      ]
+    },
+    {
+      "name": "One Way Vision",
+      "desc": "",
+      "badge": "",
+      "category": "sign-boards",
+      "images": [
+        {
+          "url": "/images/vehicle/1.webp",
+          "label": "One Way Vision - Image 1"
+        },
+        {
+          "url": "/images/vehicle/2.webp",
+          "label": "One Way Vision - Image 2"
+        }
+      ]
+    },
+    {
+      "name": "Gloss Branding",
+      "desc": "",
+      "badge": "",
+      "category": "sign-boards",
+      "images": [
+        {
+          "url": "/images/led/1.webp",
+          "label": "Gloss Branding - Image 1"
+        },
+        {
+          "url": "/images/led/2.webp",
+          "label": "Gloss Branding - Image 2"
+        }
+      ]
+    },
+    {
+      "name": "Wall Graphics",
+      "desc": "",
+      "badge": "",
+      "category": "sign-boards",
+      "images": [
+        {
+          "url": "/images/wall/1.webp",
+          "label": "Wall Graphics - Image 1"
+        },
+        {
+          "url": "/images/wall/2.webp",
+          "label": "Wall Graphics - Image 2"
+        },
+        {
+          "url": "/images/wall/3.webp",
+          "label": "Wall Graphics - Image 3"
+        },
+        {
+          "url": "/images/wall/4.webp",
+          "label": "Wall Graphics - Image 4"
+        }
+      ]
+    },
+    {
+      "name": "Promotional Tents",
+      "desc": "",
+      "badge": "",
+      "category": "sign-boards",
+      "images": [
+        {
+          "url": "/images/portfolio/01.webp",
+          "label": "Promotional Tents - Image 1"
+        },
+        {
+          "url": "/images/portfolio/03.webp",
+          "label": "Promotional Tents - Image 2"
+        }
+      ]
+    },
+    {
+      "name": "Roll Up Standees",
+      "desc": "",
+      "badge": "",
+      "category": "sign-boards",
+      "images": [
+        {
+          "url": "/images/portfolio/04.webp",
+          "label": "Roll Up Standees - Image 1"
+        },
+        {
+          "url": "/images/portfolio/05.webp",
+          "label": "Roll Up Standees - Image 2"
+        }
+      ]
+    },
+    {
+      "name": "Posters",
+      "desc": "",
+      "badge": "",
+      "category": "sign-boards",
+      "images": [
+        {
+          "url": "/images/wall/1.webp",
+          "label": "Posters - Image 1"
+        },
+        {
+          "url": "/images/wall/2.webp",
+          "label": "Posters - Image 2"
+        }
+      ]
+    },
+    {
+      "name": "Visiting Cards",
+      "desc": "",
+      "badge": "",
+      "category": "sign-boards",
+      "images": [
+        {
+          "url": "/images/square/4.webp",
+          "label": "Visiting Cards - Image 1"
+        },
+        {
+          "url": "/images/square/5.webp",
+          "label": "Visiting Cards - Image 2"
+        }
+      ]
+    },
+    {
+      "name": "ID Cards",
+      "desc": "",
+      "badge": "",
+      "category": "sign-boards",
+      "images": [
+        {
+          "url": "/images/square/5.webp",
+          "label": "ID Cards - Image 1"
+        }
+      ]
+    },
+    {
+      "name": "T-Shirts",
+      "desc": "",
+      "badge": "",
+      "category": "sign-boards",
+      "images": [
+        {
+          "url": "/images/square/6.webp",
+          "label": "T-Shirts - Image 1"
+        },
+        {
+          "url": "/images/square/7.webp",
+          "label": "T-Shirts - Image 2"
+        }
+      ]
+    },
+    {
+      "name": "Quick Printing",
+      "desc": "",
+      "badge": "",
+      "category": "sign-boards",
+      "images": [
+        {
+          "url": "/images/square/2.webp",
+          "label": "Quick Printing - Image 1"
+        },
+        {
+          "url": "/images/square/3.webp",
+          "label": "Quick Printing - Image 2"
+        }
+      ]
+    }
+  ],
   "portfolio": [],
   "hero": {
     "bgImage": "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/portfolio/01.webp",
@@ -62,9 +465,9 @@
     "siteDescription": "Premium LED signs, glow signs, acrylic signage and vehicle wraps in Bangalore.",
     "logoType": "text",
     "workingHours": "Mon - Sat: 9:00 AM - 7:00 PM<br>Sunday: Closed",
-    "aboutDescription": "Founded in 2021, PrimeSign Private Limited has rapidly become Bangalore's go-to studio for premium signage and architectural branding. We don't just print signs — we engineer visibility.",
+    "aboutDescription": "Founded in 2021, PrimeSign Private Limited has rapidly become Bangalore's go-to studio for premium signage and architectural branding. We don't just print signs \u2014 we engineer visibility.",
     "helpText": "Ready to transform your brand visibility? Let's discuss your project."
   },
-  "_publishedAt": "2025-01-15T00:00:00.000Z",
+  "_publishedAt": "2026-06-25T06:00:00Z",
   "_version": "1.0"
 }
