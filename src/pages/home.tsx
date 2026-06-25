@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { Link } from "wouter";
-import { ArrowRight, CheckCircle2, ChevronRight, PhoneCall, Star } from "lucide-react";
+import { ArrowRight, CheckCircle2, ChevronLeft, ChevronRight, PhoneCall, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuoteModal } from "@/context/QuoteModalContext";
 import { PortfolioImage } from "@/components/ui/image-with-skeleton";
@@ -19,12 +19,17 @@ interface Testimonial {
   avatar?: string;
 }
 
+interface ServiceImage {
+  url: string;
+  label?: string;
+}
+
 interface ServiceConfig {
   id?: number;
   name: string;
   desc?: string;
   badge?: string;
-  images?: { url: string; label: string }[] | string[];
+  images?: ServiceImage[] | string[];
 }
 
 interface PortfolioConfig {
@@ -148,42 +153,42 @@ const services = [
   {
     title: "LED Signs",
     desc: "Ultra-bright, energy-efficient LED boards engineered for maximum daylight visibility.",
-    img: IMAGES.led[0],
+    images: IMAGES.led.slice(0, 5),
     tag: "Most Popular",
     category: "led",
   },
   {
     title: "Glow Signs",
     desc: "Illuminated channel-letter installations that blaze through the Bangalore night.",
-    img: IMAGES.glow[0],
+    images: IMAGES.glow.slice(0, 5),
     tag: null,
     category: "glow",
   },
   {
     title: "Acrylic Signs",
     desc: "Precision-routed acrylic lettering — crisp, clean, and unmistakably premium.",
-    img: IMAGES.acrylic[0],
+    images: IMAGES.acrylic.slice(0, 4),
     tag: null,
     category: "acrylic",
   },
   {
     title: "Wall Branding",
     desc: "Large-format wall murals and architectural graphics for offices and retail.",
-    img: IMAGES.wall[0],
+    images: IMAGES.wall.slice(0, 5),
     tag: null,
     category: "wall",
   },
   {
     title: "Vehicle Wraps",
     desc: "Turn your entire fleet into high-impact moving billboards across the city.",
-    img: IMAGES.vehicle[0],
+    images: IMAGES.vehicle.slice(0, 6),
     tag: null,
     category: "vehicle",
   },
   {
     title: "PVC & Flex",
     desc: "Durable outdoor flex printing for hoardings, banners, and retail displays.",
-    img: IMAGES.pvc,
+    images: [IMAGES.pvc, ...IMAGES.wall.slice(0, 4)],
     tag: null,
     category: "pvc",
   },
@@ -248,26 +253,39 @@ function getDynamicTestimonials(): Testimonial[] | null {
   return null;
 }
 
-// Helper to get dynamic services from localStorage
+// Helper to extract image URL from service image (handles both string and object formats)
+function extractImageUrl(img: ServiceImage | string): string {
+  if (typeof img === 'string') return img;
+  return img?.url || '';
+}
+
+// Helper to get dynamic services from localStorage with FULL IMAGE ARRAY support
 function getDynamicServices(): any[] | null {
   try {
     const stored = localStorage.getItem("primesign-config");
     if (stored) {
       const config = JSON.parse(stored);
       if (config.services && config.services.length > 0) {
-        // Map admin service format to main site format
+        // Map admin service format to main site format with full image arrays
         return config.services
           .filter((s: ServiceConfig) => s.name) // Only include services with names
-          .map((s: ServiceConfig) => ({
-            title: s.name,
-            desc: s.desc || "",
-            // Get first image from images array, or fallback to category-based image
-            img: s.images && s.images.length > 0 
-              ? (typeof s.images[0] === 'string' ? s.images[0] : (s.images[0] as {url: string}).url || IMAGES.led[0])
-              : getServiceImage(s.name),
-            tag: s.badge === "popular" ? "Most Popular" : s.badge === "new" ? "New" : null,
-            category: getCategoryFromServiceName(s.name),
-          }));
+          .map((s: ServiceConfig) => {
+            // Extract all images from the service gallery
+            const serviceImages = s.images && s.images.length > 0
+              ? s.images.map((img: ServiceImage | string) => extractImageUrl(img)).filter(Boolean)
+              : [getServiceImage(s.name)]; // Fallback to category-based image
+            
+            return {
+              title: s.name,
+              desc: s.desc || "",
+              // Store ALL images for the gallery carousel
+              images: serviceImages,
+              // First image as thumbnail
+              thumbnail: serviceImages[0] || getServiceImage(s.name),
+              tag: s.badge === "popular" ? "Most Popular" : s.badge === "new" ? "New" : null,
+              category: getCategoryFromServiceName(s.name),
+            };
+          });
       }
     }
   } catch (e) {
@@ -302,6 +320,144 @@ function getServiceImage(serviceName: string): string {
   return IMAGES.led[0];
 }
 
+// Service Image Gallery Carousel Component
+interface ServiceGalleryProps {
+  images: string[];
+  serviceTitle: string;
+  prefersReducedMotion: boolean;
+}
+
+function ServiceImageGallery({ images, serviceTitle, prefersReducedMotion }: ServiceGalleryProps) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isHovering, setIsHovering] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const autoScrollRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Ensure we have at least one image
+  const displayImages = images.length > 0 ? images : [IMAGES.led[0]];
+  const totalImages = displayImages.length;
+
+  // Auto-scroll every 3-4 seconds
+  useEffect(() => {
+    if (isHovering || totalImages <= 1) return;
+    
+    autoScrollRef.current = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % totalImages);
+    }, 3500);
+
+    return () => {
+      if (autoScrollRef.current) {
+        clearInterval(autoScrollRef.current);
+      }
+    };
+  }, [isHovering, totalImages]);
+
+  // Scroll to current index
+  useEffect(() => {
+    if (scrollContainerRef.current) {
+      const scrollAmount = currentIndex * scrollContainerRef.current.offsetWidth;
+      scrollContainerRef.current.scrollTo({
+        left: scrollAmount,
+        behavior: prefersReducedMotion ? 'auto' : 'smooth',
+      });
+    }
+  }, [currentIndex, prefersReducedMotion]);
+
+  const goToNext = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    setCurrentIndex((prev) => (prev + 1) % totalImages);
+  };
+
+  const goToPrev = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    setCurrentIndex((prev) => (prev - 1 + totalImages) % totalImages);
+  };
+
+  const goToIndex = (index: number) => {
+    setCurrentIndex(index);
+  };
+
+  // Only show navigation if we have multiple images
+  const showNavigation = totalImages > 1;
+
+  return (
+    <div 
+      className="relative w-full h-full"
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
+    >
+      {/* Horizontal scroll container */}
+      <div 
+        ref={scrollContainerRef}
+        className="flex w-full h-full overflow-hidden scroll-smooth"
+        style={{ scrollSnapType: 'x mandatory' }}
+      >
+        {displayImages.map((img, idx) => (
+          <div 
+            key={idx}
+            className="flex-shrink-0 w-full h-full"
+            style={{ scrollSnapAlign: 'start' }}
+          >
+            <img
+              src={img}
+              alt={`${serviceTitle} - Image ${idx + 1}`}
+              className="w-full h-full object-cover"
+              loading={idx === 0 ? "eager" : "lazy"}
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* Arrow buttons - visible on hover or always for touch devices */}
+      {showNavigation && (
+        <>
+          <button
+            onClick={goToPrev}
+            className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/60 backdrop-blur-sm text-white flex items-center justify-center opacity-0 hover:opacity-100 focus:opacity-100 transition-opacity duration-200 hover:bg-black/80 z-10 group-hover:opacity-100"
+            aria-label="Previous image"
+            style={{ opacity: isHovering ? 1 : undefined }}
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <button
+            onClick={goToNext}
+            className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/60 backdrop-blur-sm text-white flex items-center justify-center opacity-0 hover:opacity-100 focus:opacity-100 transition-opacity duration-200 hover:bg-black/80 z-10"
+            aria-label="Next image"
+            style={{ opacity: isHovering ? 1 : undefined }}
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        </>
+      )}
+
+      {/* Dot indicators */}
+      {showNavigation && (
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-10">
+          {displayImages.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={(e) => { e.stopPropagation(); goToIndex(idx); }}
+              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                idx === currentIndex
+                  ? "bg-primary w-4"
+                  : "bg-white/60 hover:bg-white/80"
+              }`}
+              aria-label={`Go to image ${idx + 1}`}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Image counter */}
+      {showNavigation && (
+        <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white text-xs font-medium px-2 py-1 rounded-full z-10">
+          {currentIndex + 1} / {totalImages}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function Home() {
   const { open: openQuote } = useQuoteModal();
   const [heroIndex, setHeroIndex] = useState(0);
@@ -322,7 +478,16 @@ export default function Home() {
 
   // Get services from config or fallback to hardcoded
   const dynamicServices = getDynamicServices();
-  const displayServices = dynamicServices || adminConfig?.services || services;
+  const rawDisplayServices = dynamicServices || adminConfig?.services || services;
+  
+  // Normalize services to have consistent image arrays
+  const displayServices = useMemo(() => {
+    return rawDisplayServices.map((s: any) => ({
+      ...s,
+      images: s.images || (s.img ? [s.img] : [IMAGES.led[0]]),
+      thumbnail: s.thumbnail || s.img || (s.images?.[0]) || IMAGES.led[0],
+    }));
+  }, [rawDisplayServices]);
 
   // Get hero data from config or fallback to hardcoded
   const heroBgImage = adminConfig?.hero?.bgImage || IMAGES.portfolio[0];
@@ -342,10 +507,36 @@ export default function Home() {
     return () => clearInterval(timer);
   }, [displayTestimonials.length]);
 
-  // Get portfolio items with proper structure including featured flag
+  // Get portfolio items - PRIORITIZE service galleries for portfolio source
   const getPortfolioItems = () => {
+    // First, try to build portfolio from service galleries (sync with services)
+    if (displayServices && displayServices.length > 0) {
+      const serviceGalleryItems: { img: string; label: string; cat: string; featured: boolean }[] = [];
+      
+      displayServices.forEach((service: any, serviceIdx: number) => {
+        const serviceImages = service.images || [];
+        const category = service.category || getCategoryFromServiceName(service.title);
+        
+        // Add each image from the service gallery as a portfolio item
+        serviceImages.forEach((img: string, imgIdx: number) => {
+          if (img) {
+            serviceGalleryItems.push({
+              img,
+              label: imgIdx === 0 ? `${service.title} - Featured` : `${service.title} - Sample`,
+              cat: category,
+              featured: serviceIdx === 0 && imgIdx === 0, // First service's first image is featured
+            });
+          }
+        });
+      });
+      
+      if (serviceGalleryItems.length > 0) {
+        return serviceGalleryItems;
+      }
+    }
+    
+    // Fallback: use admin portfolio config
     if (adminConfig?.portfolio && adminConfig.portfolio.length > 0) {
-      // Convert config portfolio items to the format expected by the grid
       return adminConfig.portfolio
         .filter((item: PortfolioConfig) => item.url)
         .map((item: PortfolioConfig) => ({
@@ -355,8 +546,8 @@ export default function Home() {
           featured: item.featured || false,
         }));
     }
-    // Fallback: create items from hardcoded portfolio + assign categories
-    // First item is featured by default
+    
+    // Final fallback: hardcoded portfolio
     return [
       { img: IMAGES.portfolio[0], label: "Storefront LED Branding", cat: "led", featured: true },
       { img: IMAGES.glow[3], label: "Glow Sign", cat: "glow", featured: false },
@@ -397,14 +588,17 @@ export default function Home() {
     : [];
 
   // Extract unique categories from services for portfolio filter buttons
+  // PRESERVE ADMIN ORDER - no sorting, maintain exact service order
   const portfolioCategories = useMemo(() => {
-    const categories = new Set<string>();
+    const categories: string[] = [];
+    const seen = new Set<string>();
     displayServices.forEach((service: any) => {
-      if (service.category) {
-        categories.add(service.category.toLowerCase());
+      if (service.category && !seen.has(service.category.toLowerCase())) {
+        seen.add(service.category.toLowerCase());
+        categories.push(service.category.toLowerCase());
       }
     });
-    return Array.from(categories).sort();
+    return categories;
   }, [displayServices]);
 
   useEffect(() => {
@@ -631,12 +825,12 @@ export default function Home() {
                     {service.tag}
                   </div>
                 )}
+                {/* Image Gallery Carousel */}
                 <div className="aspect-[4/3] overflow-hidden">
-                  <img
-                    src={service.img}
-                    alt={`${service.title} service example`}
-                    loading="lazy"
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  <ServiceImageGallery
+                    images={service.images || [service.thumbnail || service.img]}
+                    serviceTitle={service.title}
+                    prefersReducedMotion={prefersReducedMotion}
                   />
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent flex flex-col justify-end p-8 transition-all duration-300 group-hover:backdrop-blur-sm">
@@ -693,7 +887,9 @@ export default function Home() {
               className={`px-4 md:px-5 py-2 rounded-full text-xs md:text-sm font-bold uppercase tracking-wider transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background ${
                 !portfolioFilter
                   ? "bg-primary text-primary-foreground" : "bg-white/5 text-white/60 hover:bg-white/10"}`}
-            >All</button>
+            >
+              All
+            </button>
             {portfolioCategories.map(cat => (
               <button 
                 key={cat}
@@ -998,7 +1194,7 @@ export default function Home() {
               className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-16 w-12 h-12 rounded-full bg-background border border-border flex items-center justify-center text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
               aria-label="Previous testimonial"
             >
-              <ChevronRight className="w-6 h-6 rotate-180" />
+              <ChevronLeft className="w-6 h-6" />
             </button>
             <button
               onClick={() => setTestimonialIndex((prev) => (prev + 1) % displayTestimonials.length)}
@@ -1043,7 +1239,7 @@ export default function Home() {
                   Get Your Free Quote
                   <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
-                <a href="tel:+916366525253">
+                <a href="tel:+916****5253">
                   <Button
                     variant="outline"
                     size="lg"
