@@ -443,11 +443,11 @@ export default function Home() {
           <motion.div
             initial="hidden"
             animate="visible"
-            variants={staggerContainer(prefersReducedMotion)}
+            variants={staggerContainer}
             className="max-w-4xl"
           >
             <motion.div
-              variants={fadeInUp(prefersReducedMotion)}
+              variants={fadeInUp}
               className="inline-block border border-primary/30 bg-primary/10 px-4 py-1.5 rounded-full mb-6 backdrop-blur-sm"
             >
               <span className="text-primary font-bold text-sm tracking-wider uppercase">
@@ -455,7 +455,7 @@ export default function Home() {
               </span>
             </motion.div>
             <motion.h1
-              variants={fadeInUp(prefersReducedMotion)}
+              variants={fadeInUp}
               className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-display font-bold leading-[1.1] mb-6 tracking-tight"
               dangerouslySetInnerHTML={{
                 __html: heroHeadline
@@ -464,12 +464,12 @@ export default function Home() {
               }}
             />
             <motion.p
-              variants={fadeInUp(prefersReducedMotion)}
+              variants={fadeInUp}
               className="text-base sm:text-xl md:text-2xl text-muted-foreground font-light max-w-2xl mb-10 leading-relaxed"
             >
               {heroSubtitle}
             </motion.p>
-            <motion.div variants={fadeInUp(prefersReducedMotion)} className="flex flex-col sm:flex-row gap-4">
+            <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row gap-4">
               <Button
                 size="lg"
                 onClick={openQuote}
