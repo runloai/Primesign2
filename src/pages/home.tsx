@@ -1087,8 +1087,8 @@ export default function Home() {
         ...item,
         img: cacheBustUrl(item.img),
       })),
-    }));
-  }, [dynamicServiceCategories, adminConfig]);
+    })) || [];
+  }, [dynamicServiceCategories, adminConfig]) || [];
 
   // Get hero data from config or fallback
   const heroBgImage = adminConfig?.hero?.bgImage || "/images/portfolio/01.webp";
@@ -1310,7 +1310,9 @@ export default function Home() {
   }, [selectedService]);
 
   // Get current category services
-  const currentCategory = serviceCategories.find(c => c.id === activeServiceCategory) || serviceCategories[0];
+  const currentCategory = serviceCategories.length > 0
+    ? (serviceCategories.find(c => c.id === activeServiceCategory) || serviceCategories[0])
+    : null;
 
   return (
     <div className="w-full">
@@ -1494,7 +1496,7 @@ export default function Home() {
 
           {/* Active Category Description */}
           <div className="text-center mb-10">
-            <p className="text-muted-foreground text-lg">{currentCategory.description}</p>
+            <p className="text-muted-foreground text-lg">{currentCategory?.description}</p>
           </div>
 
           {/* Services Grid */}
@@ -1505,7 +1507,7 @@ export default function Home() {
             transition={{ duration: prefersReducedMotion ? 0.01 : 0.4 }}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
           >
-            {currentCategory.items.map((service, index) => (
+            {(currentCategory?.items || []).map((service, index) => (
               <motion.div
                 key={service.name}
                 id={`svc-${service.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '')}`}
