@@ -2,11 +2,11 @@
   "contact": {
     "phones": [
       "+91 6366525253",
-      "+91 8861848284",
-      "080 49595599"
+      "+91 8861848284"
     ],
     "emails": [
-      "primesign2021@gmail.com"
+      "primesign2021@gmail.com",
+      "tst@gmail.com"
     ],
     "address": "#35, Ramamurthy Nagar Signal, T C Palya Main Road, Bangalore 560016",
     "whatsapp": "+91 6366525253",
@@ -82,8 +82,44 @@
       "category": "sign-boards",
       "images": [
         {
-          "url": "/images/services/sign-boards/glow-1.jpg",
+          "url": "/images/glow/1.webp",
           "label": "Glow Signs - Image 1"
+        },
+        {
+          "url": "/images/glow/2.webp",
+          "label": "Glow Signs - Image 2"
+        },
+        {
+          "url": "/images/glow/3.webp",
+          "label": "Glow Signs - Image 3"
+        },
+        {
+          "url": "/images/glow/4.webp",
+          "label": "Glow Signs - Image 4"
+        },
+        {
+          "url": "/images/glow/5.webp",
+          "label": "Glow Signs - Image 5"
+        },
+        {
+          "url": "/images/glow/6.webp",
+          "label": "Glow Signs - Image 6"
+        },
+        {
+          "url": "/images/glow/7.webp",
+          "label": "Glow Signs - Image 7"
+        },
+        {
+          "url": "/images/glow/8.webp",
+          "label": "Glow Signs - Image 8"
+        },
+        {
+          "url": "/images/glow/9.webp",
+          "label": "Glow Signs - Image 9"
+        },
+        {
+          "url": "/images/glow/10.webp",
+          "label": "Glow Signs - Image 10"
         }
       ]
     },
@@ -128,24 +164,48 @@
       "category": "sign-boards",
       "images": [
         {
-          "url": "/images/services/sign-boards/wall-1.png",
+          "url": "/images/services/sign-boards/wall-1.jpg",
           "label": "Wall Branding - Image 1"
         },
         {
-          "url": "/images/services/sign-boards/wall-2.png",
+          "url": "/images/services/sign-boards/wall-2.jpg",
           "label": "Wall Branding - Image 2"
         },
         {
-          "url": "/images/services/sign-boards/wall-3.png",
+          "url": "/images/services/sign-boards/wall-3.jpg",
           "label": "Wall Branding - Image 3"
         },
         {
-          "url": "/images/services/sign-boards/wall-4.png",
+          "url": "/images/services/sign-boards/wall-4.jpg",
           "label": "Wall Branding - Image 4"
         },
         {
-          "url": "/images/services/sign-boards/wall-5.png",
+          "url": "/images/services/sign-boards/wall-5.jpg",
           "label": "Wall Branding - Image 5"
+        },
+        {
+          "url": "/images/services/sign-boards/wall-6.jpg",
+          "label": "Wall Branding - Image 6"
+        },
+        {
+          "url": "/images/services/sign-boards/wall-7.jpg",
+          "label": "Wall Branding - Image 7"
+        },
+        {
+          "url": "/images/services/sign-boards/wall-8.jpg",
+          "label": "Wall Branding - Image 8"
+        },
+        {
+          "url": "/images/services/sign-boards/wall-9.jpg",
+          "label": "Wall Branding - Image 9"
+        },
+        {
+          "url": "/images/services/sign-boards/wall-10.jpg",
+          "label": "Wall Branding - Image 10"
+        },
+        {
+          "url": "/images/services/sign-boards/wall-11.jpg",
+          "label": "Wall Branding - Image 11"
         }
       ]
     },
@@ -157,20 +217,48 @@
       "category": "sign-boards",
       "images": [
         {
-          "url": "/images/services/sign-boards/vehicle-1.png",
+          "url": "/images/services/sign-boards/vehicle-1.jpg",
           "label": "Vehicle Wraps - Image 1"
         },
         {
-          "url": "/images/services/sign-boards/vehicle-2.png",
+          "url": "/images/services/sign-boards/vehicle-2.jpg",
           "label": "Vehicle Wraps - Image 2"
         },
         {
-          "url": "/images/services/sign-boards/vehicle-3.png",
+          "url": "/images/services/sign-boards/vehicle-3.jpg",
           "label": "Vehicle Wraps - Image 3"
         },
         {
-          "url": "/images/services/sign-boards/vehicle-5.png",
+          "url": "/images/services/sign-boards/vehicle-4.jpg",
           "label": "Vehicle Wraps - Image 4"
+        },
+        {
+          "url": "/images/services/sign-boards/vehicle-5.jpg",
+          "label": "Vehicle Wraps - Image 5"
+        },
+        {
+          "url": "/images/services/sign-boards/vehicle-6.jpg",
+          "label": "Vehicle Wraps - Image 6"
+        },
+        {
+          "url": "/images/services/sign-boards/vehicle-7.jpg",
+          "label": "Vehicle Wraps - Image 7"
+        },
+        {
+          "url": "/images/services/sign-boards/vehicle-8.jpg",
+          "label": "Vehicle Wraps - Image 8"
+        },
+        {
+          "url": "/images/services/sign-boards/vehicle-9.jpg",
+          "label": "Vehicle Wraps - Image 9"
+        },
+        {
+          "url": "/images/services/sign-boards/vehicle-10.jpg",
+          "label": "Vehicle Wraps - Image 10"
+        },
+        {
+          "url": "/images/services/sign-boards/vehicle-11.jpg",
+          "label": "Vehicle Wraps - Image 11"
         }
       ]
     },
@@ -258,10 +346,6 @@
         {
           "url": "/images/services/sign-boards/nonlight-3.png",
           "label": "Non-Light Sign Board - Image 3"
-        },
-        {
-          "url": "/images/services/sign-boards/nonlight-4.png",
-          "label": "Non-Light Sign Board - Image 4"
         }
       ]
     },
@@ -370,14 +454,6 @@
         {
           "url": "/images/services/promotional/rollup-3.png",
           "label": "Roll Up Standees - Image 3"
-        },
-        {
-          "url": "/images/services/promotional/rollup-4.png",
-          "label": "Roll Up Standees - Image 4"
-        },
-        {
-          "url": "/images/services/promotional/rollup-5.png",
-          "label": "Roll Up Standees - Image 5"
         }
       ]
     },
@@ -704,25 +780,150 @@
   "serviceCategories": [
     {
       "id": "sign-boards",
-      "label": "SIGN BOARD",
+      "label": "SIGN BOARDS",
       "icon": "\ud83e\udea7",
-      "description": "Premium signage solutions including LED, glow, acrylic, wall branding, vehicle wraps, hoardings & more"
+      "description": "Premium signage solutions including LED, glow, acrylic, wall branding, vehicle wraps, hoardings & more",
+      "items": [
+        {
+          "id": "led-signs",
+          "name": "LED Signs",
+          "href": "/#services",
+          "filter": "sign-boards",
+          "serviceId": "led-signs"
+        },
+        {
+          "id": "glow-signs",
+          "name": "Glow Signs",
+          "href": "/#services",
+          "filter": "sign-boards",
+          "serviceId": "glow-signs"
+        },
+        {
+          "id": "acrylic-signs",
+          "name": "Acrylic Signs",
+          "href": "/#services",
+          "filter": "sign-boards",
+          "serviceId": "acrylic-signs"
+        },
+        {
+          "id": "wall-branding",
+          "name": "Wall Branding",
+          "href": "/#services",
+          "filter": "sign-boards",
+          "serviceId": "wall-branding"
+        },
+        {
+          "id": "vehicle-wraps",
+          "name": "Vehicle Wraps",
+          "href": "/#services",
+          "filter": "sign-boards",
+          "serviceId": "vehicle-wraps"
+        },
+        {
+          "id": "pvc-flex",
+          "name": "PVC & Flex",
+          "href": "/#services",
+          "filter": "sign-boards",
+          "serviceId": "pvc-flex"
+        },
+        {
+          "id": "pvc-ss-letter-sign",
+          "name": "PVC/SS Letter Sign",
+          "href": "/#services",
+          "filter": "sign-boards",
+          "serviceId": "pvc-ss-letter-sign"
+        },
+        {
+          "id": "non-light-sign-board",
+          "name": "Non-Light Sign Board",
+          "href": "/#services",
+          "filter": "sign-boards",
+          "serviceId": "non-light-sign-board"
+        },
+        {
+          "id": "hoardings",
+          "name": "Hoardings",
+          "href": "/#services",
+          "filter": "sign-boards",
+          "serviceId": "hoardings"
+        },
+        {
+          "id": "one-way-vision",
+          "name": "One Way Vision",
+          "href": "/#services",
+          "filter": "sign-boards",
+          "serviceId": "one-way-vision"
+        }
+      ]
     },
     {
       "id": "promotional",
       "label": "PROMOTIONAL DISPLAY",
       "icon": "\ud83d\udce2",
-      "description": "Eye-catching display solutions for events & marketing"
+      "description": "Eye-catching display solutions for events & marketing",
+      "items": [
+        {
+          "id": "promotional-tents",
+          "name": "Promotional Tents",
+          "href": "/#services",
+          "filter": "promotional",
+          "serviceId": "promotional-tents"
+        },
+        {
+          "id": "roll-up-standees",
+          "name": "Roll Up Standees",
+          "href": "/#services",
+          "filter": "promotional",
+          "serviceId": "roll-up-standees"
+        }
+      ]
     },
     {
       "id": "digital",
-      "label": "DIGITAL PRINTS",
+      "label": "DIGITAL PRINT",
       "icon": "\ud83d\udda8\ufe0f",
-      "description": "High-quality digital printing on various media"
+      "description": "High-quality digital printing on various media",
+      "items": [
+        {
+          "id": "posters",
+          "name": "Posters",
+          "href": "/#services",
+          "filter": "digital",
+          "serviceId": "posters"
+        },
+        {
+          "id": "visiting-cards",
+          "name": "Visiting Cards",
+          "href": "/#services",
+          "filter": "digital",
+          "serviceId": "visiting-cards"
+        },
+        {
+          "id": "id-cards",
+          "name": "ID Cards",
+          "href": "/#services",
+          "filter": "digital",
+          "serviceId": "id-cards"
+        },
+        {
+          "id": "t-shirts",
+          "name": "T-Shirts",
+          "href": "/#services",
+          "filter": "digital",
+          "serviceId": "t-shirts"
+        },
+        {
+          "id": "quick-printing",
+          "name": "Quick Printing",
+          "href": "/#services",
+          "filter": "digital",
+          "serviceId": "quick-printing"
+        }
+      ]
     }
   ],
   "settings": {
-    "logoType": "image",
+    "logoType": "text",
     "logoUrl": "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/logo/logo.webp",
     "scheme": "Obsidian Gold",
     "whatsappNumber": "+91 6366525253",
@@ -787,6 +988,6 @@
     ]
   },
   "navbar": {},
-  "_publishedAt": "2026-06-26T14:57:14.230Z",
+  "_publishedAt": "2026-06-26T18:50:27.496Z",
   "_version": "2.1"
 }

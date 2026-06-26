@@ -3345,9 +3345,14 @@
       document.getElementById('loginScreen').classList.add('hidden');
       document.getElementById('dashboard').classList.add('active');
       populateAllFields();
-      renderAllTabs();
-      loadFromServer();
+      try {
+        renderAllTabs();
+      } catch (e) {
+        console.error('renderAllTabs error:', e);
+      }
       switchTab('dashboard');
+      // Fire-and-forget server sync AFTER dashboard is visible
+      setTimeout(() => loadFromServer(), 0);
     }
 
     // ================================================

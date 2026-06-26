@@ -54,6 +54,7 @@ export function ImageLightbox({ images, currentIndex, isOpen, onClose, onNavigat
     <AnimatePresence>
       {isOpen && currentImage && (
         <motion.div
+          key="image-lightbox"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}

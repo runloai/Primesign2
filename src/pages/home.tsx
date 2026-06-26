@@ -51,7 +51,7 @@ let sharedConfigFetched = false;
 
 // Cache-busting helper: append timestamp to any URL
 const cacheBustUrl = (url: string | null | undefined): string => {
-  if (!url) return '/images/led/1.webp';
+  if (!url || typeof url !== 'string') return '/images/led/1.webp';
   return url + (url.includes('?') ? '&' : '?') + 't=' + Date.now();
 };
 
@@ -437,9 +437,9 @@ function getDynamicServiceCategories(): typeof SERVICES_CATEGORIES | null {
     const stored = localStorage.getItem("primesign-config");
     if (stored) {
       const config = JSON.parse(stored);
-      if (config.serviceCategories && config.serviceCategories.length > 0) {
+      if (Array.isArray(config.serviceCategories) && config.serviceCategories.length > 0) {
         // Check if stored categories have items populated
-        const hasItems = config.serviceCategories.some((c: any) => c.items && c.items.length > 0);
+        const hasItems = config.serviceCategories.some((c: any) => c.items && Array.isArray(c.items) && c.items.length > 0);
         if (hasItems) {
           return config.serviceCategories;
         }
@@ -1044,8 +1044,8 @@ export default function Home() {
   // Get service categories from config or fallback
   const dynamicServiceCategories = getDynamicServiceCategories();
   const serviceCategories = useMemo(() => {
-    if (dynamicServiceCategories) {
-      const hasItems = dynamicServiceCategories.some(c => c.items && c.items.length > 0);
+    if (Array.isArray(dynamicServiceCategories)) {
+      const hasItems = dynamicServiceCategories.some(c => c.items && Array.isArray(c.items) && c.items.length > 0);
       if (hasItems) return dynamicServiceCategories;
     }
     if (adminConfig?.services && adminConfig.services.length > 0) {
@@ -1239,6 +1239,7 @@ export default function Home() {
     if (exact && exact.length > 0) return exact;
     const noTrailS = normalized.replace(/s$/, '');
     for (const [key, imgs] of serviceImagesLookup) {
+      if (typeof key !== 'string' || typeof noTrailS !== 'string') continue;
       if (key.replace(/s$/, '') === noTrailS && imgs.length > 0) return imgs;
       if (key.includes(noTrailS) || noTrailS.includes(key)) {
         if (imgs.length > 0) return imgs;
@@ -1502,12 +1503,12 @@ export default function Home() {
                   <h4 className="text-lg font-display font-bold mb-1 group-hover:text-primary transition-colors">
                     {service.name}
                   </h4>
-                  <p className="text-muted-foreground text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <p className="text-muted-foreground text-sm">
                     {service.desc}
                   </p>
                   <button
                     onClick={(e) => { e.stopPropagation(); openServiceDetail(service); }}
-                    className="mt-2 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary hover:text-primary/80 transition-colors opacity-0 group-hover:opacity-100"
+                    className="mt-2 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary hover:text-primary/80 transition-colors"
                   >
                     See Work →
                   </button>
@@ -1688,6 +1689,7 @@ export default function Home() {
           </div>
 
           {/* Carousel Container */}
+          {Array.isArray(displayTestimonials) && displayTestimonials.length > 0 ? (
           <div className="relative max-w-4xl mx-auto">
             <div className="overflow-hidden">
               <AnimatePresence mode="wait">
@@ -1761,6 +1763,7 @@ export default function Home() {
               <ChevronRight className="w-6 h-6" />
             </button>
           </div>
+        ) : null}
         </div>
       </section>
 
@@ -1830,6 +1833,7 @@ export default function Home() {
       <AnimatePresence>
         {selectedService && (
           <motion.div
+            key="service-detail-overlay"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
