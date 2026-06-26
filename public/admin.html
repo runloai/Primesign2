@@ -2144,8 +2144,7 @@
             <div class="save-dot"></div>
             <span id="saveText">All changes saved</span>
           </div>
-          <button class="btn btn-gold btn-sm" onclick="saveConfig()" title="Save All Changes">💾 Save All</button>
-          <button class="btn btn-cyan btn-sm" onclick="publishConfig()" title="Generate config.json for sharing">🌍 Publish Config</button>
+          <button class="btn btn-gold btn-sm" onclick="saveConfig()" title="Save & Publish All Changes">💾 Save</button>
           <a href="/" class="btn btn-outline btn-sm" target="_blank">🌐 View Site</a>
           <button class="btn btn-outline btn-sm" onclick="doLogout()">Logout</button>
         </div>
@@ -2186,8 +2185,7 @@
               <div class="card-title">⚡ Quick Actions</div>
             </div>
             <div class="card-body" style="display:flex;gap:12px;flex-wrap:wrap;">
-              <button class="btn btn-gold" onclick="saveConfig()">💾 Save All</button>
-              <button class="btn btn-cyan" onclick="publishConfig()">🌍 Publish</button>
+              <button class="btn btn-gold" onclick="saveConfig()">💾 Save</button>
               <button class="btn btn-outline" onclick="exportData()">📤 Export Backup</button>
               <a href="/" class="btn btn-outline" target="_blank">🌐 View Site</a>
             </div>
@@ -2248,7 +2246,7 @@
               </div>
               <div class="field-group">
                 <label class="field-label">WhatsApp Number</label>
-                <input type="text" class="field-input" data-path="contact.whatsapp" placeholder="+91 6366525253">
+                <input type="text" class="field-input" data-path="contact.whatsapp" data-validate="phone" placeholder="+91 6366525253">
               </div>
             </div>
           </div>
@@ -2264,7 +2262,7 @@
               </div>
               <div class="field-group">
                 <label class="field-label">Upload Target Number</label>
-                <input type="text" class="field-input" data-path="contact.sendFileNumber" placeholder="+91 6366525253">
+                <input type="text" class="field-input" data-path="contact.sendFileNumber" data-validate="phone" placeholder="+91 6366525253">
                 <div class="field-hint">Files sent via WhatsApp to this number when users click the button</div>
               </div>
               <div class="field-group" style="margin-bottom:0">
@@ -2286,23 +2284,23 @@
             <div class="card-body">
               <div class="field-group">
                 <label class="field-label">YouTube Channel</label>
-                <input type="text" class="field-input" data-path="contact.youtube" placeholder="https://youtube.com/...">
+                <input type="text" class="field-input" data-path="contact.youtube" data-validate="url" placeholder="https://youtube.com/...">
               </div>
               <div class="field-group">
                 <label class="field-label">Instagram</label>
-                <input type="text" class="field-input" data-path="contact.instagram" placeholder="https://instagram.com/...">
+                <input type="text" class="field-input" data-path="contact.instagram" data-validate="url" placeholder="https://instagram.com/...">
               </div>
               <div class="field-group">
                 <label class="field-label">Facebook</label>
-                <input type="text" class="field-input" data-path="contact.facebook" placeholder="https://facebook.com/...">
+                <input type="text" class="field-input" data-path="contact.facebook" data-validate="url" placeholder="https://facebook.com/...">
               </div>
               <div class="field-group">
                 <label class="field-label">Threads</label>
-                <input type="text" class="field-input" data-path="contact.threadsUrl" placeholder="https://threads.net/...">
+                <input type="text" class="field-input" data-path="contact.threadsUrl" data-validate="url" placeholder="https://threads.net/...">
               </div>
               <div class="field-group">
                 <label class="field-label">🗺️ Google Maps Link</label>
-                <input type="text" class="field-input" data-path="contact.mapsUrl" placeholder="https://maps.google.com/?q=...">
+                <input type="text" class="field-input" data-path="contact.mapsUrl" data-validate="url" placeholder="https://maps.google.com/?q=...">
               </div>
             </div>
           </div>
@@ -2619,7 +2617,7 @@
             <div class="card-body">
               <div class="field-group">
                 <label class="field-label">WhatsApp Number</label>
-                <input type="text" class="field-input" data-path="settings.whatsappNumber" placeholder="+91 6366525253">
+                <input type="text" class="field-input" data-path="settings.whatsappNumber" data-validate="phone" placeholder="+91 6366525253">
               </div>
               <div class="field-group">
                 <label class="field-label">Preset Message</label>
@@ -2651,7 +2649,7 @@
               </div>
               <div class="field-group">
                 <label class="field-label">Google Maps Embed URL</label>
-                <input type="text" class="field-input" data-path="settings.mapsUrl" placeholder="https://www.google.com/maps/embed?pb=...">
+                <input type="text" class="field-input" data-path="settings.mapsUrl" data-validate="url" placeholder="https://www.google.com/maps/embed?pb=...">
                 <div class="field-hint">Full embed src URL from Google Maps share dialog</div>
               </div>
             </div>
@@ -2663,9 +2661,9 @@
             </div>
             <div class="card-body">
               <div class="field-group">
-                <label class="field-label">Publish Config (Shared with all visitors)</label>
-                <div class="field-hint" style="margin-bottom: 12px;">Generate config.json to share your changes with all website visitors</div>
-                <button class="btn btn-cyan" onclick="publishConfig()">🌍 Publish Config</button>
+                <label class="field-label">Save & Publish</label>
+                <div class="field-hint" style="margin-bottom: 12px;">Save all changes and publish to all website visitors</div>
+                <button class="btn btn-gold" onclick="saveConfig()">💾 Save & Publish</button>
               </div>
               <div class="field-group">
                 <label class="field-label">Backup / Restore (Private)</label>
@@ -3305,8 +3303,7 @@
       for (const key in savedObj) {
         if (savedObj.hasOwnProperty(key)) {
           if (Array.isArray(savedObj[key])) {
-            // Only use saved array if it has items, otherwise keep defaults
-            if (savedObj[key].length > 0) result[key] = savedObj[key];
+            result[key] = savedObj[key];
           } else if (typeof savedObj[key] === 'object' && savedObj[key] !== null) {
             result[key] = mergeDeep(result[key] || {}, savedObj[key]);
           } else {
@@ -3339,6 +3336,23 @@
       } catch (err) {
         // publishConfig already shows its own toast
         console.error('Auto-publish error:', err);
+      }
+    }
+
+    async function loadFromServer() {
+      try {
+        const host = window.location.hostname;
+        const resp = await fetch('/config.json?_=' + Date.now());
+        if (resp.ok) {
+          const serverConfig = await resp.json();
+          // Merge server config into current config (local values take precedence)
+          config = mergeDeep(serverConfig, config);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
+          populateAllFields();
+          renderAllTabs();
+        }
+      } catch (e) {
+        // Server config not available - that's ok
       }
     }
 
@@ -3389,6 +3403,7 @@
       document.getElementById('dashboard').classList.add('active');
       populateAllFields();
       renderAllTabs();
+      loadFromServer();
     }
 
     // ================================================
@@ -3620,7 +3635,6 @@
       bar.offsetHeight;
       bar.style.animation = "slide-in-right 0.4s ease";
       setTimeout(() => { bar.style.display = "none"; }, 2500);
-      showToast("Contact info saved", "success");
     }
 
     function addPhone() {
@@ -3660,6 +3674,11 @@
         const value = getPathValue(config, path);
         if (value !== undefined && value !== null) {
           input.value = value;
+        }
+
+        const validateType = input.dataset.validate;
+        if (validateType) {
+          setupValidation(input, validateType);
         }
 
         input.addEventListener('change', () => {
@@ -5348,19 +5367,7 @@
     }
 
     function saveAboutContent() {
-      const titleInput = document.getElementById('aboutTitle');
-      const descInput = document.getElementById('aboutDescription');
-      
-      if (!config.about) {
-        config.about = {};
-      }
-      
-      if (titleInput) config.about.title = titleInput.value;
-      if (descInput) config.about.description = descInput.value;
-      
-      updateSaveIndicator(false);
-      
-      // Show success indicator
+      saveConfig();
       const indicator = document.getElementById('aboutSaveIndicator');
       if (indicator) {
         indicator.style.display = 'block';
@@ -5368,8 +5375,6 @@
           indicator.style.display = 'none';
         }, 3000);
       }
-      
-      showToast('About content saved', 'success');
     }
 
     // ================================================

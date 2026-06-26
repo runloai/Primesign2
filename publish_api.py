@@ -31,11 +31,30 @@ class PublishAPI(BaseHTTPRequestHandler):
         else:
             self._respond(404, {"error": "not found"})
 
+    def _atomic_write(self, path, data):
+        d = os.path.dirname(path)
+        os.makedirs(d, exist_ok=True)
+        tmp = path + ".tmp"
+        try:
+            with open(tmp, "w") as f:
+                json.dump(data, f, indent=2)
+                f.write("\n")
+            os.replace(tmp, path)
+        except Exception:
+            if os.path.exists(tmp):
+                os.unlink(tmp)
+            raise
+
     def do_POST(self):
         if self.path == "/publish":
             try:
-                length = int(self.headers.get("Content-Length", 0))
-                if length == 0 or length > 10 * 1024 * 1024:
+                raw_length = self.headers.get("Content-Length", "0")
+                try:
+                    length = int(raw_length)
+                except (ValueError, TypeError):
+                    self._respond(400, {"error": "invalid content-length header"})
+                    return
+                if length <= 0 or length > 10 * 1024 * 1024:
                     self._respond(400, {"error": "invalid content length"})
                     return
 
@@ -57,13 +76,7 @@ class PublishAPI(BaseHTTPRequestHandler):
 
                 written = []
                 for path in [PUBLIC_CONFIG, DIST_CONFIG]:
-                    d = os.path.dirname(path)
-                    os.makedirs(d, exist_ok=True)
-                    # Atomic write: write to temp then rename
-                    tmp = path + ".tmp"
-                    with open(tmp, "w") as f:
-                        json.dump(data, f, indent=2)
-                    os.replace(tmp, path)
+                    self._atomic_write(path, data)
                     written.append(path)
 
                 svc_count = len(data.get("services", []))
@@ -71,6 +84,9 @@ class PublishAPI(BaseHTTPRequestHandler):
                 self._respond(200, {"ok": True, "services": svc_count, "paths": written})
             except json.JSONDecodeError:
                 self._respond(400, {"error": "invalid JSON payload"})
+            except (OSError, IOError) as e:
+                print(f"Publish write error: {e}")
+                self._respond(500, {"error": f"write failed: {e}"})
             except Exception as e:
                 print(f"Publish error: {e}")
                 self._respond(500, {"error": str(e)})
