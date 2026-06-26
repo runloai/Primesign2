@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { Link } from "wouter";
+import { SiWhatsapp } from "react-icons/si";
 import { ArrowRight, CheckCircle2, ChevronLeft, ChevronRight, X, PhoneCall, Star, MapPin, Mail, Clock, Upload, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -999,7 +1000,7 @@ function ContactSection({ prefersReducedMotion, adminConfig }: { prefersReducedM
                       size="lg"
                       className="w-full h-12 rounded-full font-bold uppercase tracking-wide border-[#25D366] text-[#25D366] hover:bg-[#25D366]/10"
                     >
-                      <WhatsAppIcon className="w-5 h-5 mr-2" />
+                      <SiWhatsapp className="w-5 h-5 mr-2" />
                       Chat on WhatsApp
                     </Button>
                   </a>
@@ -1426,7 +1427,7 @@ export default function Home() {
                   size="lg"
                   className="h-12 sm:h-14 px-6 sm:px-8 rounded-full text-sm sm:text-lg font-bold uppercase tracking-wide bg-white/5 border-[#25D366] text-[#25D366] hover:bg-[#25D366]/10 w-full sm:w-auto"
                 >
-                  <WhatsAppIcon className="w-5 h-5 mr-2" />
+                  <SiWhatsapp className="w-5 h-5 mr-2" />
                   WhatsApp Us
                 </Button>
               </a>
@@ -1892,7 +1893,7 @@ export default function Home() {
                     size="lg"
                     className="h-14 px-8 rounded-full text-lg font-bold uppercase tracking-wide border-[#25D366] text-[#25D366] hover:bg-[#25D366]/10"
                   >
-                    <WhatsAppIcon className="mr-2 w-5 h-5" />
+                    <SiWhatsapp className="mr-2 w-5 h-5" />
                     WhatsApp Us
                   </Button>
                 </a>

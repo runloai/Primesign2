@@ -5700,7 +5700,9 @@
       };
       
       try {
-        const resp = await fetch("/.netlify/functions/publish", {
+        const resp = await fetch(window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+          ? 'http://localhost:9999/api/publish' 
+          : '/.netlify/functions/publish', {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(publishConfig)
