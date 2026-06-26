@@ -224,7 +224,6 @@ body, #root {
 /* Ensure images and media don't overflow */
 img, video, iframe {
   max-width: 100%;
-  height: auto;
 }
 
 /* Small screen improvements */
