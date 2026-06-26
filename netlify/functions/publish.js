@@ -23,13 +23,14 @@ exports.handler = async (event) => {
       services: config.services,
       portfolio: config.portfolio,
       hero: config.hero,
-      aboutImages: config.aboutImages,
-      advantageImages: config.advantageImages,
-      colorScheme: config.colorScheme,
+      about: config.about,
+      advantage: config.advantage,
       serviceCategories: config.serviceCategories,
       settings: config.settings,
+      footer: config.footer,
+      navbar: config.navbar,
       _publishedAt: new Date().toISOString(),
-      _version: '1.0'
+      _version: '2.1'
     }, null, 2);
 
     // Get current file SHA

@@ -13,6 +13,7 @@ class PublishAPI(BaseHTTPRequestHandler):
             try:
                 length = int(self.headers.get("Content-Length", 0))
                 data = json.loads(self.rfile.read(length))
+                data["_version"] = "2.1"
                 for path in [CONFIG, DIST]:
                     os.makedirs(os.path.dirname(path), exist_ok=True)
                     with open(path, "w") as f:
