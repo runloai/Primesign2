@@ -3302,8 +3302,6 @@
 
     async function saveConfig() {
       showSaveProgress('saving');
-      
-      // Simulate a small delay for UX feedback
       await new Promise(resolve => setTimeout(resolve, 300));
       
       try {
@@ -3311,13 +3309,19 @@
         updateSaveIndicator(true);
         showSaveProgress('saved');
         showToast('All changes saved successfully', 'success');
-        
-        // Auto-publish after save
-        await publishConfig();
       } catch (err) {
         showSaveProgress('');
-        showToast('Failed to save changes', 'error');
+        showToast('Failed to save changes to browser', 'error');
         console.error('Save error:', err);
+        return;
+      }
+      
+      // Auto-publish after save (independent error handling)
+      try {
+        await publishConfig();
+      } catch (err) {
+        // publishConfig already shows its own toast
+        console.error('Auto-publish error:', err);
       }
     }
 
@@ -5622,7 +5626,7 @@
     // PUBLISH CONFIG - Generate config.json for sharing
     // ================================================
     async function publishConfig() {
-      const publishConfig = {
+      const payload = {
         contact: config.contact,
         testimonials: config.testimonials,
         services: config.services,
@@ -5639,23 +5643,28 @@
       };
       
       try {
-        const isLocal = /^(localhost|127\.0\.0\.1|0\.0\.0\.0|::1|\[::1\])$/.test(window.location.hostname);
-        const resp = await fetch(isLocal 
-          ? 'http://localhost:9999/api/publish' 
-          : '/.netlify/functions/publish', {
+        const host = window.location.hostname;
+        const isLocal = /^(localhost|127\.0\.0\.1|0\.0\.0\.0|::1|\[::1\])$/.test(host);
+        const isServer = /^3\.110\.186\.195$/.test(host);
+        const publishUrl = isLocal
+          ? `http://localhost:9998/publish`
+          : isServer
+            ? `http://${host}:9998/publish`
+            : `/.netlify/functions/publish`;
+        const resp = await fetch(publishUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(publishConfig)
+          body: JSON.stringify(payload)
         });
         if (resp.ok) {
           const result = await resp.json();
           showToast(`🌍 Published! ${result.services} services updated. Site auto-updates in ~30 seconds.`, 'success', 6000);
         } else {
-          const errText = await resp.text().catch(() => '');
-          throw new Error(errText || `HTTP ${resp.status}: Publish failed`);
+          const errBody = await resp.json().catch(() => ({}));
+          throw new Error(errBody.error || `HTTP ${resp.status}: Publish failed`);
         }
       } catch(e) {
-        showToast(`❌ Publish failed: ${e.message}. Ensure the publish server is running locally or GITHUB_TOKEN is set in Netlify.`, 'error', 10000);
+        showToast(`❌ Publish failed: ${e.message}. Ensure the publish API (port 9998) is running on the server.`, 'error', 10000);
       }
     }
 
