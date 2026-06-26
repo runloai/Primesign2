@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -160,8 +160,6 @@ export function ImageLightbox({ images, currentIndex, isOpen, onClose, onNavigat
 }
 
 // Hook for managing lightbox state
-import { useState } from "react";
-
 export function useLightbox(images: { src: string; alt?: string; label?: string }[]) {
   const [isOpen, setIsOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);

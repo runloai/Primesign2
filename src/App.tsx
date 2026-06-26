@@ -1,15 +1,17 @@
-import { Switch, Route, Router as WouterRouter } from "wouter";
+import { Switch, Route, Router as WouterRouter, lazy } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
-import ContactPage from "@/pages/contact";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 import QuoteModal from "@/components/QuoteModal";
 import { QuoteModalProvider } from "@/context/QuoteModalContext";
+
+// Lazy-load the contact page — only loaded when user navigates to /contact
+const ContactPage = lazy(() => import("@/pages/contact"));
 
 const queryClient = new QueryClient();
 

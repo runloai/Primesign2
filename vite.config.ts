@@ -14,5 +14,14 @@ export default defineConfig({
   build: {
     outDir: "dist",
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ["react", "react-dom", "wouter"],
+          motion: ["framer-motion"],
+          ui: ["lucide-react", "react-icons"],
+        },
+      },
+    },
   },
 });

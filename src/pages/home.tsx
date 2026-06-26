@@ -742,12 +742,16 @@ function ClientLogosCarousel({ prefersReducedMotion }: { prefersReducedMotion: b
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isPaused, setIsPaused] = useState(false);
   
-  const clients = [];
+  // Static client list — add real client logos here
+  const clients: { name: string; src: string }[] = [];
+  // Skip animation if no real client logos configured
+  const hasRealClients = clients.some(c => c.src);
+  
   // Double the logos for seamless loop
-  const displayClients = [...clients, ...clients];
+  const displayClients = hasRealClients ? [...clients, ...clients] : [];
 
   useEffect(() => {
-    if (prefersReducedMotion || isPaused) return;
+    if (!hasRealClients || prefersReducedMotion || isPaused) return;
     
     const scrollContainer = scrollRef.current;
     if (!scrollContainer) return;
@@ -771,7 +775,7 @@ function ClientLogosCarousel({ prefersReducedMotion }: { prefersReducedMotion: b
 
     animationId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationId);
-  }, [isPaused, prefersReducedMotion]);
+  }, [isPaused, prefersReducedMotion, hasRealClients]);
 
   return (
     <div 
@@ -788,14 +792,14 @@ function ClientLogosCarousel({ prefersReducedMotion }: { prefersReducedMotion: b
         className="flex gap-12 items-center overflow-x-hidden"
         style={{ scrollBehavior: 'auto' }}
       >
-        {displayClients.map((src, i) => (
+        {displayClients.map((client, i) => (
           <div 
             key={i}
             className="flex-shrink-0 w-32 h-16 flex items-center justify-center"
           >
             <img
-              src={src}
-              alt={`Client ${(i % clients.length) + 1}`}
+              src={client.src}
+              alt={`Client ${(i % Math.max(clients.length, 1)) + 1}`}
               className="h-12 w-full object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
               loading="lazy"
             />
@@ -1474,10 +1478,7 @@ export default function Home() {
                 {adminConfig?.about?.description || adminConfig?.settings?.aboutDescription || "Founded in 2021, Primesign Private Limited has rapidly become Bangalore's go-to studio for premium signage and architectural branding. We don't just print signs — we engineer visibility."}
               </p>
               <p className="text-lg text-muted-foreground font-light leading-relaxed mb-8">
-                We don't just print signs — we engineer visibility. Our obsession with quality
-                materials, cutting-edge lighting technology, and flawless execution ensures every
-                installation makes a statement. When your brand needs to own the street, you call
-                Primesign.
+                {adminConfig?.about?.description2 || "We don't just print signs — we engineer visibility. Our obsession with quality materials, cutting-edge lighting technology, and flawless execution ensures every installation makes a statement. When your brand needs to own the street, you call Primesign."}
               </p>
               <div className="grid grid-cols-2 gap-8 border-t border-border pt-8">
                 <div>

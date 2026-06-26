@@ -22,8 +22,8 @@ export default function ContactPage() {
   const phones = contact.phones || ["+91 6366525253", "+91 8861848284"];
   const emails = contact.emails || ["primesign2021@gmail.com"];
   const address = contact.address || "#35, Ramamurthy Nagar Signal, T C Palya Main Road, Bangalore 560016";
-  const mapsUrl = settings.mapsUrl || contact.mapsUrl || "https://maps.google.com/?q=Primesign+Ramamurthy+Nagar+Bangalore";
-  const whatsappNumber = settings.whatsappNumber || contact.whatsapp || phones[0];
+  const mapsUrl = contact.mapsUrl || "https://maps.google.com/?q=Primesign+Ramamurthy+Nagar+Bangalore";
+  const whatsappNumber = contact.whatsapp || contact.phones?.[0] || "6366525253";
   const workingHours = settings.workingHours || "Monday - Saturday: 9:00 AM - 7:00 PM";
 
   const [formData, setFormData] = useState({
