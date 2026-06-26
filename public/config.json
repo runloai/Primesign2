@@ -192,6 +192,14 @@
         {
           "url": "/images/pvc/1.webp",
           "label": "PVC & Flex - Image 1"
+        },
+        {
+          "url": "/images/square/6.webp",
+          "label": "PVC & Flex - Image 2"
+        },
+        {
+          "url": "/images/square/7.webp",
+          "label": "PVC & Flex - Image 3"
         }
       ]
     },
@@ -203,16 +211,20 @@
       "category": "sign-boards",
       "images": [
         {
-          "url": "/images/led/1.webp",
+          "url": "/images/services/sign-boards/nonlight-1.png",
           "label": "Non-Light Sign Board - Image 1"
         },
         {
-          "url": "/images/led/2.webp",
+          "url": "/images/services/sign-boards/nonlight-2.png",
           "label": "Non-Light Sign Board - Image 2"
         },
         {
-          "url": "/images/led/3.webp",
+          "url": "/images/services/sign-boards/nonlight-3.png",
           "label": "Non-Light Sign Board - Image 3"
+        },
+        {
+          "url": "/images/services/sign-boards/nonlight-4.png",
+          "label": "Non-Light Sign Board - Image 4"
         }
       ]
     },
@@ -336,16 +348,20 @@
       "category": "sign-boards",
       "images": [
         {
-          "url": "/images/wall/1.webp",
+          "url": "/images/services/sign-boards/hoardings-1.png",
           "label": "Hoardings - Image 1"
         },
         {
-          "url": "/images/wall/2.webp",
+          "url": "/images/services/sign-boards/hoardings-2.png",
           "label": "Hoardings - Image 2"
         },
         {
-          "url": "/images/wall/3.webp",
+          "url": "/images/services/sign-boards/hoardings-3.png",
           "label": "Hoardings - Image 3"
+        },
+        {
+          "url": "/images/services/sign-boards/hoardings-4.png",
+          "label": "Hoardings - Image 4"
         }
       ]
     },
@@ -357,16 +373,20 @@
       "category": "sign-boards",
       "images": [
         {
-          "url": "/images/wall/1.webp",
+          "url": "/images/services/sign-boards/house-1.png",
           "label": "One Way Vision - Image 1"
         },
         {
-          "url": "/images/wall/2.webp",
+          "url": "/images/services/sign-boards/house-2.png",
           "label": "One Way Vision - Image 2"
         },
         {
-          "url": "/images/wall/3.webp",
+          "url": "/images/services/sign-boards/house-3.png",
           "label": "One Way Vision - Image 3"
+        },
+        {
+          "url": "/images/services/sign-boards/house-4.png",
+          "label": "One Way Vision - Image 4"
         }
       ]
     },
@@ -378,15 +398,15 @@
       "category": "sign-boards",
       "images": [
         {
-          "url": "/images/wall/4.webp",
+          "url": "/images/services/sign-boards/wall-1.png",
           "label": "Gloss Branding - Image 1"
         },
         {
-          "url": "/images/wall/5.webp",
+          "url": "/images/services/sign-boards/wall-2.png",
           "label": "Gloss Branding - Image 2"
         },
         {
-          "url": "/images/square/1.webp",
+          "url": "/images/services/sign-boards/wall-3.png",
           "label": "Gloss Branding - Image 3"
         }
       ]
@@ -478,15 +498,15 @@
       "category": "digital",
       "images": [
         {
-          "url": "/images/01.jpg",
+          "url": "/images/square/1.webp",
           "label": "Posters - Image 1"
         },
         {
-          "url": "/images/02.jpg",
+          "url": "/images/square/2.webp",
           "label": "Posters - Image 2"
         },
         {
-          "url": "/images/003.jpg",
+          "url": "/images/square/3.webp",
           "label": "Posters - Image 3"
         }
       ]
@@ -499,15 +519,15 @@
       "category": "digital",
       "images": [
         {
-          "url": "/images/004.jpg",
+          "url": "/images/square/brass.webp",
           "label": "Visiting Cards - Image 1"
         },
         {
-          "url": "/images/005.jpg",
+          "url": "/images/portfolio/01.webp",
           "label": "Visiting Cards - Image 2"
         },
         {
-          "url": "/images/square/brass.webp",
+          "url": "/images/portfolio/03.webp",
           "label": "Visiting Cards - Image 3"
         }
       ]
@@ -541,15 +561,15 @@
       "category": "digital",
       "images": [
         {
-          "url": "/images/square/7.webp",
+          "url": "/images/portfolio/3.webp",
           "label": "T-Shirts - Image 1"
         },
         {
-          "url": "/images/square/8.webp",
+          "url": "/images/portfolio/4.webp",
           "label": "T-Shirts - Image 2"
         },
         {
-          "url": "/images/hero-yt.webp",
+          "url": "/images/portfolio/7.webp",
           "label": "T-Shirts - Image 3"
         }
       ]
