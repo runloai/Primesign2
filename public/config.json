@@ -52,11 +52,26 @@
       "badge": "popular",
       "category": "sign-boards",
       "images": [
-        {"url": "/images/led/1.webp", "label": "LED Signs - Image 1"},
-        {"url": "/images/led/2.webp", "label": "LED Signs - Image 2"},
-        {"url": "/images/led/3.webp", "label": "LED Signs - Image 3"},
-        {"url": "/images/led/4.webp", "label": "LED Signs - Image 4"},
-        {"url": "/images/led/5.webp", "label": "LED Signs - Image 5"}
+        {
+          "url": "/images/led/1.webp",
+          "label": "LED Signs - Image 1"
+        },
+        {
+          "url": "/images/led/2.webp",
+          "label": "LED Signs - Image 2"
+        },
+        {
+          "url": "/images/led/3.webp",
+          "label": "LED Signs - Image 3"
+        },
+        {
+          "url": "/images/led/4.webp",
+          "label": "LED Signs - Image 4"
+        },
+        {
+          "url": "/images/led/5.webp",
+          "label": "LED Signs - Image 5"
+        }
       ]
     },
     {
@@ -85,12 +100,30 @@
       "badge": "",
       "category": "sign-boards",
       "images": [
-        {"url": "/images/services/sign-boards/acrylic-1.png", "label": "Acrylic Signs - Image 1"},
-        {"url": "/images/services/sign-boards/acrylic-2.png", "label": "Acrylic Signs - Image 2"},
-        {"url": "/images/services/sign-boards/acrylic-3.png", "label": "Acrylic Signs - Image 3"},
-        {"url": "/images/services/sign-boards/acrylic-4.png", "label": "Acrylic Signs - Image 4"},
-        {"url": "/images/services/sign-boards/acrylic-5.png", "label": "Acrylic Signs - Image 5"},
-        {"url": "/images/services/sign-boards/acrylic-6.png", "label": "Acrylic Signs - Image 6"}
+        {
+          "url": "/images/services/sign-boards/acrylic-1.png",
+          "label": "Acrylic Signs - Image 1"
+        },
+        {
+          "url": "/images/services/sign-boards/acrylic-2.png",
+          "label": "Acrylic Signs - Image 2"
+        },
+        {
+          "url": "/images/services/sign-boards/acrylic-3.png",
+          "label": "Acrylic Signs - Image 3"
+        },
+        {
+          "url": "/images/services/sign-boards/acrylic-4.png",
+          "label": "Acrylic Signs - Image 4"
+        },
+        {
+          "url": "/images/services/sign-boards/acrylic-5.png",
+          "label": "Acrylic Signs - Image 5"
+        },
+        {
+          "url": "/images/services/sign-boards/acrylic-6.png",
+          "label": "Acrylic Signs - Image 6"
+        }
       ]
     },
     {
@@ -140,11 +173,30 @@
       "badge": "",
       "category": "sign-boards",
       "images": [
-        {"url": "/images/services/sign-boards/pvc-ss-1.png", "label": "PVC & Flex - Image 1"},
-        {"url": "/images/services/sign-boards/pvc-ss-2.png", "label": "PVC & Flex - Image 2"},
-        {"url": "/images/services/sign-boards/pvc-ss-3.png", "label": "PVC & Flex - Image 3"},
-        {"url": "/images/services/sign-boards/hoardings-3.png", "label": "PVC & Flex - Image 4"},
-        {"url": "/images/services/sign-boards/hoardings-4.png", "label": "PVC & Flex - Image 5"}
+        {
+          "url": "/images/services/sign-boards/pvc-ss-1.png",
+          "label": "PVC & Flex - Image 1"
+        },
+        {
+          "url": "/images/services/sign-boards/pvc-ss-2.png",
+          "label": "PVC & Flex - Image 2"
+        },
+        {
+          "url": "/images/services/sign-boards/pvc-ss-3.png",
+          "label": "PVC & Flex - Image 3"
+        },
+        {
+          "url": "/images/services/sign-boards/pvc-ss-4.png",
+          "label": "PVC & Flex - Image 4"
+        },
+        {
+          "url": "/images/services/sign-boards/pvc-ss-5.png",
+          "label": "PVC & Flex - Image 5"
+        },
+        {
+          "url": "/images/services/sign-boards/pvc-ss-6.png",
+          "label": "PVC & Flex - Image 6"
+        }
       ]
     },
     {
@@ -154,11 +206,30 @@
       "badge": "",
       "category": "sign-boards",
       "images": [
-        {"url": "/images/services/sign-boards/pvc-ss-4.png", "label": "PVC/SS Letter Sign - Image 1"},
-        {"url": "/images/services/sign-boards/pvc-ss-5.png", "label": "PVC/SS Letter Sign - Image 2"},
-        {"url": "/images/services/sign-boards/pvc-ss-6.png", "label": "PVC/SS Letter Sign - Image 3"},
-        {"url": "/images/services/sign-boards/pvc-ss-7.png", "label": "PVC/SS Letter Sign - Image 4"},
-        {"url": "/images/services/sign-boards/pvc-ss-8.png", "label": "PVC/SS Letter Sign - Image 5"}
+        {
+          "url": "/images/services/sign-boards/pvc-ss-1.png",
+          "label": "PVC/SS Letter Sign - Image 1"
+        },
+        {
+          "url": "/images/services/sign-boards/pvc-ss-2.png",
+          "label": "PVC/SS Letter Sign - Image 2"
+        },
+        {
+          "url": "/images/services/sign-boards/pvc-ss-3.png",
+          "label": "PVC/SS Letter Sign - Image 3"
+        },
+        {
+          "url": "/images/services/sign-boards/pvc-ss-4.png",
+          "label": "PVC/SS Letter Sign - Image 4"
+        },
+        {
+          "url": "/images/services/sign-boards/pvc-ss-5.png",
+          "label": "PVC/SS Letter Sign - Image 5"
+        },
+        {
+          "url": "/images/services/sign-boards/pvc-ss-6.png",
+          "label": "PVC/SS Letter Sign - Image 6"
+        }
       ]
     },
     {
@@ -168,9 +239,18 @@
       "badge": "",
       "category": "sign-boards",
       "images": [
-        {"url": "/images/services/sign-boards/nonlight-1.png", "label": "Non-Light Sign Board - Image 1"},
-        {"url": "/images/services/sign-boards/nonlight-2.png", "label": "Non-Light Sign Board - Image 2"},
-        {"url": "/images/services/sign-boards/nonlight-3.png", "label": "Non-Light Sign Board - Image 3"}
+        {
+          "url": "/images/services/sign-boards/nonlight-1.png",
+          "label": "Non-Light Sign Board - Image 1"
+        },
+        {
+          "url": "/images/services/sign-boards/nonlight-2.png",
+          "label": "Non-Light Sign Board - Image 2"
+        },
+        {
+          "url": "/images/services/sign-boards/nonlight-3.png",
+          "label": "Non-Light Sign Board - Image 3"
+        }
       ]
     },
     {
@@ -180,12 +260,30 @@
       "badge": "",
       "category": "sign-boards",
       "images": [
-        {"url": "/images/services/sign-boards/hoardings-1.png", "label": "Hoardings - Image 1"},
-        {"url": "/images/services/sign-boards/hoardings-2.png", "label": "Hoardings - Image 2"},
-        {"url": "/images/services/sign-boards/hoardings-3.png", "label": "Hoardings - Image 3"},
-        {"url": "/images/services/sign-boards/hoardings-4.png", "label": "Hoardings - Image 4"},
-        {"url": "/images/services/sign-boards/hoardings-5.png", "label": "Hoardings - Image 5"},
-        {"url": "/images/services/sign-boards/hoardings-6.png", "label": "Hoardings - Image 6"}
+        {
+          "url": "/images/services/sign-boards/hoardings-1.png",
+          "label": "Hoardings - Image 1"
+        },
+        {
+          "url": "/images/services/sign-boards/hoardings-2.png",
+          "label": "Hoardings - Image 2"
+        },
+        {
+          "url": "/images/services/sign-boards/hoardings-3.png",
+          "label": "Hoardings - Image 3"
+        },
+        {
+          "url": "/images/services/sign-boards/hoardings-4.png",
+          "label": "Hoardings - Image 4"
+        },
+        {
+          "url": "/images/services/sign-boards/hoardings-5.png",
+          "label": "Hoardings - Image 5"
+        },
+        {
+          "url": "/images/services/sign-boards/hoardings-6.png",
+          "label": "Hoardings - Image 6"
+        }
       ]
     },
     {
@@ -195,11 +293,26 @@
       "badge": "",
       "category": "sign-boards",
       "images": [
-        {"url": "/images/services/sign-boards/house-1.png", "label": "One Way Vision - Image 1"},
-        {"url": "/images/services/sign-boards/house-2.png", "label": "One Way Vision - Image 2"},
-        {"url": "/images/services/sign-boards/house-3.png", "label": "One Way Vision - Image 3"},
-        {"url": "/images/services/sign-boards/house-4.png", "label": "One Way Vision - Image 4"},
-        {"url": "/images/services/sign-boards/house-5.png", "label": "One Way Vision - Image 5"}
+        {
+          "url": "/images/services/sign-boards/house-1.png",
+          "label": "One Way Vision - Image 1"
+        },
+        {
+          "url": "/images/services/sign-boards/house-2.png",
+          "label": "One Way Vision - Image 2"
+        },
+        {
+          "url": "/images/services/sign-boards/house-3.png",
+          "label": "One Way Vision - Image 3"
+        },
+        {
+          "url": "/images/services/sign-boards/house-4.png",
+          "label": "One Way Vision - Image 4"
+        },
+        {
+          "url": "/images/services/sign-boards/house-5.png",
+          "label": "One Way Vision - Image 5"
+        }
       ]
     },
     {
@@ -209,10 +322,22 @@
       "badge": "",
       "category": "promotional",
       "images": [
-        {"url": "/images/services/promotional/tent-1.png", "label": "Promotional Tents - Image 1"},
-        {"url": "/images/services/promotional/tent-2.png", "label": "Promotional Tents - Image 2"},
-        {"url": "/images/services/promotional/tent-3.png", "label": "Promotional Tents - Image 3"},
-        {"url": "/images/services/promotional/tent-4.png", "label": "Promotional Tents - Image 4"}
+        {
+          "url": "/images/services/promotional/tent-1.png",
+          "label": "Promotional Tents - Image 1"
+        },
+        {
+          "url": "/images/services/promotional/tent-2.png",
+          "label": "Promotional Tents - Image 2"
+        },
+        {
+          "url": "/images/services/promotional/tent-3.png",
+          "label": "Promotional Tents - Image 3"
+        },
+        {
+          "url": "/images/services/promotional/tent-4.png",
+          "label": "Promotional Tents - Image 4"
+        }
       ]
     },
     {
@@ -234,11 +359,26 @@
       "badge": "",
       "category": "digital",
       "images": [
-        {"url": "/images/square/1.webp", "label": "Posters - Image 1"},
-        {"url": "/images/square/2.webp", "label": "Posters - Image 2"},
-        {"url": "/images/square/3.webp", "label": "Posters - Image 3"},
-        {"url": "/images/square/4.webp", "label": "Posters - Image 4"},
-        {"url": "/images/square/5.webp", "label": "Posters - Image 5"}
+        {
+          "url": "/images/square/1.webp",
+          "label": "Posters - Image 1"
+        },
+        {
+          "url": "/images/square/2.webp",
+          "label": "Posters - Image 2"
+        },
+        {
+          "url": "/images/square/3.webp",
+          "label": "Posters - Image 3"
+        },
+        {
+          "url": "/images/square/4.webp",
+          "label": "Posters - Image 4"
+        },
+        {
+          "url": "/images/square/5.webp",
+          "label": "Posters - Image 5"
+        }
       ]
     },
     {
@@ -248,10 +388,22 @@
       "badge": "",
       "category": "digital",
       "images": [
-        {"url": "/images/square/brass.webp", "label": "Visiting Cards - Image 1"},
-        {"url": "/images/square/6.webp", "label": "Visiting Cards - Image 2"},
-        {"url": "/images/square/7.webp", "label": "Visiting Cards - Image 3"},
-        {"url": "/images/square/8.webp", "label": "Visiting Cards - Image 4"}
+        {
+          "url": "/images/square/brass.webp",
+          "label": "Visiting Cards - Image 1"
+        },
+        {
+          "url": "/images/square/6.webp",
+          "label": "Visiting Cards - Image 2"
+        },
+        {
+          "url": "/images/square/7.webp",
+          "label": "Visiting Cards - Image 3"
+        },
+        {
+          "url": "/images/square/8.webp",
+          "label": "Visiting Cards - Image 4"
+        }
       ]
     },
     {
@@ -261,10 +413,22 @@
       "badge": "",
       "category": "digital",
       "images": [
-        {"url": "/images/portfolio/01.webp", "label": "ID Cards - Image 1"},
-        {"url": "/images/portfolio/03.webp", "label": "ID Cards - Image 2"},
-        {"url": "/images/portfolio/04.webp", "label": "ID Cards - Image 3"},
-        {"url": "/images/portfolio/05.webp", "label": "ID Cards - Image 4"}
+        {
+          "url": "/images/portfolio/01.webp",
+          "label": "ID Cards - Image 1"
+        },
+        {
+          "url": "/images/portfolio/03.webp",
+          "label": "ID Cards - Image 2"
+        },
+        {
+          "url": "/images/portfolio/04.webp",
+          "label": "ID Cards - Image 3"
+        },
+        {
+          "url": "/images/portfolio/05.webp",
+          "label": "ID Cards - Image 4"
+        }
       ]
     },
     {
@@ -274,10 +438,22 @@
       "badge": "",
       "category": "digital",
       "images": [
-        {"url": "/images/portfolio/06.webp", "label": "T-Shirts - Image 1"},
-        {"url": "/images/portfolio/07.webp", "label": "T-Shirts - Image 2"},
-        {"url": "/images/portfolio/3.webp", "label": "T-Shirts - Image 3"},
-        {"url": "/images/portfolio/4.webp", "label": "T-Shirts - Image 4"}
+        {
+          "url": "/images/portfolio/06.webp",
+          "label": "T-Shirts - Image 1"
+        },
+        {
+          "url": "/images/portfolio/07.webp",
+          "label": "T-Shirts - Image 2"
+        },
+        {
+          "url": "/images/portfolio/3.webp",
+          "label": "T-Shirts - Image 3"
+        },
+        {
+          "url": "/images/portfolio/4.webp",
+          "label": "T-Shirts - Image 4"
+        }
       ]
     },
     {
@@ -287,10 +463,22 @@
       "badge": "",
       "category": "digital",
       "images": [
-        {"url": "/images/portfolio/005.webp", "label": "Quick Printing - Image 1"},
-        {"url": "/images/portfolio/006.webp", "label": "Quick Printing - Image 2"},
-        {"url": "/images/portfolio/007.webp", "label": "Quick Printing - Image 3"},
-        {"url": "/images/portfolio/008.webp", "label": "Quick Printing - Image 4"}
+        {
+          "url": "/images/portfolio/005.webp",
+          "label": "Quick Printing - Image 1"
+        },
+        {
+          "url": "/images/portfolio/006.webp",
+          "label": "Quick Printing - Image 2"
+        },
+        {
+          "url": "/images/portfolio/007.webp",
+          "label": "Quick Printing - Image 3"
+        },
+        {
+          "url": "/images/portfolio/008.webp",
+          "label": "Quick Printing - Image 4"
+        }
       ]
     }
   ],
@@ -430,6 +618,34 @@
       "label": "About Image 4"
     }
   ],
+  "advantage": {
+    "images": [
+      {
+        "url": "/images/glow/1.webp",
+        "label": "Premium Quality Materials"
+      },
+      {
+        "url": "/images/acrylic/1.webp",
+        "label": "Rapid Turnaround Times"
+      },
+      {
+        "url": "/images/wall/1.webp",
+        "label": "Expert Installation Team"
+      },
+      {
+        "url": "/images/vehicle/1.webp",
+        "label": "End-to-End Service"
+      },
+      {
+        "url": "/images/pvc/1.webp",
+        "label": "Competitive Pricing"
+      },
+      {
+        "url": "/images/led/1.webp",
+        "label": "Bangalore-Based Manufacturing"
+      }
+    ]
+  },
   "advantageImages": [
     {
       "url": "/images/glow/1.webp",
@@ -459,7 +675,7 @@
   "serviceCategories": [
     {
       "id": "sign-boards",
-      "label": "SIGN BOARDS",
+      "label": "SIGN BOARD",
       "icon": "\ud83e\udea7",
       "description": "Premium signage solutions including LED, glow, acrylic, wall branding, vehicle wraps, hoardings & more"
     },
@@ -487,6 +703,61 @@
     "helpText": "Ready to transform your brand visibility? Let's discuss your project.",
     "mapsUrl": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d248849.8865401047!2d77.46612999155236!3d12.953945337580189!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae1670c9b44e6d%3A0xf8dfc3e8517e4a3e!2sBangalore%2C%20Karnataka!5e0!3m2!1sen!2sin!4v1703123456789!5m2!1sen!2sin"
   },
-  "_publishedAt": "2026-06-26T12:00:00.000Z",
+  "footer": {
+    "companyName": "Primesign Private Limited",
+    "tagline": "Bangalore's Premier Signage & Branding Studio",
+    "copyright": "\u00a9 {year} Primesign Private Limited. All rights reserved.",
+    "taglineFooter": "Let's build something iconic together.",
+    "showSocialLinks": true,
+    "socialLinks": [
+      {
+        "platform": "youtube",
+        "url": "https://www.youtube.com/@PrimesignBangalore",
+        "enabled": true
+      },
+      {
+        "platform": "instagram",
+        "url": "https://www.instagram.com/primesignpvtltd/",
+        "enabled": true
+      },
+      {
+        "platform": "facebook",
+        "url": "https://www.facebook.com/primesign.in",
+        "enabled": true
+      }
+    ],
+    "quickLinks": [
+      {
+        "name": "Home",
+        "href": "#home"
+      },
+      {
+        "name": "Services",
+        "href": "#services"
+      },
+      {
+        "name": "Portfolio",
+        "href": "#portfolio"
+      },
+      {
+        "name": "About",
+        "href": "#about"
+      },
+      {
+        "name": "Contact",
+        "href": "#contact"
+      }
+    ],
+    "expertise": [
+      "LED Sign Boards",
+      "3D Channel Letters",
+      "Acrylic Signs",
+      "Vehicle Wraps",
+      "Digital Printing",
+      "Corporate Branding"
+    ]
+  },
+  "navbar": {},
+  "_publishedAt": "2026-06-26T13:08:53.237Z",
   "_version": "2.1"
 }
