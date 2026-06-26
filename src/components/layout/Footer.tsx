@@ -103,7 +103,7 @@ export default function Footer() {
           footerConfig.socialLinks = socialPlatforms.map(p => ({ ...p, enabled: !!p.url }));
         } else {
           // Update social links URLs from contact config
-          footerConfig.socialLinks = footerConfig.socialLinks.map(link => {
+          footerConfig.socialLinks = footerConfig.socialLinks.map((link: { platform: string; url?: string; enabled: boolean }) => {
             const platformData = socialPlatforms.find(p => p.platform === link.platform);
             if (platformData && (!link.url || link.url === "")) {
               return { ...link, url: platformData.url };

@@ -2895,7 +2895,16 @@
           badge: "",
           category: "sign-boards",
           images: [
-            { url: "/images/services/sign-boards/glow-1.jpg", label: "Glow Signs - Image 1" }
+            { url: "/images/glow/1.webp", label: "Glow Signs - Image 1" },
+            { url: "/images/glow/2.webp", label: "Glow Signs - Image 2" },
+            { url: "/images/glow/3.webp", label: "Glow Signs - Image 3" },
+            { url: "/images/glow/4.webp", label: "Glow Signs - Image 4" },
+            { url: "/images/glow/5.webp", label: "Glow Signs - Image 5" },
+            { url: "/images/glow/6.webp", label: "Glow Signs - Image 6" },
+            { url: "/images/glow/7.webp", label: "Glow Signs - Image 7" },
+            { url: "/images/glow/8.webp", label: "Glow Signs - Image 8" },
+            { url: "/images/glow/9.webp", label: "Glow Signs - Image 9" },
+            { url: "/images/glow/10.webp", label: "Glow Signs - Image 10" }
           ]
         },
         {
@@ -2920,11 +2929,17 @@
           badge: "",
           category: "sign-boards",
           images: [
-            { url: "/images/services/sign-boards/wall-1.png", label: "Wall Branding - Image 1" },
-            { url: "/images/services/sign-boards/wall-2.png", label: "Wall Branding - Image 2" },
-            { url: "/images/services/sign-boards/wall-3.png", label: "Wall Branding - Image 3" },
-            { url: "/images/services/sign-boards/wall-4.png", label: "Wall Branding - Image 4" },
-            { url: "/images/services/sign-boards/wall-5.png", label: "Wall Branding - Image 5" }
+            { url: "/images/services/sign-boards/wall-1.jpg", label: "Wall Branding - Image 1" },
+            { url: "/images/services/sign-boards/wall-2.jpg", label: "Wall Branding - Image 2" },
+            { url: "/images/services/sign-boards/wall-3.jpg", label: "Wall Branding - Image 3" },
+            { url: "/images/services/sign-boards/wall-4.jpg", label: "Wall Branding - Image 4" },
+            { url: "/images/services/sign-boards/wall-5.jpg", label: "Wall Branding - Image 5" },
+            { url: "/images/services/sign-boards/wall-6.jpg", label: "Wall Branding - Image 6" },
+            { url: "/images/services/sign-boards/wall-7.jpg", label: "Wall Branding - Image 7" },
+            { url: "/images/services/sign-boards/wall-8.jpg", label: "Wall Branding - Image 8" },
+            { url: "/images/services/sign-boards/wall-9.jpg", label: "Wall Branding - Image 9" },
+            { url: "/images/services/sign-boards/wall-10.jpg", label: "Wall Branding - Image 10" },
+            { url: "/images/services/sign-boards/wall-11.jpg", label: "Wall Branding - Image 11" }
           ]
         },
         {
@@ -2934,10 +2949,17 @@
           badge: "",
           category: "sign-boards",
           images: [
-            { url: "/images/services/sign-boards/vehicle-1.png", label: "Vehicle Wraps - Image 1" },
-            { url: "/images/services/sign-boards/vehicle-2.png", label: "Vehicle Wraps - Image 2" },
-            { url: "/images/services/sign-boards/vehicle-3.png", label: "Vehicle Wraps - Image 3" },
-            { url: "/images/services/sign-boards/vehicle-5.png", label: "Vehicle Wraps - Image 4" }
+            { url: "/images/services/sign-boards/vehicle-1.jpg", label: "Vehicle Wraps - Image 1" },
+            { url: "/images/services/sign-boards/vehicle-2.jpg", label: "Vehicle Wraps - Image 2" },
+            { url: "/images/services/sign-boards/vehicle-3.jpg", label: "Vehicle Wraps - Image 3" },
+            { url: "/images/services/sign-boards/vehicle-4.jpg", label: "Vehicle Wraps - Image 4" },
+            { url: "/images/services/sign-boards/vehicle-5.jpg", label: "Vehicle Wraps - Image 5" },
+            { url: "/images/services/sign-boards/vehicle-6.jpg", label: "Vehicle Wraps - Image 6" },
+            { url: "/images/services/sign-boards/vehicle-7.jpg", label: "Vehicle Wraps - Image 7" },
+            { url: "/images/services/sign-boards/vehicle-8.jpg", label: "Vehicle Wraps - Image 8" },
+            { url: "/images/services/sign-boards/vehicle-9.jpg", label: "Vehicle Wraps - Image 9" },
+            { url: "/images/services/sign-boards/vehicle-10.jpg", label: "Vehicle Wraps - Image 10" },
+            { url: "/images/services/sign-boards/vehicle-11.jpg", label: "Vehicle Wraps - Image 11" }
           ]
         },
         {
@@ -2979,8 +3001,7 @@
           images: [
             { url: "/images/services/sign-boards/nonlight-1.png", label: "Non-Light Sign Board - Image 1" },
             { url: "/images/services/sign-boards/nonlight-2.png", label: "Non-Light Sign Board - Image 2" },
-            { url: "/images/services/sign-boards/nonlight-3.png", label: "Non-Light Sign Board - Image 3" },
-            { url: "/images/services/sign-boards/nonlight-4.png", label: "Non-Light Sign Board - Image 4" }
+            { url: "/images/services/sign-boards/nonlight-3.png", label: "Non-Light Sign Board - Image 3" }
           ]
         },
         {
@@ -3034,9 +3055,7 @@
           images: [
             { url: "/images/services/promotional/rollup-1.png", label: "Roll Up Standees - Image 1" },
             { url: "/images/services/promotional/rollup-2.png", label: "Roll Up Standees - Image 2" },
-            { url: "/images/services/promotional/rollup-3.png", label: "Roll Up Standees - Image 3" },
-            { url: "/images/services/promotional/rollup-4.png", label: "Roll Up Standees - Image 4" },
-            { url: "/images/services/promotional/rollup-5.png", label: "Roll Up Standees - Image 5" }
+            { url: "/images/services/promotional/rollup-3.png", label: "Roll Up Standees - Image 3" }
           ]
         },
         {
@@ -5633,7 +5652,9 @@
         portfolio: config.portfolio,
         hero: config.hero,
         about: config.about,
+        aboutImages: config.about?.images || [],
         advantage: config.advantage,
+        advantageImages: config.advantage?.images || [],
         serviceCategories: config.serviceCategories,
         settings: config.settings,
         footer: config.footer,

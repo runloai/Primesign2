@@ -53,9 +53,16 @@ const FALLBACK_SERVICE_MENU: Record<string, { name: string; href: string; filter
   ],
 };
 
+interface DropdownMenuItem {
+  name: string;
+  href: string;
+  filter?: string;
+  serviceId?: string;
+}
+
 interface DropdownMenuProps {
   title: string;
-  items: { name: string; href: string; filter?: string }[];
+  items: DropdownMenuItem[];
   isOpen: boolean;
   onMouseEnter: () => void;
   onMouseLeave: () => void;
@@ -122,7 +129,7 @@ export default function Navbar() {
   const [scheme, setScheme] = useState("Obsidian Gold");
   const [useTextLogo, setUseTextLogo] = useState(false);
   const [logoSrc, setLogoSrc] = useState("https://raw.githubusercontent.com/runloai/PrimeSign/main/data/logo/logo.webp");
-  const [serviceMenu, setServiceMenu] = useState(FALLBACK_SERVICE_MENU);
+  const [serviceMenu, setServiceMenu] = useState<Record<string, DropdownMenuItem[]>>(FALLBACK_SERVICE_MENU);
   const [configContact, setConfigContact] = useState<{ phones?: string[]; emails?: string[]; facebook?: string; instagram?: string; youtube?: string } | null>(null);
   const [workingHours, setWorkingHours] = useState("Mon-Sat: 9:00 AM - 7:00 PM<br>Sunday: Closed");
 
@@ -130,7 +137,8 @@ export default function Navbar() {
     fetch("/config.json?t=" + Date.now()).then(r => r.json()).then(c => {
       if (c.settings?.logoType === "text") setUseTextLogo(true);
       if (c.settings?.logoUrl) setLogoSrc(c.settings.logoUrl);
-      if (c.settings?.scheme && COLOR_SCHEMES[c.settings.scheme]) setScheme(c.settings.scheme);
+      const schemeName = c.settings?.scheme as keyof typeof COLOR_SCHEMES;
+      if (schemeName && schemeName in COLOR_SCHEMES) setScheme(schemeName);
       if (c.settings?.workingHours) setWorkingHours(c.settings.workingHours);
       if (c.contact) setConfigContact(c.contact);
       if (c.services && c.services.length > 0) {
@@ -139,7 +147,7 @@ export default function Navbar() {
           "promotional": "PROMOTIONAL DISPLAY",
           "digital": "DIGITAL PRINTS",
         };
-        const grouped: Record<string, { name: string; href: string; filter: string; serviceId: string }[]> = {};
+        const grouped: Record<string, DropdownMenuItem[]> = {};
         c.services.forEach((s: any) => {
           const cat = s.category || "General";
           const title = categoryTitles[cat] || cat.toUpperCase();
