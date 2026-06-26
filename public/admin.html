@@ -1455,67 +1455,6 @@
       gap: 12px;
     }
 
-    .toast {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-secondary);
-      border-radius: var(--radius-md);
-      padding: 16px 20px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      min-width: 300px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-      animation: slide-in-right 0.3s ease;
-    }
-
-    .toast.success {
-      border-color: rgba(34, 197, 94, 0.3);
-    }
-
-    .toast.error {
-      border-color: rgba(239, 68, 68, 0.3);
-    }
-
-    .toast-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: var(--radius-sm);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-    }
-
-    .toast.success .toast-icon {
-      background: rgba(34, 197, 94, 0.1);
-      color: var(--success);
-    }
-
-    .toast.error .toast-icon {
-      background: rgba(239, 68, 68, 0.1);
-      color: var(--error);
-    }
-
-    .toast-content {
-      flex: 1;
-    }
-
-    .toast-title {
-      font-weight: 600;
-      font-size: 14px;
-      margin-bottom: 2px;
-    }
-
-    .toast-message {
-      font-size: 13px;
-      color: var(--text-muted);
-    }
-
-    @keyframes slide-in-right {
-      from { transform: translateX(100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-
     /* ================================================
        UTILITIES
        ================================================ */
@@ -3321,8 +3260,7 @@
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
         updateSaveIndicator(true);
-        showSaveProgress('saved');
-        showToast('All changes saved successfully', 'success');
+        showToast('Saving locally, publishing to website...', 'info', 2000);
       } catch (err) {
         showSaveProgress('');
         showToast('Failed to save changes to browser', 'error');
@@ -3330,11 +3268,10 @@
         return;
       }
       
-      // Auto-publish after save (independent error handling)
+      // Auto-publish after save
       try {
         await publishConfig();
       } catch (err) {
-        // publishConfig already shows its own toast
         console.error('Auto-publish error:', err);
       }
     }
@@ -3345,8 +3282,14 @@
         const resp = await fetch('/config.json?_=' + Date.now());
         if (resp.ok) {
           const serverConfig = await resp.json();
-          // Merge server config into current config (local values take precedence)
-          config = mergeDeep(serverConfig, config);
+          const hasLocalDraft = localStorage.getItem(STORAGE_KEY) !== null;
+          if (hasLocalDraft) {
+            // Merge: server is baseline, local unsaved changes overlay
+            config = mergeDeep(serverConfig, config);
+          } else {
+            // Fresh browser: use server config as-is (published state)
+            config = serverConfig;
+          }
           localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
           populateAllFields();
           renderAllTabs();
@@ -3404,6 +3347,7 @@
       populateAllFields();
       renderAllTabs();
       loadFromServer();
+      switchTab('dashboard');
     }
 
     // ================================================
@@ -3681,19 +3625,27 @@
           setupValidation(input, validateType);
         }
 
-        input.addEventListener('change', () => {
+        // Remove old listeners before adding new ones to prevent duplicates
+        const newChangeHandler = () => {
           setPathValue(config, path, input.value);
           updateSaveIndicator(false);
-        });
-
-        input.addEventListener('input', () => {
+        };
+        const newInputHandler = () => {
           setPathValue(config, path, input.value);
           updateSaveIndicator(false);
-        });
+        };
+        input.removeEventListener('change', input._psChangeHandler);
+        input.removeEventListener('input', input._psInputHandler);
+        input._psChangeHandler = newChangeHandler;
+        input._psInputHandler = newInputHandler;
+        input.addEventListener('change', newChangeHandler);
+        input.addEventListener('input', newInputHandler);
       });
+    }
 
-      // Auto-save interval
-      setInterval(() => {
+    // Auto-save interval (start once, not per populateAllFields call)
+    if (!window._psAutoSaveInterval) {
+      window._psAutoSaveInterval = setInterval(() => {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
       }, 30000);
     }
@@ -4467,115 +4419,6 @@
 
     function closeGalleryModal() {
       document.getElementById('galleryModal').classList.remove('visible');
-    }
-
-    // ================================================
-    // HERO IMAGE & PORTFOLIO IMAGES MANAGEMENT
-    // ================================================
-    async function handleServiceHeroUpload(serviceId, event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      try {
-        const dataUrl = await fileToDataUrl(file);
-        const webpUrl = await convertToWebP(dataUrl, 0.9);
-
-        const service = config.services.find(s => s.id === serviceId);
-        if (service) {
-          service.heroImage = webpUrl;
-          renderServices();
-          updateSaveIndicator(false);
-          showToast('Hero image updated', 'success');
-        }
-      } catch (err) {
-        showToast('Failed to process hero image', 'error');
-      }
-    }
-
-    function deleteServiceHeroImage(serviceId) {
-      showConfirmDialog({
-        title: 'Remove Hero Image',
-        message: 'Remove the hero image from this service?',
-        icon: '🖼️',
-        type: 'warning',
-        confirmText: 'Remove',
-        confirmClass: 'btn-danger',
-        onConfirm: () => {
-          const service = config.services.find(s => s.id === serviceId);
-          if (service) {
-            service.heroImage = '';
-            renderServices();
-            updateSaveIndicator(false);
-            showToast('Hero image removed', 'success');
-          }
-        }
-      });
-    }
-
-    async function handleServicePortfolioUpload(serviceId, event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      try {
-        const dataUrl = await fileToDataUrl(file);
-        const webpUrl = await convertToWebP(dataUrl, 0.9);
-
-        const service = config.services.find(s => s.id === serviceId);
-        if (service) {
-          if (!service.portfolioImages) service.portfolioImages = [];
-          service.portfolioImages.push({ url: webpUrl, label: file.name.replace(/\.[^.]+$/, "") });
-          renderServices();
-          updateSaveIndicator(false);
-          showToast('Portfolio image added', 'success');
-        }
-      } catch (err) {
-        showToast('Failed to process portfolio image', 'error');
-      }
-    }
-
-    function moveServicePortfolioImage(serviceId, idx, direction) {
-      const service = config.services.find(s => s.id === serviceId);
-      if (!service || !service.portfolioImages) return;
-
-      const newIdx = idx + direction;
-      if (newIdx < 0 || newIdx >= service.portfolioImages.length) return;
-
-      [service.portfolioImages[idx], service.portfolioImages[newIdx]] = [service.portfolioImages[newIdx], service.portfolioImages[idx]];
-      renderServices();
-      updateSaveIndicator(false);
-    }
-
-    function editServicePortfolioLabel(serviceId, idx, currentLabel) {
-      const newLabel = prompt('Enter label for this portfolio image:', currentLabel);
-      if (newLabel === null) return; // User cancelled
-
-      const service = config.services.find(s => s.id === serviceId);
-      if (service && service.portfolioImages && service.portfolioImages[idx]) {
-        service.portfolioImages[idx].label = newLabel;
-        renderServices();
-        updateSaveIndicator(false);
-        showToast('Label updated', 'success');
-      }
-    }
-
-    function deleteServicePortfolioImage(serviceId, idx) {
-      showConfirmDialog({
-        title: 'Delete Portfolio Image',
-        message: 'This image will be permanently removed from the service portfolio.',
-        icon: '🖼️',
-        type: 'warning',
-        confirmText: 'Delete',
-        confirmClass: 'btn-danger',
-        onConfirm: () => {
-          const service = config.services.find(s => s.id === serviceId);
-          if (service && service.portfolioImages) {
-            service.portfolioImages.splice(idx, 1);
-            renderServices();
-            updateSaveIndicator(false);
-            showToast('Portfolio image deleted', 'success');
-          }
-        }
-      });
     }
 
     // ================================================
@@ -5656,8 +5499,8 @@
         hero: config.hero,
         about: config.about,
         aboutImages: config.about?.images || [],
-        advantage: config.advantage,
-        advantageImages: config.advantage?.images || [],
+        advantage: config.advantage || { images: config.advantageImages || [] },
+        advantageImages: config.advantage?.images || config.advantageImages || [],
         serviceCategories: config.serviceCategories,
         settings: config.settings,
         footer: config.footer,
@@ -5669,26 +5512,32 @@
       try {
         const host = window.location.hostname;
         const isLocal = /^(localhost|127\.0\.0\.1|0\.0\.0\.0|::1|\[::1\])$/.test(host);
-        const isServer = /^3\.110\.186\.195$/.test(host);
-        const publishUrl = isLocal
-          ? `http://localhost:9998/publish`
-          : isServer
-            ? `http://${host}:9998/publish`
-            : `/.netlify/functions/publish`;
-        const resp = await fetch(publishUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-        if (resp.ok) {
-          const result = await resp.json();
-          showToast(`🌍 Published! ${result.services} services updated. Site auto-updates in ~30 seconds.`, 'success', 6000);
-        } else {
-          const errBody = await resp.json().catch(() => ({}));
-          throw new Error(errBody.error || `HTTP ${resp.status}: Publish failed`);
+        // Try publish API on port 9998 first, fall back to server's /api/publish
+        const candidates = isLocal
+          ? [`http://localhost:9998/publish`, `http://${host}:8888/api/publish`]
+          : [`http://${host}:9998/publish`, `/.netlify/functions/publish`, `/api/publish`];
+        let lastError = null;
+        for (const publishUrl of candidates) {
+          try {
+            const resp = await fetch(publishUrl, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload)
+            });
+            if (resp.ok) {
+              const result = await resp.json();
+              showToast(`🌍 Published! ${result.services} services updated.`, 'success', 6000);
+              return;
+            }
+            const errBody = await resp.json().catch(() => ({}));
+            lastError = new Error(errBody.error || `HTTP ${resp.status}`);
+          } catch (e) {
+            lastError = e;
+          }
         }
+        throw lastError || new Error('No publish endpoint available');
       } catch(e) {
-        showToast(`❌ Publish failed: ${e.message}. Ensure the publish API (port 9998) is running on the server.`, 'error', 10000);
+        showToast(`❌ Publish failed: ${e.message}. Ensure the publish API is running.`, 'error', 10000);
       }
     }
 

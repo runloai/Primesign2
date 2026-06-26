@@ -1420,7 +1420,7 @@ export default function Home() {
                 {adminConfig?.about?.title || "About Primesign"}
               </h2>
               <h3 className="text-4xl md:text-5xl font-display font-bold leading-tight mb-6">
-                {adminConfig?.about?.subtitle || "BORN IN BANGALORE.\nBUILT FOR IMPACT.".replace(/\n/g, '\n')}
+                {adminConfig?.about?.subtitle || "BORN IN BANGALORE.\nBUILT FOR IMPACT."}
               </h3>
               <p className="text-lg text-muted-foreground font-light leading-relaxed mb-6">
                 {adminConfig?.about?.description || adminConfig?.settings?.aboutDescription || "Founded in 2021, Primesign Private Limited has rapidly become Bangalore's go-to studio for premium signage and architectural branding. We don't just print signs — we engineer visibility."}

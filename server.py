@@ -13,6 +13,19 @@ class PublishHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=DIST_DIR, **kwargs)
     
+    def _atomic_write(self, path, data):
+        d = os.path.dirname(path)
+        os.makedirs(d, exist_ok=True)
+        tmp = path + ".tmp"
+        try:
+            with open(tmp, "w") as f:
+                json.dump(data, f, indent=2)
+            os.replace(tmp, path)
+        except Exception:
+            if os.path.exists(tmp):
+                os.unlink(tmp)
+            raise
+
     def do_POST(self):
         if self.path == "/api/publish":
             try:
@@ -28,11 +41,9 @@ class PublishHandler(http.server.SimpleHTTPRequestHandler):
                     self.wfile.write(json.dumps({"error": "empty payload", "existing_services": len(svc_count)}).encode())
                     print(f"❌ Rejected empty publish")
                     return
-                # Write to both public/ and dist/
+                # Write to both public/ and dist/ atomically
                 for d in [PUBLIC_DIR, DIST_DIR]:
-                    os.makedirs(d, exist_ok=True)
-                    with open(os.path.join(d, "config.json"), "w") as f:
-                        json.dump(data, f, indent=2)
+                    self._atomic_write(os.path.join(d, "config.json"), data)
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")
                 self.end_headers()
