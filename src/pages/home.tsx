@@ -153,20 +153,20 @@ const SERVICES_CATEGORIES = [
     icon: "sign",
     items: [
       { name: "LED Signs", desc: "High-brightness LED boards with ACP backing and 3D letters", img: "/images/led/1.webp", badge: "Popular" },
-      { name: "Glow Signs", desc: "Illuminated glow signs visible day and night", img: "/images/glow/1.webp" },
-      { name: "Acrylic Signs", desc: "Laser-cut precision acrylic signs for corporate and retail", img: "/images/acrylic/1.webp" },
-      { name: "Wall Branding", desc: "Custom vinyl graphics and murals for interior and exterior walls", img: "/images/wall/1.webp" },
-      { name: "Non-Light Sign Board", desc: "Non-illuminated sign boards for daytime visibility and cost-effective branding", img: "/images/led/1.webp" },
+      { name: "Glow Signs", desc: "Illuminated glow signs visible day and night", img: "/images/services/sign-boards/glow-1.jpg" },
+      { name: "Acrylic Signs", desc: "Laser-cut precision acrylic signs for corporate and retail", img: "/images/services/sign-boards/acrylic-1.png" },
+      { name: "Wall Branding", desc: "Custom vinyl graphics and murals for interior and exterior walls", img: "/images/services/sign-boards/wall-1.png" },
+      { name: "Non-Light Sign Board", desc: "Non-illuminated sign boards for daytime visibility and cost-effective branding", img: "/images/services/sign-boards/nonlight-1.png" },
       { name: "3D LED Letters", desc: "Premium 3D fabricated LED letters for standout storefront branding", img: "/images/led/2.webp" },
-      { name: "Glow Sign Board", desc: "Illuminated glow sign boards that attract attention day and night", img: "/images/glow/2.webp" },
-      { name: "Acrylic Sign Board", desc: "High-gloss acrylic sign boards with laser-cut precision", img: "/images/acrylic/2.webp" },
-      { name: "PVC/SS Letter Sign", desc: "PVC and stainless steel letter signs for modern corporate branding", img: "/images/pvc/1.webp" },
-      { name: "Hoardings", desc: "Large-format outdoor hoardings for maximum brand visibility", img: "/images/wall/2.webp" },
-      { name: "One Way Vision", desc: "Perforated window films for see-through branding on glass surfaces", img: "/images/vehicle/2.webp" },
-      { name: "Gloss Branding", desc: "High-gloss vinyl branding for a premium polished finish", img: "/images/led/3.webp" },
-      { name: "Wall Graphics", desc: "Custom wall murals and graphics for interior and exterior spaces", img: "/images/wall/3.webp" },
-      { name: "Vehicle Wraps", desc: "Full and partial vehicle wraps for mobile advertising", img: "/images/vehicle/1.webp" },
-      { name: "PVC & Flex", desc: "Durable outdoor flex printing for hoardings and banners", img: "/images/pvc/1.webp" },
+      { name: "Glow Sign Board", desc: "Illuminated glow sign boards that attract attention day and night", img: "/images/services/sign-boards/glow-1.jpg" },
+      { name: "Acrylic Sign Board", desc: "High-gloss acrylic sign boards with laser-cut precision", img: "/images/services/sign-boards/acrylic-1.png" },
+      { name: "PVC/SS Letter Sign", desc: "PVC and stainless steel letter signs for modern corporate branding", img: "/images/services/sign-boards/pvc-ss-1.png" },
+      { name: "Hoardings", desc: "Large-format outdoor hoardings for maximum brand visibility", img: "/images/services/sign-boards/hoardings-1.png" },
+      { name: "One Way Vision", desc: "Perforated window films for see-through branding on glass surfaces", img: "/images/services/sign-boards/house-1.png" },
+      { name: "Gloss Branding", desc: "High-gloss vinyl branding for a premium polished finish", img: "/images/services/sign-boards/gloss-1.png" },
+      { name: "Wall Graphics", desc: "Custom wall murals and graphics for interior and exterior spaces", img: "/images/services/sign-boards/wall-1.png" },
+      { name: "Vehicle Wraps", desc: "Full and partial vehicle wraps for mobile advertising", img: "/images/services/sign-boards/vehicle-1.png" },
+      { name: "PVC & Flex", desc: "Durable outdoor flex printing for hoardings and banners", img: "/images/services/sign-boards/pvc-ss-1.png" },
     ]
   },
   {
@@ -175,8 +175,8 @@ const SERVICES_CATEGORIES = [
     description: "Eye-catching display solutions for events & marketing",
     icon: "display",
     items: [
-      { name: "Promotional Tents", desc: "Custom branded promotional tents for events and outdoor campaigns", img: "/images/portfolio/01.webp" },
-      { name: "Roll Up Standees", desc: "Portable roll-up banner stands for indoor events and promotions", img: "/images/portfolio/03.webp" },
+      { name: "Promotional Tents", desc: "Custom branded promotional tents for events and outdoor campaigns", img: "/images/services/promotional/tent-1.png" },
+      { name: "Roll Up Standees", desc: "Portable roll-up banner stands for indoor events and promotions", img: "/images/services/promotional/rollup-1.png" },
     ]
   },
   {
@@ -185,11 +185,11 @@ const SERVICES_CATEGORIES = [
     description: "High-quality digital printing services",
     icon: "print",
     items: [
-      { name: "Posters", desc: "High-quality poster printing for indoor and outdoor advertising", img: "/images/wall/4.webp" },
-      { name: "Visiting Cards", desc: "Premium visiting card printing on multiple paper stocks and finishes", img: "/images/square/4.webp" },
-      { name: "ID Cards", desc: "Custom ID card printing with lamination and accessories", img: "/images/square/5.webp" },
-      { name: "T-Shirts", desc: "Custom t-shirt printing with screen and DTF transfer methods", img: "/images/square/6.webp" },
-      { name: "Quick Printing", desc: "Fast turnaround digital printing for brochures, flyers and documents", img: "/images/square/2.webp" },
+      { name: "Posters", desc: "High-quality poster printing for indoor and outdoor advertising", img: "/images/square/1.webp" },
+      { name: "Visiting Cards", desc: "Premium visiting card printing on multiple paper stocks and finishes", img: "/images/square/brass.webp" },
+      { name: "ID Cards", desc: "Custom ID card printing with lamination and accessories", img: "/images/portfolio/01.webp" },
+      { name: "T-Shirts", desc: "Custom t-shirt printing with screen and DTF transfer methods", img: "/images/portfolio/06.webp" },
+      { name: "Quick Printing", desc: "Fast turnaround digital printing for brochures, flyers and documents", img: "/images/portfolio/005.webp" },
     ]
   },
 ];
@@ -442,11 +442,22 @@ function extractImageUrl(img: ServiceImage | string): string {
 function getServiceImage(serviceName: string): string {
   const name = serviceName.toLowerCase();
   if (name.includes("led")) return "/images/led/1.webp";
-  if (name.includes("glow")) return "/images/glow/1.webp";
-  if (name.includes("acrylic")) return "/images/acrylic/1.webp";
-  if (name.includes("wall")) return "/images/wall/1.webp";
-  if (name.includes("vehicle")) return "/images/vehicle/1.webp";
-  if (name.includes("pvc") || name.includes("flex")) return "/images/pvc/1.webp";
+  if (name.includes("non-light") || name.includes("nonlight")) return "/images/services/sign-boards/nonlight-1.png";
+  if (name.includes("hoarding")) return "/images/services/sign-boards/hoardings-1.png";
+  if (name.includes("one way") || name.includes("one-way") || name.includes("oneway")) return "/images/services/sign-boards/house-1.png";
+  if (name.includes("gloss")) return "/images/services/sign-boards/gloss-1.png";
+  if (name.includes("glow")) return "/images/services/sign-boards/glow-1.jpg";
+  if (name.includes("acrylic")) return "/images/services/sign-boards/acrylic-1.png";
+  if (name.includes("wall")) return "/images/services/sign-boards/wall-1.png";
+  if (name.includes("vehicle")) return "/images/services/sign-boards/vehicle-1.png";
+  if (name.includes("pvc") || name.includes("flex")) return "/images/services/sign-boards/pvc-ss-1.png";
+  if (name.includes("promotional")) return "/images/services/promotional/tent-1.png";
+  if (name.includes("poster")) return "/images/square/1.webp";
+  if (name.includes("visiting")) return "/images/square/brass.webp";
+  if (name.includes("id")) return "/images/portfolio/01.webp";
+  if (name.includes("t-shirt") || name.includes("tshirt")) return "/images/portfolio/06.webp";
+  if (name.includes("quick")) return "/images/portfolio/005.webp";
+  if (name.includes("roll-up") || name.includes("rollup") || name.includes("roll up")) return "/images/services/promotional/rollup-1.png";
   return "/images/led/1.webp";
 }
 
