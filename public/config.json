@@ -206,7 +206,7 @@
       "name": "Vehicle Wraps",
       "desc": "Full and partial vehicle wraps for mobile advertising",
       "badge": "",
-      "category": "vehicle",
+      "category": "sign-boards",
       "heroImage": "/images/services/sign-boards/vehicle-1.png",
       "portfolioImages": [
         {
@@ -242,7 +242,7 @@
       "name": "PVC & Flex",
       "desc": "Durable outdoor flex printing for hoardings and banners",
       "badge": "",
-      "category": "pvc-flex",
+      "category": "sign-boards",
       "heroImage": "/images/pvc/1.webp",
       "portfolioImages": [
         {
@@ -462,7 +462,7 @@
       "name": "Hoardings",
       "desc": "Large-format outdoor hoardings for maximum brand visibility",
       "badge": "",
-      "category": "outdoor",
+      "category": "sign-boards",
       "heroImage": "/images/services/sign-boards/hoardings-1.png",
       "portfolioImages": [
         {
@@ -506,7 +506,7 @@
       "name": "One Way Vision",
       "desc": "Perforated window films for see-through branding on glass surfaces",
       "badge": "",
-      "category": "graphics",
+      "category": "sign-boards",
       "heroImage": "/images/vehicle/1.webp",
       "portfolioImages": [
         {
@@ -538,7 +538,7 @@
       "name": "Gloss Branding",
       "desc": "High-gloss vinyl branding for a premium polished finish",
       "badge": "",
-      "category": "graphics",
+      "category": "sign-boards",
       "heroImage": "/images/led/1.webp",
       "portfolioImages": [
         {
@@ -570,7 +570,7 @@
       "name": "Wall Graphics",
       "desc": "Custom wall murals and graphics for interior and exterior spaces",
       "badge": "",
-      "category": "graphics",
+      "category": "sign-boards",
       "heroImage": "/images/wall/1.webp",
       "portfolioImages": [
         {
@@ -686,7 +686,7 @@
       "name": "Posters",
       "desc": "High-quality poster printing for indoor and outdoor advertising",
       "badge": "",
-      "category": "print",
+      "category": "digital",
       "heroImage": "/images/wall/4.webp",
       "portfolioImages": [
         {
@@ -718,7 +718,7 @@
       "name": "Visiting Cards",
       "desc": "Premium visiting card printing on multiple paper stocks and finishes",
       "badge": "",
-      "category": "print",
+      "category": "digital",
       "heroImage": "/images/square/1.webp",
       "portfolioImages": [
         {
@@ -754,7 +754,7 @@
       "name": "ID Cards",
       "desc": "Custom ID card printing with lamination and accessories",
       "badge": "",
-      "category": "print",
+      "category": "digital",
       "heroImage": "/images/square/5.webp",
       "portfolioImages": [
         {
@@ -786,7 +786,7 @@
       "name": "T-Shirts",
       "desc": "Custom t-shirt printing with screen and DTF transfer methods",
       "badge": "",
-      "category": "apparel",
+      "category": "digital",
       "heroImage": "/images/square/6.webp",
       "portfolioImages": [
         {
@@ -818,7 +818,7 @@
       "name": "Quick Printing",
       "desc": "Fast turnaround digital printing for brochures, flyers and documents",
       "badge": "",
-      "category": "print",
+      "category": "digital",
       "heroImage": "/images/square/2.webp",
       "portfolioImages": [
         {
@@ -1166,51 +1166,21 @@
   "serviceCategories": [
     {
       "id": "sign-boards",
-      "label": "Sign Boards",
+      "label": "SIGN BOARDS",
       "icon": "\ud83e\udea7",
-      "description": "Premium signage solutions for every business need"
-    },
-    {
-      "id": "vehicle",
-      "label": "Vehicles",
-      "icon": "\ud83d\ude97",
-      "description": "Vehicle branding and wrap solutions"
-    },
-    {
-      "id": "pvc-flex",
-      "label": "PVC & Flex",
-      "icon": "\ud83d\udccb",
-      "description": "Durable flex and PVC printing solutions"
-    },
-    {
-      "id": "outdoor",
-      "label": "Outdoor",
-      "icon": "\ud83c\udfd7\ufe0f",
-      "description": "Large-format outdoor signage solutions"
-    },
-    {
-      "id": "graphics",
-      "label": "Graphics",
-      "icon": "\ud83c\udfa8",
-      "description": "Custom graphics and branding solutions"
+      "description": "Premium signage solutions including LED, glow, acrylic, wall branding, vehicle wraps, hoardings & more"
     },
     {
       "id": "promotional",
-      "label": "Promotional Display",
+      "label": "PROMOTIONAL DISPLAY",
       "icon": "\ud83d\udce2",
       "description": "Eye-catching display solutions for events & marketing"
     },
     {
-      "id": "print",
-      "label": "Digital Prints",
+      "id": "digital",
+      "label": "DIGITAL PRINTS",
       "icon": "\ud83d\udda8\ufe0f",
       "description": "High-quality digital printing on various media"
-    },
-    {
-      "id": "apparel",
-      "label": "Apparel",
-      "icon": "\ud83d\udc55",
-      "description": "Custom apparel and merchandise printing"
     }
   ],
   "settings": {

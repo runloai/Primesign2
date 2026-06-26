@@ -144,12 +144,12 @@ const HERO_SLIDES = [
   "/images/portfolio/06.webp",
 ];
 
-// ============ EXPANDED SERVICES (6 CATEGORIES, 22 SERVICES) ============
+// ============ EXPANDED SERVICES (3 CATEGORIES) ============
 const SERVICES_CATEGORIES = [
   {
     id: "sign-boards",
     title: "SIGN BOARDS",
-    description: "Premium signage solutions for every business need",
+    description: "Premium signage solutions including LED, glow, acrylic, wall branding, vehicle wraps, hoardings & more",
     icon: "sign",
     items: [
       { name: "LED Signs", desc: "High-brightness LED boards with ACP backing and 3D letters", img: "/images/led/1.webp", badge: "Popular" },
@@ -161,23 +161,11 @@ const SERVICES_CATEGORIES = [
       { name: "Glow Sign Board", desc: "Illuminated glow sign boards that attract attention day and night", img: "/images/glow/2.webp" },
       { name: "Acrylic Sign Board", desc: "High-gloss acrylic sign boards with laser-cut precision", img: "/images/acrylic/2.webp" },
       { name: "PVC/SS Letter Sign", desc: "PVC and stainless steel letter signs for modern corporate branding", img: "/images/pvc/1.webp" },
-    ]
-  },
-  {
-    id: "vehicle",
-    title: "VEHICLES",
-    description: "Vehicle branding and wrap solutions",
-    icon: "vehicle",
-    items: [
+      { name: "Hoardings", desc: "Large-format outdoor hoardings for maximum brand visibility", img: "/images/wall/2.webp" },
+      { name: "One Way Vision", desc: "Perforated window films for see-through branding on glass surfaces", img: "/images/vehicle/2.webp" },
+      { name: "Gloss Branding", desc: "High-gloss vinyl branding for a premium polished finish", img: "/images/led/3.webp" },
+      { name: "Wall Graphics", desc: "Custom wall murals and graphics for interior and exterior spaces", img: "/images/wall/3.webp" },
       { name: "Vehicle Wraps", desc: "Full and partial vehicle wraps for mobile advertising", img: "/images/vehicle/1.webp" },
-    ]
-  },
-  {
-    id: "pvc-flex",
-    title: "PVC & FLEX",
-    description: "Durable flex and PVC printing solutions",
-    icon: "pvc",
-    items: [
       { name: "PVC & Flex", desc: "Durable outdoor flex printing for hoardings and banners", img: "/images/pvc/1.webp" },
     ]
   },
@@ -192,27 +180,7 @@ const SERVICES_CATEGORIES = [
     ]
   },
   {
-    id: "outdoor",
-    title: "OUTDOOR",
-    description: "Large-format outdoor signage solutions",
-    icon: "outdoor",
-    items: [
-      { name: "Hoardings", desc: "Large-format outdoor hoardings for maximum brand visibility", img: "/images/wall/2.webp" },
-    ]
-  },
-  {
-    id: "graphics",
-    title: "GRAPHICS",
-    description: "Custom graphics and branding solutions",
-    icon: "graphics",
-    items: [
-      { name: "One Way Vision", desc: "Perforated window films for see-through branding on glass surfaces", img: "/images/vehicle/2.webp" },
-      { name: "Gloss Branding", desc: "High-gloss vinyl branding for a premium polished finish", img: "/images/led/3.webp" },
-      { name: "Wall Graphics", desc: "Custom wall murals and graphics for interior and exterior spaces", img: "/images/wall/3.webp" },
-    ]
-  },
-  {
-    id: "print",
+    id: "digital",
     title: "DIGITAL PRINTS",
     description: "High-quality digital printing services",
     icon: "print",
@@ -220,16 +188,8 @@ const SERVICES_CATEGORIES = [
       { name: "Posters", desc: "High-quality poster printing for indoor and outdoor advertising", img: "/images/wall/4.webp" },
       { name: "Visiting Cards", desc: "Premium visiting card printing on multiple paper stocks and finishes", img: "/images/square/4.webp" },
       { name: "ID Cards", desc: "Custom ID card printing with lamination and accessories", img: "/images/square/5.webp" },
-      { name: "Quick Printing", desc: "Fast turnaround digital printing for brochures, flyers and documents", img: "/images/square/2.webp" },
-    ]
-  },
-  {
-    id: "apparel",
-    title: "APPAREL",
-    description: "Custom apparel and merchandise printing",
-    icon: "apparel",
-    items: [
       { name: "T-Shirts", desc: "Custom t-shirt printing with screen and DTF transfer methods", img: "/images/square/6.webp" },
+      { name: "Quick Printing", desc: "Fast turnaround digital printing for brochures, flyers and documents", img: "/images/square/2.webp" },
     ]
   },
 ];
@@ -574,14 +534,9 @@ function getDynamicServiceCategories(): typeof SERVICES_CATEGORIES | null {
 
 // Category display names and descriptions
 const CATEGORY_DETAILS: Record<string, { title: string; description: string }> = {
-  "sign-boards": { title: "SIGN BOARDS", description: "Premium signage solutions for every business need" },
-  "vehicle": { title: "VEHICLES", description: "Vehicle branding and wrap solutions" },
-  "pvc-flex": { title: "PVC & FLEX", description: "Durable flex and PVC printing solutions" },
-  "outdoor": { title: "OUTDOOR", description: "Large-format outdoor signage solutions" },
-  "graphics": { title: "GRAPHICS", description: "Custom graphics and branding solutions" },
+  "sign-boards": { title: "SIGN BOARDS", description: "Premium signage solutions including LED, glow, acrylic, wall branding, vehicle wraps, hoardings & more" },
   "promotional": { title: "PROMOTIONAL DISPLAY", description: "Eye-catching display solutions for events & marketing" },
-  "print": { title: "DIGITAL PRINTS", description: "High-quality digital printing services" },
-  "apparel": { title: "APPAREL", description: "Custom apparel and merchandise printing" },
+  "digital": { title: "DIGITAL PRINTS", description: "High-quality digital printing services" },
 };
 
 // Build SERVICES_CATEGORIES dynamically from a services array (config.json or localStorage)
@@ -600,7 +555,7 @@ function buildServiceCategoriesFromServices(services: ServiceConfig[]): typeof S
       badge: s.badge === "popular" ? "Most Popular" : s.badge === "new" ? "New" : s.badge || undefined,
     });
   });
-  const order = ["sign-boards", "vehicle", "pvc-flex", "promotional", "print", "apparel", "outdoor", "graphics"];
+  const order = ["sign-boards", "promotional", "digital"];
   return [
     ...order.filter(catId => grouped.has(catId)).map(catId => grouped.get(catId)!),
     ...Array.from(grouped.entries()).filter(([catId]) => !order.includes(catId)).map(([, val]) => val),
@@ -742,9 +697,18 @@ function ClientLogosCarousel({ prefersReducedMotion }: { prefersReducedMotion: b
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isPaused, setIsPaused] = useState(false);
   
-  // Static client list — add real client logos here
-  const clients: { name: string; src: string }[] = [];
-  // Skip animation if no real client logos configured
+  const clients: { name: string; src: string }[] = [
+    { name: "Client 1", src: "/images/clients/1.webp" },
+    { name: "Client 2", src: "/images/clients/2.webp" },
+    { name: "Client 3", src: "/images/clients/3.webp" },
+    { name: "Client 4", src: "/images/clients/4.webp" },
+    { name: "Client 5", src: "/images/clients/5.webp" },
+    { name: "Client 6", src: "/images/clients/6.webp" },
+    { name: "Client 7", src: "/images/clients/7.webp" },
+    { name: "Client 8", src: "/images/clients/8.webp" },
+    { name: "Client 9", src: "/images/clients/9.webp" },
+    { name: "Client 10", src: "/images/clients/10.webp" },
+  ];
   const hasRealClients = clients.some(c => c.src);
   
   // Double the logos for seamless loop
@@ -917,15 +881,14 @@ function ContactSection({ prefersReducedMotion, adminConfig }: { prefersReducedM
 
                 <div>
                   <Label htmlFor="email" className="text-sm font-medium text-muted-foreground mb-2 block">
-                    Email Address *
+                    Email Address
                   </Label>
                   <Input
                     id="email"
                     type="email"
-                    required
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    placeholder="you@example.com"
+                    placeholder="you@example.com (optional)"
                     className="bg-background/60 border-white/10 focus:border-primary/60"
                   />
                 </div>
@@ -1497,10 +1460,10 @@ export default function Home() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: prefersReducedMotion ? 0.01 : 0.8 }}
-              className="grid grid-cols-2 gap-3"
+              className="grid grid-cols-2 gap-6"
             >
               {aboutImages.map((src: string, i: number) => (
-                <div key={i} className="aspect-square rounded-xl overflow-hidden">
+                <div key={i} className="aspect-[4/3] rounded-xl overflow-hidden shadow-lg">
                   <img
                     src={src}
                     alt={`Primesign signage work sample ${i + 1}`}

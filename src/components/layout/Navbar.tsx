@@ -33,29 +33,23 @@ const FALLBACK_SERVICE_MENU: Record<string, { name: string; href: string; filter
     { name: "Glow Sign Board", href: "/#services", filter: "sign-boards", serviceId: "glow-sign-board" },
     { name: "Acrylic Sign Board", href: "/#services", filter: "sign-boards", serviceId: "acrylic-sign-board" },
     { name: "PVC/SS Letter Sign", href: "/#services", filter: "sign-boards", serviceId: "pvc-ss-letter-sign" },
-    { name: "Hoardings", href: "/#services", filter: "outdoor", serviceId: "hoardings" },
-    { name: "One Way Vision", href: "/#services", filter: "graphics", serviceId: "one-way-vision" },
-    { name: "Gloss Branding", href: "/#services", filter: "graphics", serviceId: "gloss-branding" },
-    { name: "Wall Graphics", href: "/#services", filter: "graphics", serviceId: "wall-graphics" },
-  ],
-  "VEHICLES": [
-    { name: "Vehicle Wraps", href: "/#services", filter: "vehicle", serviceId: "vehicle-wraps" },
-  ],
-  "PVC & FLEX": [
-    { name: "PVC & Flex", href: "/#services", filter: "pvc-flex", serviceId: "pvc-flex" },
+    { name: "Hoardings", href: "/#services", filter: "sign-boards", serviceId: "hoardings" },
+    { name: "One Way Vision", href: "/#services", filter: "sign-boards", serviceId: "one-way-vision" },
+    { name: "Gloss Branding", href: "/#services", filter: "sign-boards", serviceId: "gloss-branding" },
+    { name: "Wall Graphics", href: "/#services", filter: "sign-boards", serviceId: "wall-graphics" },
+    { name: "Vehicle Wraps", href: "/#services", filter: "sign-boards", serviceId: "vehicle-wraps" },
+    { name: "PVC & Flex", href: "/#services", filter: "sign-boards", serviceId: "pvc-flex" },
   ],
   "PROMOTIONAL DISPLAY": [
     { name: "Promotional Tents", href: "/#services", filter: "promotional", serviceId: "promotional-tents" },
     { name: "Roll Up Standees", href: "/#services", filter: "promotional", serviceId: "roll-up-standees" },
   ],
   "DIGITAL PRINTS": [
-    { name: "Posters", href: "/#services", filter: "print", serviceId: "posters" },
-    { name: "Visiting Cards", href: "/#services", filter: "print", serviceId: "visiting-cards" },
-    { name: "ID Cards", href: "/#services", filter: "print", serviceId: "id-cards" },
-    { name: "Quick Printing", href: "/#services", filter: "print", serviceId: "quick-printing" },
-  ],
-  "APPAREL": [
-    { name: "T-Shirts", href: "/#services", filter: "apparel", serviceId: "t-shirts" },
+    { name: "Posters", href: "/#services", filter: "digital", serviceId: "posters" },
+    { name: "Visiting Cards", href: "/#services", filter: "digital", serviceId: "visiting-cards" },
+    { name: "ID Cards", href: "/#services", filter: "digital", serviceId: "id-cards" },
+    { name: "T-Shirts", href: "/#services", filter: "digital", serviceId: "t-shirts" },
+    { name: "Quick Printing", href: "/#services", filter: "digital", serviceId: "quick-printing" },
   ],
 };
 
@@ -142,13 +136,8 @@ export default function Navbar() {
       if (c.services && c.services.length > 0) {
         const categoryTitles: Record<string, string> = {
           "sign-boards": "SIGN BOARDS",
-          "vehicle": "VEHICLES",
-          "pvc-flex": "PVC & FLEX",
           "promotional": "PROMOTIONAL DISPLAY",
-          "print": "DIGITAL PRINTS",
-          "apparel": "APPAREL",
-          "outdoor": "OUTDOOR",
-          "graphics": "GRAPHICS",
+          "digital": "DIGITAL PRINTS",
         };
         const grouped: Record<string, { name: string; href: string; filter: string; serviceId: string }[]> = {};
         c.services.forEach((s: any) => {
@@ -326,28 +315,12 @@ export default function Navbar() {
               onClick={() => handleDropdownToggle("SIGN BOARDS")}
             />
             <DropdownMenu
-              title="PROMOTIONAL"
+              title="PROMOTIONAL DISPLAY"
               items={serviceMenu["PROMOTIONAL DISPLAY"] || []}
               isOpen={openDropdown === "PROMOTIONAL DISPLAY"}
               onMouseEnter={() => handleDropdownEnter("PROMOTIONAL DISPLAY")}
               onMouseLeave={handleDropdownLeave}
               onClick={() => handleDropdownToggle("PROMOTIONAL DISPLAY")}
-            />
-            <DropdownMenu
-              title="VEHICLES"
-              items={serviceMenu["VEHICLES"] || []}
-              isOpen={openDropdown === "VEHICLES"}
-              onMouseEnter={() => handleDropdownEnter("VEHICLES")}
-              onMouseLeave={handleDropdownLeave}
-              onClick={() => handleDropdownToggle("VEHICLES")}
-            />
-            <DropdownMenu
-              title="PVC & FLEX"
-              items={serviceMenu["PVC & FLEX"] || []}
-              isOpen={openDropdown === "PVC & FLEX"}
-              onMouseEnter={() => handleDropdownEnter("PVC & FLEX")}
-              onMouseLeave={handleDropdownLeave}
-              onClick={() => handleDropdownToggle("PVC & FLEX")}
             />
             <DropdownMenu
               title="DIGITAL PRINTS"
@@ -356,14 +329,6 @@ export default function Navbar() {
               onMouseEnter={() => handleDropdownEnter("DIGITAL PRINTS")}
               onMouseLeave={handleDropdownLeave}
               onClick={() => handleDropdownToggle("DIGITAL PRINTS")}
-            />
-            <DropdownMenu
-              title="APPAREL"
-              items={serviceMenu["APPAREL"] || []}
-              isOpen={openDropdown === "APPAREL"}
-              onMouseEnter={() => handleDropdownEnter("APPAREL")}
-              onMouseLeave={handleDropdownLeave}
-              onClick={() => handleDropdownToggle("APPAREL")}
             />
             
             {/* Direct Links */}
@@ -436,20 +401,6 @@ export default function Navbar() {
                   onItemClick={() => setIsMobileMenuOpen(false)}
                 />
                 
-                {/* Mobile Dropdown - Vehicles */}
-                <MobileDropdownSection 
-                  title="VEHICLES" 
-                  items={serviceMenu["VEHICLES"] || []} 
-                  onItemClick={() => setIsMobileMenuOpen(false)}
-                />
-                
-                {/* Mobile Dropdown - PVC & Flex */}
-                <MobileDropdownSection 
-                  title="PVC & FLEX" 
-                  items={serviceMenu["PVC & FLEX"] || []} 
-                  onItemClick={() => setIsMobileMenuOpen(false)}
-                />
-                
                 {/* Mobile Dropdown - Promotional */}
                 <MobileDropdownSection 
                   title="PROMOTIONAL DISPLAY" 
@@ -461,13 +412,6 @@ export default function Navbar() {
                 <MobileDropdownSection 
                   title="DIGITAL PRINTS" 
                   items={serviceMenu["DIGITAL PRINTS"] || []} 
-                  onItemClick={() => setIsMobileMenuOpen(false)}
-                />
-                
-                {/* Mobile Dropdown - Apparel */}
-                <MobileDropdownSection 
-                  title="APPAREL" 
-                  items={serviceMenu["APPAREL"] || []} 
                   onItemClick={() => setIsMobileMenuOpen(false)}
                 />
 

@@ -2938,7 +2938,7 @@
           name: "Vehicle Wraps",
           desc: "Full and partial vehicle wraps for mobile advertising",
           badge: "",
-          category: "vehicle",
+          category: "sign-boards",
           images: [
             { url: "/images/vehicle/1.webp", label: "Vehicle Wraps - Image 1" },
             { url: "/images/vehicle/2.webp", label: "Vehicle Wraps - Image 2" },
@@ -2951,7 +2951,7 @@
           name: "PVC & Flex",
           desc: "Durable outdoor flex printing for hoardings and banners",
           badge: "",
-          category: "pvc-flex",
+          category: "sign-boards",
           images: [
             { url: "/images/pvc/1.webp", label: "PVC & Flex - Image 1" }
           ]
@@ -3028,7 +3028,7 @@
           name: "Hoardings",
           desc: "Large-format outdoor hoardings for maximum brand visibility",
           badge: "",
-          category: "outdoor",
+          category: "sign-boards",
           images: [
             { url: "/images/wall/1.webp", label: "Hoardings - Image 1" },
             { url: "/images/wall/2.webp", label: "Hoardings - Image 2" },
@@ -3040,7 +3040,7 @@
           name: "One Way Vision",
           desc: "Perforated window films for see-through branding on glass surfaces",
           badge: "",
-          category: "graphics",
+          category: "sign-boards",
           images: [
             { url: "/images/wall/1.webp", label: "One Way Vision - Image 1" },
             { url: "/images/wall/2.webp", label: "One Way Vision - Image 2" },
@@ -3052,7 +3052,7 @@
           name: "Gloss Branding",
           desc: "High-gloss vinyl branding for a premium polished finish",
           badge: "",
-          category: "graphics",
+          category: "sign-boards",
           images: [
             { url: "/images/wall/4.webp", label: "Gloss Branding - Image 1" },
             { url: "/images/wall/5.webp", label: "Gloss Branding - Image 2" },
@@ -3064,7 +3064,7 @@
           name: "Wall Graphics",
           desc: "Custom wall murals and graphics for interior and exterior spaces",
           badge: "",
-          category: "graphics",
+          category: "sign-boards",
           images: [
             { url: "/images/wall/1.webp", label: "Wall Graphics - Image 1" },
             { url: "/images/wall/2.webp", label: "Wall Graphics - Image 2" },
@@ -3104,7 +3104,7 @@
           name: "Posters",
           desc: "High-quality poster printing for indoor and outdoor advertising",
           badge: "",
-          category: "print",
+          category: "digital",
           images: [
             { url: "/images/01.jpg", label: "Posters - Image 1" },
             { url: "/images/02.jpg", label: "Posters - Image 2" },
@@ -3116,7 +3116,7 @@
           name: "Visiting Cards",
           desc: "Premium visiting card printing on multiple paper stocks and finishes",
           badge: "",
-          category: "print",
+          category: "digital",
           images: [
             { url: "/images/004.jpg", label: "Visiting Cards - Image 1" },
             { url: "/images/005.jpg", label: "Visiting Cards - Image 2" },
@@ -3128,7 +3128,7 @@
           name: "ID Cards",
           desc: "Custom ID card printing with lamination and accessories",
           badge: "",
-          category: "print",
+          category: "digital",
           images: [
             { url: "/images/portfolio/01.webp", label: "ID Cards - Image 1" },
             { url: "/images/portfolio/03.webp", label: "ID Cards - Image 2" },
@@ -3140,7 +3140,7 @@
           name: "T-Shirts",
           desc: "Custom t-shirt printing with screen and DTF transfer methods",
           badge: "",
-          category: "apparel",
+          category: "digital",
           images: [
             { url: "/images/square/7.webp", label: "T-Shirts - Image 1" },
             { url: "/images/square/8.webp", label: "T-Shirts - Image 2" },
@@ -3152,7 +3152,7 @@
           name: "Quick Printing",
           desc: "Fast turnaround digital printing for brochures, flyers and documents",
           badge: "",
-          category: "print",
+          category: "digital",
           images: [
             { url: "/images/portfolio/05.webp", label: "Quick Printing - Image 1" },
             { url: "/images/portfolio/06.webp", label: "Quick Printing - Image 2" },
@@ -3233,14 +3233,9 @@
         }
       ],
       serviceCategories: [
-        { id: 'sign-boards', label: 'Sign Boards', icon: '🪧', description: 'Premium signage solutions for every business need' },
-        { id: 'vehicle', label: 'Vehicles', icon: '🚗', description: 'Vehicle branding and wrap solutions' },
-        { id: 'pvc-flex', label: 'PVC & Flex', icon: '📋', description: 'Durable flex and PVC printing solutions' },
-        { id: 'outdoor', label: 'Outdoor', icon: '🏗️', description: 'Large-format outdoor signage solutions' },
-        { id: 'graphics', label: 'Graphics', icon: '🎨', description: 'Custom graphics and branding solutions' },
-        { id: 'promotional', label: 'Promotional Display', icon: '📢', description: 'Eye-catching display solutions for events & marketing' },
-        { id: 'print', label: 'Digital Prints', icon: '🖨️', description: 'High-quality digital printing on various media' },
-        { id: 'apparel', label: 'Apparel', icon: '👕', description: 'Custom apparel and merchandise printing' }
+        { id: 'sign-boards', label: 'SIGN BOARDS', icon: '🪧', description: 'Premium signage solutions including LED, glow, acrylic, wall branding, vehicle wraps, hoardings & more' },
+        { id: 'promotional', label: 'PROMOTIONAL DISPLAY', icon: '📢', description: 'Eye-catching display solutions for events & marketing' },
+        { id: 'digital', label: 'DIGITAL PRINTS', icon: '🖨️', description: 'High-quality digital printing on various media' }
       ],
       hero: {
         bgImage: "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/portfolio/01.webp",
@@ -4578,14 +4573,9 @@
     // ================================================
     function getDefaultCategories() {
       return [
-        { id: 'sign-boards', label: 'Sign Boards', icon: '🪧', description: 'Premium signage solutions for every business need' },
-        { id: 'vehicle', label: 'Vehicles', icon: '🚗', description: 'Vehicle branding and wrap solutions' },
-        { id: 'pvc-flex', label: 'PVC & Flex', icon: '📋', description: 'Durable flex and PVC printing solutions' },
-        { id: 'outdoor', label: 'Outdoor', icon: '🏗️', description: 'Large-format outdoor signage solutions' },
-        { id: 'graphics', label: 'Graphics', icon: '🎨', description: 'Custom graphics and branding solutions' },
-        { id: 'promotional', label: 'Promotional Display', icon: '📢', description: 'Eye-catching display solutions for events & marketing' },
-        { id: 'print', label: 'Digital Prints', icon: '🖨️', description: 'High-quality digital printing on various media' },
-        { id: 'apparel', label: 'Apparel', icon: '👕', description: 'Custom apparel and merchandise printing' }
+        { id: 'sign-boards', label: 'SIGN BOARDS', icon: '🪧', description: 'Premium signage solutions including LED, glow, acrylic, wall branding, vehicle wraps, hoardings & more' },
+        { id: 'promotional', label: 'PROMOTIONAL DISPLAY', icon: '📢', description: 'Eye-catching display solutions for events & marketing' },
+        { id: 'digital', label: 'DIGITAL PRINTS', icon: '🖨️', description: 'High-quality digital printing on various media' }
       ];
     }
 
