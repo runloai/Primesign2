@@ -5292,6 +5292,8 @@
           <div class="image-item-order">#${idx + 1}</div>
           <div class="image-item-actions">
             <button class="btn btn-gold btn-sm" onclick="triggerAboutImageUpload(${idx})">📁 Change</button>
+            <button class="btn btn-cyan btn-sm" onclick="moveAboutImage(${idx}, -1)" ${idx === 0 ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : ''}>⬆️</button>
+            <button class="btn btn-cyan btn-sm" onclick="moveAboutImage(${idx}, 1)" ${idx === config.aboutImages.length - 1 ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : ''}>⬇️</button>
             <button class="btn btn-danger btn-sm" onclick="removeAboutImage(${idx})">🗑️</button>
           </div>
           <input type="file" id="aboutFile-${idx}" accept="image/*" style="display:none" onchange="handleAboutImageUpload(${idx}, event)">
@@ -5327,6 +5329,21 @@
       renderAboutImages();
       updateSaveIndicator(false);
       showToast('Image removed', 'success');
+    }
+
+    function moveAboutImage(idx, direction) {
+      if (!config.aboutImages) return;
+      const newIdx = idx + direction;
+      if (newIdx < 0 || newIdx >= config.aboutImages.length) return;
+      
+      // Swap items
+      const temp = config.aboutImages[idx];
+      config.aboutImages[idx] = config.aboutImages[newIdx];
+      config.aboutImages[newIdx] = temp;
+      
+      renderAboutImages();
+      updateSaveIndicator(false);
+      showToast(`Image moved ${direction > 0 ? 'down' : 'up'}`, 'success');
     }
 
     // ================================================
@@ -5411,6 +5428,8 @@
             </div>
           </div>
           <div class="portfolio-actions">
+            <button class="btn btn-cyan btn-sm" onclick="moveAdvantageImage(${idx}, -1)" ${idx === 0 ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : ''}>⬆️ Up</button>
+            <button class="btn btn-cyan btn-sm" onclick="moveAdvantageImage(${idx}, 1)" ${idx === config.advantageImages.length - 1 ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : ''}>⬇️ Down</button>
             <button class="btn btn-danger btn-sm" onclick="removeAdvantageImage(${idx})">🗑️ Remove</button>
           </div>
           <input type="file" id="advantageFile-${idx}" accept="image/*" style="display:none" onchange="handleAdvantageImageUpload(${idx}, event)">
@@ -5460,6 +5479,21 @@
       renderAdvantageImages();
       updateSaveIndicator(false);
       showToast('Image removed', 'success');
+    }
+
+    function moveAdvantageImage(idx, direction) {
+      if (!config.advantageImages) return;
+      const newIdx = idx + direction;
+      if (newIdx < 0 || newIdx >= config.advantageImages.length) return;
+      
+      // Swap items
+      const temp = config.advantageImages[idx];
+      config.advantageImages[idx] = config.advantageImages[newIdx];
+      config.advantageImages[newIdx] = temp;
+      
+      renderAdvantageImages();
+      updateSaveIndicator(false);
+      showToast(`Advantage moved ${direction > 0 ? 'down' : 'up'}`, 'success');
     }
 
     function pickIconForAdvantage(idx) {
