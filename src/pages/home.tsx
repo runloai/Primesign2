@@ -45,6 +45,23 @@ interface PortfolioConfig {
   featured?: boolean;
 }
 
+interface ServiceCategoryItem {
+  name: string;
+  desc: string;
+  img: string;
+  badge?: string;
+}
+
+interface ServiceCategory {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  items: ServiceCategoryItem[];
+}
+
+
+
 // Shared config cache
 let sharedConfig: { portfolio?: PortfolioConfig[]; hero?: any; services?: ServiceConfig[]; testimonials?: Testimonial[]; contact?: any; settings?: any; aboutImages?: any[]; advantageImages?: any[]; colorScheme?: any; serviceCategories?: any[]; about?: any; footer?: any; navbar?: any } | null = null;
 let sharedConfigFetched = false;
@@ -432,7 +449,7 @@ function getDynamicServices(): any[] | null {
 }
 
 // Build services categories from admin config (preview mode only)
-function getDynamicServiceCategories(): typeof SERVICES_CATEGORIES | null {
+function getDynamicServiceCategories(): ServiceCategory[] | null {
   try {
     const stored = localStorage.getItem("primesign-config");
     if (stored) {
@@ -485,7 +502,7 @@ const CATEGORY_DETAILS: Record<string, { title: string; description: string }> =
 };
 
 // Build SERVICES_CATEGORIES dynamically from a services array (config.json or localStorage)
-function buildServiceCategoriesFromServices(services: ServiceConfig[]): typeof SERVICES_CATEGORIES {
+function buildServiceCategoriesFromServices(services: ServiceConfig[]): ServiceCategory[] {
   const grouped = new Map<string, { id: string; title: string; description: string; icon: string; items: any[] }>();
   services.forEach(s => {
     const cat = s.category || "General";
@@ -1276,7 +1293,7 @@ export default function Home() {
 
   // Get current category services
   const currentCategory = serviceCategories.length > 0
-    ? (serviceCategories.find(c => c.id === activeServiceCategory) || serviceCategories[0])
+    ? (serviceCategories.find((c: ServiceCategory) => c.id === activeServiceCategory) || serviceCategories[0])
     : null;
 
   return (
@@ -1444,7 +1461,7 @@ export default function Home() {
 
           {/* Category Tabs */}
           <div className="flex flex-wrap justify-center gap-2 mb-12">
-            {serviceCategories.map((category) => (
+            {serviceCategories.map((category: ServiceCategory) => (
               <button
                 key={category.id}
                 onClick={() => setActiveServiceCategory(category.id)}
@@ -1472,7 +1489,7 @@ export default function Home() {
             transition={{ duration: prefersReducedMotion ? 0.01 : 0.4 }}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
           >
-            {(currentCategory?.items || []).map((service, index) => (
+            {(currentCategory?.items || []).map((service: ServiceCategoryItem, index: number) => (
               <motion.div
                 key={service.name}
                 id={`svc-${service.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '')}`}

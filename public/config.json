@@ -265,10 +265,6 @@
         {
           "url": "/images/services/sign-boards/nonlight-3.png",
           "label": "Non-Light Sign Board - Image 3"
-        },
-        {
-          "url": "/images/services/sign-boards/nonlight-4.png",
-          "label": "Non-Light Sign Board - Image 4"
         }
       ]
     },
@@ -366,26 +362,9 @@
       "badge": "",
       "category": "promotional",
       "images": [
-        {
-          "url": "/images/services/promotional/rollup-1.png",
-          "label": "Roll Up Standees - Image 1"
-        },
-        {
-          "url": "/images/services/promotional/rollup-2.png",
-          "label": "Roll Up Standees - Image 2"
-        },
-        {
-          "url": "/images/services/promotional/rollup-3.png",
-          "label": "Roll Up Standees - Image 3"
-        },
-        {
-          "url": "/images/services/promotional/rollup-4.png",
-          "label": "Roll Up Standees - Image 4"
-        },
-        {
-          "url": "/images/services/promotional/rollup-5.png",
-          "label": "Roll Up Standees - Image 5"
-        }
+        {"url": "/images/services/promotional/rollup-1.png", "label": "Roll Up Standees - Image 1"},
+        {"url": "/images/services/promotional/rollup-2.png", "label": "Roll Up Standees - Image 2"},
+        {"url": "/images/services/promotional/rollup-3.png", "label": "Roll Up Standees - Image 3"}
       ]
     },
     {
