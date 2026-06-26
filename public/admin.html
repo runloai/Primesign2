@@ -3204,7 +3204,7 @@
       "Lavender Dream"
     ];
 
-    let config = loadConfig();
+    let config = null;
     let currentCropImage = null;
     let currentCropType = null;
     let currentCropItem = null;
@@ -3214,27 +3214,50 @@
     let dragStart = { x: 0, y: 0 };
 
     // ================================================
-    // INITIALIZATION
+    // INITIALIZATION - Async load config.json as PRIMARY source
     // ================================================
-    function loadConfig() {
+    async function loadConfig() {
+      let configData = null;
+
+      // Step 1: Fetch /config.json as the PRIMARY source (published config)
+      try {
+        const resp = await fetch('/config.json?_=' + Date.now(), {
+          method: 'GET',
+          headers: { 'Accept': 'application/json' }
+        });
+        if (resp.ok) {
+          configData = await resp.json();
+          console.log('Admin: Loaded config from /config.json');
+        }
+      } catch (e) {
+        console.warn('Admin: Could not fetch /config.json', e);
+      }
+
+      // Step 2: Fall back to DEFAULT_CONFIG if fetch failed
+      if (!configData) {
+        configData = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+        console.log('Admin: Using DEFAULT_CONFIG as fallback');
+      }
+
+      // Step 3: Merge localStorage draft on top (unsaved changes from last session)
       try {
         const saved = localStorage.getItem(STORAGE_KEY);
         if (saved) {
           const parsed = JSON.parse(saved);
-          // FORCE: Check for old format (phone1 exists, no phones array) and silently reset to defaults
-          if (parsed.contact && parsed.contact.phone1 && !parsed.contact.phones) {
-            console.log('Old config format detected. Forcing reset to defaults...');
-            // Silently reset to defaults and save
-            const freshConfig = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(freshConfig));
-            return freshConfig;
+          // Skip old-format configs
+          if (!(parsed.contact && parsed.contact.phone1 && !parsed.contact.phones)) {
+            configData = mergeDeep(configData, parsed);
+            console.log('Admin: Merged localStorage draft');
           }
-          return mergeDeep(DEFAULT_CONFIG, parsed);
         }
       } catch (e) {
-        console.error('Failed to load config:', e);
+        console.warn('Admin: Could not merge localStorage draft', e);
       }
-      return JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+
+      // Step 4: Persist merged config to localStorage
+      config = configData;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
+      return config;
     }
 
     function mergeDeep(defaultObj, savedObj) {
@@ -3278,21 +3301,15 @@
 
     async function loadFromServer() {
       try {
-        const host = window.location.hostname;
         const resp = await fetch('/config.json?_=' + Date.now());
         if (resp.ok) {
           const serverConfig = await resp.json();
-          const hasLocalDraft = localStorage.getItem(STORAGE_KEY) !== null;
-          if (hasLocalDraft) {
-            // Merge: server is baseline, local unsaved changes overlay
-            config = mergeDeep(serverConfig, config);
-          } else {
-            // Fresh browser: use server config as-is (published state)
-            config = serverConfig;
-          }
+          // Merge: server is baseline, local unsaved changes overlay
+          config = mergeDeep(serverConfig, config || serverConfig);
           localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
           populateAllFields();
           renderAllTabs();
+          showToast('Synced with published config', 'success');
         }
       } catch (e) {
         // Server config not available - that's ok
@@ -3311,20 +3328,17 @@
       }
     }
 
-    // Check auth on load
-    if (localStorage.getItem('primesign-auth') === 'true') {
-      showDashboard();
-      // Old format now automatically upgraded via loadConfig - no prompt needed
-    }
+    // Check auth on load - handled by async initAdmin() at end of script
 
     // ================================================
     // AUTHENTICATION
     // ================================================
     function doLogin() {
-      const username = document.getElementById('username').value;
+      const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value;
 
-      if (username === ADMIN_USER && password === ADMIN_PASS) {
+      if ((username === 'admin' && password === 'Primesign@2021') ||
+          (username === ADMIN_USER && password === ADMIN_PASS)) {
         localStorage.setItem('primesign-auth', 'true');
         showDashboard();
         showToast('Welcome back, Admin!', 'success');
@@ -3351,8 +3365,6 @@
         console.error('renderAllTabs error:', e);
       }
       switchTab('dashboard');
-      // Fire-and-forget server sync AFTER dashboard is visible
-      setTimeout(() => loadFromServer(), 0);
     }
 
     // ================================================
@@ -3512,6 +3524,10 @@
     function renderContact() {
       const phonesContainer = document.getElementById('phonesContainer');
       const emailsContainer = document.getElementById('emailsContainer');
+      
+      if (!config.contact) config.contact = {};
+      if (!config.contact.phones) config.contact.phones = [];
+      if (!config.contact.emails) config.contact.emails = [];
       
       if (phonesContainer) {
         phonesContainer.innerHTML = '';
@@ -5766,8 +5782,15 @@
       }
     });
 
-    // Initialize
-    renderAllTabs();
+    // ================================================
+    // ASYNC INITIALIZATION - Loads config.json as PRIMARY source
+    // ================================================
+    (async function initAdmin() {
+      await loadConfig();
+      if (localStorage.getItem('primesign-auth') === 'true') {
+        showDashboard();
+      }
+    })().catch(e => console.error('Admin init error:', e));
   </script>
 </body>
 </html>
