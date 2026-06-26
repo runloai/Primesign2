@@ -5690,7 +5690,8 @@
       };
       
       try {
-        const resp = await fetch(window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+        const isLocal = /^(localhost|127\.0\.0\.1|0\.0\.0\.0|::1|\[::1\])$/.test(window.location.hostname);
+        const resp = await fetch(isLocal 
           ? 'http://localhost:9999/api/publish' 
           : '/.netlify/functions/publish', {
           method: "POST",
@@ -5701,10 +5702,11 @@
           const result = await resp.json();
           showToast(`🌍 Published! ${result.services} services updated. Site auto-updates in ~30 seconds.`, 'success', 6000);
         } else {
-          throw new Error("Publish failed");
+          const errText = await resp.text().catch(() => '');
+          throw new Error(errText || `HTTP ${resp.status}: Publish failed`);
         }
       } catch(e) {
-        showToast('❌ Publish failed. Check GITHUB_TOKEN in Netlify environment variables.', 'error', 8000);
+        showToast(`❌ Publish failed: ${e.message}. Ensure the publish server is running locally or GITHUB_TOKEN is set in Netlify.`, 'error', 10000);
       }
     }
 

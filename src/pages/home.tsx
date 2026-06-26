@@ -1460,10 +1460,10 @@ export default function Home() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: prefersReducedMotion ? 0.01 : 0.8 }}
-              className="grid grid-cols-2 gap-6"
+               className="grid grid-cols-2 gap-3"
             >
               {aboutImages.map((src: string, i: number) => (
-                <div key={i} className="aspect-[4/3] rounded-xl overflow-hidden shadow-lg">
+                <div key={i} className="aspect-square rounded-xl overflow-hidden">
                   <img
                     src={src}
                     alt={`Primesign signage work sample ${i + 1}`}
