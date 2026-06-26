@@ -21,13 +21,6 @@ const COLOR_SCHEMES = {
   "Lavender Dream": { p: "270 60% 55%", s: "330 50% 60%", b: "260 40% 97%", f: "260 25% 15%" },
 };
 
-// Category display names for service menu grouping
-const CATEGORY_DISPLAY_NAMES: Record<string, string> = {
-  "sign-boards": "SIGN BOARDS",
-  "promotional": "PROMOTIONAL DISPLAY",
-  "digital": "DIGITAL PRINTS",
-};
-
 interface DropdownMenuItem {
   name: string;
   href: string;
@@ -105,6 +98,7 @@ export default function Navbar() {
   const [useTextLogo, setUseTextLogo] = useState(false);
   const [logoSrc, setLogoSrc] = useState("https://raw.githubusercontent.com/runloai/PrimeSign/main/data/logo/logo.webp");
   const [serviceMenu, setServiceMenu] = useState<Record<string, DropdownMenuItem[]>>({});
+  const [serviceCategories, setServiceCategories] = useState<{ id: string; label: string }[]>([]);
   const [configContact, setConfigContact] = useState<{ phones?: string[]; emails?: string[]; facebook?: string; instagram?: string; youtube?: string } | null>(null);
   const [workingHours, setWorkingHours] = useState("Mon-Sat: 9:00 AM - 7:00 PM<br>Sunday: Closed");
 
@@ -116,11 +110,15 @@ export default function Navbar() {
       if (schemeName && schemeName in COLOR_SCHEMES) setScheme(schemeName);
       if (c.settings?.workingHours) setWorkingHours(c.settings.workingHours);
       if (c.contact) setConfigContact(c.contact);
+      if (c.serviceCategories) setServiceCategories(c.serviceCategories);
       if (c.services && c.services.length > 0) {
+        const categories = c.serviceCategories || [];
+        const catLabelMap: Record<string, string> = {};
+        categories.forEach((cat: { id: string; label: string }) => { catLabelMap[cat.id] = cat.label; });
         const grouped: Record<string, DropdownMenuItem[]> = {};
         c.services.forEach((s: any) => {
           const cat = s.category || "General";
-          const title = CATEGORY_DISPLAY_NAMES[cat] || cat.toUpperCase();
+          const title = catLabelMap[cat] || cat.toUpperCase();
           if (!grouped[title]) grouped[title] = [];
           const serviceId = s.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '');
           grouped[title].push({ name: s.name, href: "/#services", filter: cat, serviceId });
@@ -284,30 +282,17 @@ export default function Navbar() {
           {/* Desktop Nav */}
           <nav className="hidden lg:flex items-center gap-6" aria-label="Main navigation">
             {/* Multi-level Dropdown Menus */}
-            <DropdownMenu
-              title="SIGN BOARDS"
-              items={serviceMenu["SIGN BOARDS"] || []}
-              isOpen={openDropdown === "SIGN BOARDS"}
-              onMouseEnter={() => handleDropdownEnter("SIGN BOARDS")}
-              onMouseLeave={handleDropdownLeave}
-              onClick={() => handleDropdownToggle("SIGN BOARDS")}
-            />
-            <DropdownMenu
-              title="PROMOTIONAL DISPLAY"
-              items={serviceMenu["PROMOTIONAL DISPLAY"] || []}
-              isOpen={openDropdown === "PROMOTIONAL DISPLAY"}
-              onMouseEnter={() => handleDropdownEnter("PROMOTIONAL DISPLAY")}
-              onMouseLeave={handleDropdownLeave}
-              onClick={() => handleDropdownToggle("PROMOTIONAL DISPLAY")}
-            />
-            <DropdownMenu
-              title="DIGITAL PRINTS"
-              items={serviceMenu["DIGITAL PRINTS"] || []}
-              isOpen={openDropdown === "DIGITAL PRINTS"}
-              onMouseEnter={() => handleDropdownEnter("DIGITAL PRINTS")}
-              onMouseLeave={handleDropdownLeave}
-              onClick={() => handleDropdownToggle("DIGITAL PRINTS")}
-            />
+            {serviceCategories.map((cat) => (
+              <DropdownMenu
+                key={cat.id}
+                title={cat.label}
+                items={serviceMenu[cat.label] || []}
+                isOpen={openDropdown === cat.label}
+                onMouseEnter={() => handleDropdownEnter(cat.label)}
+                onMouseLeave={handleDropdownLeave}
+                onClick={() => handleDropdownToggle(cat.label)}
+              />
+            ))}
             
             {/* Direct Links */}
             <Link
@@ -372,26 +357,14 @@ export default function Navbar() {
             {/* Mobile Menu Content */}
             <div className="flex-1 overflow-y-auto pt-24 pb-8 px-6">
               <nav className="flex flex-col gap-2">
-                {/* Mobile Dropdown - Sign Boards */}
-                <MobileDropdownSection 
-                  title="SIGN BOARDS" 
-                  items={serviceMenu["SIGN BOARDS"] || []} 
-                  onItemClick={() => setIsMobileMenuOpen(false)}
-                />
-                
-                {/* Mobile Dropdown - Promotional */}
-                <MobileDropdownSection 
-                  title="PROMOTIONAL DISPLAY" 
-                  items={serviceMenu["PROMOTIONAL DISPLAY"] || []} 
-                  onItemClick={() => setIsMobileMenuOpen(false)}
-                />
-                
-                {/* Mobile Dropdown - Digital Prints */}
-                <MobileDropdownSection 
-                  title="DIGITAL PRINTS" 
-                  items={serviceMenu["DIGITAL PRINTS"] || []} 
-                  onItemClick={() => setIsMobileMenuOpen(false)}
-                />
+                {serviceCategories.map((cat) => (
+                  <MobileDropdownSection
+                    key={cat.id}
+                    title={cat.label}
+                    items={serviceMenu[cat.label] || []}
+                    onItemClick={() => setIsMobileMenuOpen(false)}
+                  />
+                ))}
 
                 {/* Direct Links */}
                 <Link
