@@ -49,6 +49,9 @@ interface PortfolioConfig {
 let sharedConfig: { portfolio?: PortfolioConfig[]; hero?: any; services?: ServiceConfig[]; testimonials?: Testimonial[]; contact?: any; settings?: any; aboutImages?: any[]; advantageImages?: any[]; colorScheme?: any; serviceCategories?: any[]; about?: any; footer?: any; navbar?: any } | null = null;
 let sharedConfigFetched = false;
 
+// Cache-busting helper: append timestamp to any URL
+const cacheBustUrl = (url: string): string => url + (url.includes('?') ? '&' : '?') + 't=' + Date.now();
+
 // Helper function to read admin config from localStorage (preview mode)
 function getAdminConfig(): { portfolio?: PortfolioConfig[]; hero?: any; services?: ServiceConfig[]; testimonials?: Testimonial[]; contact?: any; settings?: any; aboutImages?: any[]; advantageImages?: any[]; colorScheme?: any; serviceCategories?: any[]; about?: any; footer?: any; navbar?: any } | null {
   try {
@@ -441,24 +444,24 @@ function extractImageUrl(img: ServiceImage | string): string {
 // Helper to get fallback image for service category
 function getServiceImage(serviceName: string): string {
   const name = serviceName.toLowerCase();
-  if (name.includes("led")) return "/images/led/1.webp";
-  if (name.includes("non-light") || name.includes("nonlight")) return "/images/services/sign-boards/nonlight-1.png";
-  if (name.includes("hoarding")) return "/images/services/sign-boards/hoardings-1.png";
-  if (name.includes("one way") || name.includes("one-way") || name.includes("oneway")) return "/images/services/sign-boards/house-1.png";
-  if (name.includes("gloss")) return "/images/services/sign-boards/gloss-1.png";
-  if (name.includes("glow")) return "/images/services/sign-boards/glow-1.jpg";
-  if (name.includes("acrylic")) return "/images/services/sign-boards/acrylic-1.png";
-  if (name.includes("wall")) return "/images/services/sign-boards/wall-1.png";
-  if (name.includes("vehicle")) return "/images/services/sign-boards/vehicle-1.png";
-  if (name.includes("pvc") || name.includes("flex")) return "/images/services/sign-boards/pvc-ss-1.png";
-  if (name.includes("promotional")) return "/images/services/promotional/tent-1.png";
-  if (name.includes("poster")) return "/images/square/1.webp";
-  if (name.includes("visiting")) return "/images/square/brass.webp";
-  if (name.includes("id")) return "/images/portfolio/01.webp";
-  if (name.includes("t-shirt") || name.includes("tshirt")) return "/images/portfolio/06.webp";
-  if (name.includes("quick")) return "/images/portfolio/005.webp";
-  if (name.includes("roll-up") || name.includes("rollup") || name.includes("roll up")) return "/images/services/promotional/rollup-1.png";
-  return "/images/led/1.webp";
+  if (name.includes("led")) return cacheBustUrl("/images/led/1.webp");
+  if (name.includes("non-light") || name.includes("nonlight")) return cacheBustUrl("/images/services/sign-boards/nonlight-1.png");
+  if (name.includes("hoarding")) return cacheBustUrl("/images/services/sign-boards/hoardings-1.png");
+  if (name.includes("one way") || name.includes("one-way") || name.includes("oneway")) return cacheBustUrl("/images/services/sign-boards/house-1.png");
+  if (name.includes("gloss")) return cacheBustUrl("/images/services/sign-boards/gloss-1.png");
+  if (name.includes("glow")) return cacheBustUrl("/images/services/sign-boards/glow-1.jpg");
+  if (name.includes("acrylic")) return cacheBustUrl("/images/services/sign-boards/acrylic-1.png");
+  if (name.includes("wall")) return cacheBustUrl("/images/services/sign-boards/wall-1.png");
+  if (name.includes("vehicle")) return cacheBustUrl("/images/services/sign-boards/vehicle-1.png");
+  if (name.includes("pvc") || name.includes("flex")) return cacheBustUrl("/images/services/sign-boards/pvc-ss-1.png");
+  if (name.includes("promotional")) return cacheBustUrl("/images/services/promotional/tent-1.png");
+  if (name.includes("poster")) return cacheBustUrl("/images/square/1.webp");
+  if (name.includes("visiting")) return cacheBustUrl("/images/square/brass.webp");
+  if (name.includes("id")) return cacheBustUrl("/images/portfolio/01.webp");
+  if (name.includes("t-shirt") || name.includes("tshirt")) return cacheBustUrl("/images/portfolio/06.webp");
+  if (name.includes("quick")) return cacheBustUrl("/images/portfolio/005.webp");
+  if (name.includes("roll-up") || name.includes("rollup") || name.includes("roll up")) return cacheBustUrl("/images/services/promotional/rollup-1.png");
+  return cacheBustUrl("/images/led/1.webp");
 }
 
 // Extract category from service name
@@ -485,14 +488,14 @@ function getDynamicServices(): any[] | null {
           .filter((s: ServiceConfig) => s.name)
           .map((s: ServiceConfig) => {
             const serviceImages = s.images && s.images.length > 0
-              ? s.images.map((img: ServiceImage | string) => extractImageUrl(img)).filter(Boolean)
+              ? s.images.map((img: ServiceImage | string) => cacheBustUrl(extractImageUrl(img))).filter(Boolean)
               : [getServiceImage(s.name)];
             
             return {
               title: s.name,
               desc: s.desc || "",
               images: serviceImages,
-              thumbnail: (s as any).heroImage || serviceImages[0] || getServiceImage(s.name),
+              thumbnail: cacheBustUrl((s as any).heroImage) || serviceImages[0] || getServiceImage(s.name),
               tag: s.badge === "popular" ? "Most Popular" : s.badge === "new" ? "New" : null,
               category: getCategoryFromServiceName(s.name),
             };
@@ -562,7 +565,7 @@ function buildServiceCategoriesFromServices(services: ServiceConfig[]): typeof S
     grouped.get(cat)!.items.push({
       name: s.name,
       desc: s.desc || "",
-      img: (s as any).heroImage || extractImageUrl(s.images?.[0] as any) || getServiceImage(s.name),
+      img: cacheBustUrl((s as any).heroImage || extractImageUrl(s.images?.[0] as any) || getServiceImage(s.name)),
       badge: s.badge === "popular" ? "Most Popular" : s.badge === "new" ? "New" : s.badge || undefined,
     });
   });
@@ -1101,8 +1104,8 @@ export default function Home() {
   const displayServices = useMemo(() => {
     return rawDisplayServices.map((s: any) => ({
       ...s,
-      images: s.images || (s.img ? [s.img] : ["/images/led/1.webp"]),
-      thumbnail: s.heroImage || s.thumbnail || s.img || (s.images?.[0]) || "/images/led/1.webp",
+      images: (s.images || (s.img ? [s.img] : ["/images/led/1.webp"])).map((img: string) => cacheBustUrl(img)),
+      thumbnail: cacheBustUrl(s.heroImage || s.thumbnail || s.img || (s.images?.[0]) || "/images/led/1.webp"),
     }));
   }, [rawDisplayServices]);
 
@@ -1113,7 +1116,13 @@ export default function Home() {
     if (adminConfig?.services && adminConfig.services.length > 0) {
       return buildServiceCategoriesFromServices(adminConfig.services);
     }
-    return SERVICES_CATEGORIES;
+    return SERVICES_CATEGORIES.map(cat => ({
+      ...cat,
+      items: cat.items.map(item => ({
+        ...item,
+        img: cacheBustUrl(item.img),
+      })),
+    }));
   }, [dynamicServiceCategories, adminConfig]);
 
   // Get hero data from config or fallback

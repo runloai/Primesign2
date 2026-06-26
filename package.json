@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && cp public/config.json dist/config.json",
+    "build": "vite build && cp -f public/config.json dist/config.json",
     "preview": "vite preview"
   },
   "dependencies": {
