@@ -1,15 +1,22 @@
 [build]
-  command = "npm run build"
+  command = "npm ci && npm run build"
   publish = "dist"
   functions = "netlify/functions"
 
+# Redirect API calls to Netlify function
 [[redirects]]
-  from = "/index.html"
+  from = "/api/publish"
+  to = "/.netlify/functions/publish"
+  status = 200
+
+# SPA fallback - all routes go to index.html EXCEPT static assets
+[[redirects]]
+  from = "/*"
   to = "/index.html"
   status = 200
-  [redirects.headers]
-    Cache-Control = "no-cache, no-store, must-revalidate"
+  conditions = {Role = ["admin"]}
 
+# Allow static assets through
 [[redirects]]
   from = "/admin.html"
   to = "/admin.html"
@@ -29,15 +36,12 @@
   from = "/assets/*"
   to = "/assets/:splat"
   status = 200
-  [redirects.headers]
-    Cache-Control = "no-cache, no-store, must-revalidate"
 
-[[redirects]]
-  from = "/api/*"
-  to = "/index.html"
-  status = 200
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+# Headers for security
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"

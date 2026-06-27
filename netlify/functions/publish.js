@@ -1,106 +1,138 @@
-// Netlify Function: publish.js
-// Accepts config JSON, commits it to GitHub, triggers redeploy
-const https = require('https');
+// Netlify Function: Publish site config to GitHub
+// This allows admin panel to persist changes server-side
 
-exports.handler = async (event) => {
+exports.handler = async function(event) {
+  // Only allow POST requests
   if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
+    return {
+      statusCode: 405,
+      body: JSON.stringify({ error: 'Method not allowed' }),
+    };
   }
 
-  const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
-  const GITHUB_REPO = process.env.GITHUB_REPO || 'runloai/Primesign2';
-  const GITHUB_BRANCH = process.env.GITHUB_BRANCH || 'main';
+  // Get environment variables
+  const token = process.env.GITHUB_TOKEN;
+  const owner = process.env.GITHUB_OWNER || 'runloai';
+  const repo = process.env.GITHUB_REPO || 'primesigntest';
+  const branch = process.env.GITHUB_BRANCH || 'main';
+  const adminToken = process.env.ADMIN_PUBLISH_TOKEN;
 
-  if (!GITHUB_TOKEN) {
-    return { statusCode: 500, body: JSON.stringify({ error: 'GITHUB_TOKEN not configured' }) };
+  // Validate environment
+  if (!token || !adminToken) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ 
+        error: 'Server misconfiguration: missing GITHUB_TOKEN or ADMIN_PUBLISH_TOKEN' 
+      }),
+    };
   }
+
+  // Validate admin token from header
+  const providedToken = event.headers['x-admin-token'] || event.headers['x-admin-token'];
+  if (providedToken !== adminToken) {
+    return {
+      statusCode: 401,
+      body: JSON.stringify({ error: 'Unauthorized' }),
+    };
+  }
+
+  // Parse request body
+  let payload;
+  try {
+    payload = JSON.parse(event.body || '{}');
+  } catch {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ error: 'Invalid JSON payload' }),
+    };
+  }
+
+  // Basic validation
+  if (!payload || typeof payload !== 'object') {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ error: 'Empty or invalid payload' }),
+    };
+  }
+
+  // Add metadata
+  payload.meta = {
+    version: '2.0',
+    publishedAt: new Date().toISOString(),
+  };
+
+  const api = 'https://api.github.com';
+  const fileUrl = api + '/repos/' + owner + '/' + repo + '/contents/public/config.json?ref=' + branch;
 
   try {
-    const config = JSON.parse(event.body);
-    const configJson = JSON.stringify({
-      contact: config.contact,
-      testimonials: config.testimonials,
-      services: config.services,
-      portfolio: config.portfolio,
-      hero: config.hero,
-      about: config.about,
-      advantage: config.advantage,
-      serviceCategories: config.serviceCategories,
-      settings: config.settings,
-      footer: config.footer,
-      navbar: config.navbar,
-      _publishedAt: new Date().toISOString(),
-      _version: '2.1'
-    }, null, 2);
-
     // Get current file SHA
-    const sha = await getFileSha(GITHUB_TOKEN, GITHUB_REPO, 'public/config.json', GITHUB_BRANCH);
+    const currentResp = await fetch(fileUrl, {
+      headers: {
+        Authorization: 'Bearer ' + token,
+        Accept: 'application/vnd.github+json',
+      },
+    });
 
-    // Commit new config
-    const commitResult = await commitFile(GITHUB_TOKEN, GITHUB_REPO, 'public/config.json', configJson, sha, GITHUB_BRANCH);
+    let sha;
+    if (currentResp.ok) {
+      const current = await currentResp.json();
+      sha = current.sha;
+    } else if (currentResp.status !== 404) {
+      // File might not exist yet, that's OK
+      console.error('Failed to get current file:', currentResp.status);
+    }
+
+    // Prepare new content
+    const content = Buffer.from(JSON.stringify(payload, null, 2) + '\n', 'utf8').toString('base64');
+
+    // Commit to GitHub
+    const updateResp = await fetch(api + '/repos/' + owner + '/' + repo + '/contents/public/config.json', {
+      method: 'PUT',
+      headers: {
+        Authorization: 'Bearer ' + token,
+        Accept: 'application/vnd.github+json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        message: 'Update site config - ' + new Date().toISOString(),
+        content: content,
+        sha: sha,
+        branch: branch,
+      }),
+    });
+
+    if (!updateResp.ok) {
+      const errorText = await updateResp.text();
+      console.error('GitHub update failed:', errorText);
+      return {
+        statusCode: updateResp.status,
+        body: JSON.stringify({ 
+          error: 'GitHub update failed', 
+          detail: errorText 
+        }),
+      };
+    }
+
+    const result = await updateResp.json();
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ 
-        ok: true, 
-        services: config.services?.length || 0,
-        message: 'Published! Site will update in ~30 seconds.',
-        commit: commitResult.sha
-      })
+      body: JSON.stringify({
+        ok: true,
+        message: 'Config published successfully',
+        commit: result.commit ? result.commit.sha : null,
+        services: Array.isArray(payload.services) ? payload.services.length : 0,
+        categories: Array.isArray(payload.serviceCategories) ? payload.serviceCategories.length : 0,
+      }),
     };
-  } catch (e) {
-    return { statusCode: 500, body: JSON.stringify({ error: e.message }) };
+  } catch (error) {
+    console.error('Publish error:', error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ 
+        error: 'Internal server error',
+        message: error.message,
+      }),
+    };
   }
 };
-
-function githubApi(path, token, method = 'GET', body = null) {
-  return new Promise((resolve, reject) => {
-    const options = {
-      hostname: 'api.github.com',
-      path: path,
-      method: method,
-      headers: {
-        'Authorization': `token ${token}`,
-        'User-Agent': 'Primesign-Admin',
-        'Accept': 'application/vnd.github.v3+json',
-        'Content-Type': 'application/json'
-      }
-    };
-
-    const req = https.request(options, (res) => {
-      let data = '';
-      res.on('data', chunk => data += chunk);
-      res.on('end', () => {
-        if (res.statusCode >= 200 && res.statusCode < 300) {
-          resolve(JSON.parse(data));
-        } else {
-          reject(new Error(`GitHub API ${res.statusCode}: ${data}`));
-        }
-      });
-    });
-
-    req.on('error', reject);
-    if (body) req.write(JSON.stringify(body));
-    req.end();
-  });
-}
-
-async function getFileSha(token, repo, filePath, branch) {
-  try {
-    const result = await githubApi(`/repos/${repo}/contents/${filePath}?ref=${branch}`, token);
-    return result.sha;
-  } catch (e) {
-    return null; // File doesn't exist yet
-  }
-}
-
-async function commitFile(token, repo, filePath, content, sha, branch) {
-  const body = {
-    message: '📦 Admin: publish config.json',
-    content: Buffer.from(content).toString('base64'),
-    branch: branch
-  };
-  if (sha) body.sha = sha;
-
-  return githubApi(`/repos/${repo}/contents/${filePath}`, token, 'PUT', body);
-}
