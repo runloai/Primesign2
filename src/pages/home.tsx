@@ -454,38 +454,10 @@ function getDynamicServiceCategories(): ServiceCategory[] | null {
     const stored = localStorage.getItem("primesign-config");
     if (stored) {
       const config = JSON.parse(stored);
-      if (Array.isArray(config.serviceCategories) && config.serviceCategories.length > 0) {
-        // Check if stored categories have items populated
-        const hasItems = config.serviceCategories.some((c: any) => c.items && Array.isArray(c.items) && c.items.length > 0);
-        if (hasItems) {
-          return config.serviceCategories;
-        }
-        // Categories exist but items are empty — build items from services
-        if (config.services && config.services.length > 0) {
-          return buildServiceCategoriesFromServices(config.services);
-        }
-      }
+      // FIXED: Always rebuild from services to pick up new categories added in admin
+      // This ensures when you add a category + service in admin, it shows in both navbar AND Arsenal
       if (config.services && config.services.length > 0) {
-        // Group services by category
-        const grouped: Record<string, any[]> = {};
-        config.services.forEach((s: ServiceConfig) => {
-          const cat = s.category || "General";
-          if (!grouped[cat]) grouped[cat] = [];
-          grouped[cat].push(s);
-        });
-        
-        return Object.entries(grouped).map(([catName, items], idx) => ({
-          id: catName.toLowerCase().replace(/\s+/g, '-'),
-          title: catName.toUpperCase(),
-          description: "Professional " + catName.toLowerCase() + " services",
-          icon: "sign",
-          items: items.map((s: any) => ({
-            name: s.name,
-            desc: s.desc || "",
-            img: s.images?.[0]?.url || s.images?.[0] || "/images/led/1.webp",
-            badge: s.badge
-          }))
-        }));
+        return buildServiceCategoriesFromServices(config.services);
       }
     }
   } catch (e) {

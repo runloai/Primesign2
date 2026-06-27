@@ -3312,6 +3312,27 @@
       config.aboutImages = (config.about?.images || []).map(i => ({ url: i.url, label: i.label }));
       config.advantageImages = (config.advantage?.images || []).map(i => ({ url: i.url, label: i.label }));
       
+      // FIXED: Populate serviceCategories.items from services so new categories show in Arsenal
+      if (config.services && config.serviceCategories) {
+        const serviceByCategory: Record<string, any[]> = {};
+        config.services.forEach((s: any) => {
+          const cat = s.category || 'General';
+          if (!serviceByCategory[cat]) serviceByCategory[cat] = [];
+          serviceByCategory[cat].push({
+            id: s.id,
+            name: s.name,
+            desc: s.desc || '',
+            badge: s.badge || '',
+            heroImage: s.heroImage,
+            images: s.images || []
+          });
+        });
+        config.serviceCategories = config.serviceCategories.map((cat: any) => ({
+          ...cat,
+          items: serviceByCategory[cat.id] || []
+        }));
+      }
+      
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
         updateSaveIndicator(true);
@@ -4276,47 +4297,31 @@
     }
 
     function addService(preSelectedCategory = null) {
-      // Show modal to let user pick category first
-      const categories = getCategories();
-      const categoryOptions = categories.map(cat => `<option value="${cat.id}" ${preSelectedCategory === cat.id ? 'selected' : ''}>${cat.label}</option>`).join('');
+      // Simple prompt-based adding (more reliable than modal)
+      const name = prompt('Enter service name:');
+      if (!name || !name.trim()) return;
       
-      const modal = document.createElement('div');
-      modal.className = 'modal-overlay';
-      modal.innerHTML = `
-        <div class="modal-content" style="max-width: 400px;">
-          <div class="modal-header">
-            <h3>Add New Service</h3>
-            <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">×</button>
-          </div>
-          <div class="modal-body">
-            <div class="field-group">
-              <label class="field-label">Service Name</label>
-              <input type="text" id="newServiceName" class="field-input" placeholder="Enter service name">
-            </div>
-            <div class="field-group">
-              <label class="field-label">Category</label>
-              <select id="newServiceCategory" class="field-select">
-                ${categoryOptions}
-              </select>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-ghost" onclick="this.closest('.modal-overlay').remove()">Cancel</button>
-            <button class="btn btn-cyan" onclick="confirmAddService()">Add Service</button>
-          </div>
-        </div>
-      `;
-      document.body.appendChild(modal);
-    }
-    
-    function confirmAddService() {
-      const name = document.getElementById('newServiceName').value.trim() || 'New Service';
-      const category = document.getElementById('newServiceCategory').value || 'sign-boards';
+      const categories = getCategories();
+      let category = preSelectedCategory;
+      
+      if (!category) {
+        // If no pre-selected category, show prompt
+        const catNames = categories.map((c, i) => `${i+1}. ${c.label}`).join('\n');
+        const catIndex = prompt(`Select category number:\n${catNames}\n\nEnter number (1-${categories.length}):`);
+        if (catIndex) {
+          const idx = parseInt(catIndex) - 1;
+          if (idx >= 0 && idx < categories.length) {
+            category = categories[idx].id;
+          }
+        }
+      }
+      
+      category = category || 'sign-boards';
       
       const newId = Math.max(...config.services.map(s => s.id), 0) + 1;
       config.services.push({
         id: newId,
-        name: name,
+        name: name.trim(),
         desc: "",
         badge: "",
         category: category,
@@ -4325,12 +4330,9 @@
         portfolioImages: []
       });
       
-      // Close modal
-      document.querySelector('.modal-overlay')?.remove();
-      
       renderServices();
       updateSaveIndicator(false);
-      showToast('New service added to ' + category, 'success');
+      showToast('Service "' + name.trim() + '" added to ' + category, 'success');
     }
 
     function deleteService(id) {
