@@ -419,6 +419,7 @@ function getCategoryFromServiceName(serviceName: string): string {
 // Helper to get dynamic services from admin config (preview mode only)
 function getDynamicServices(): any[] | null {
   try {
+    // Check localStorage first (has latest from admin)
     const stored = localStorage.getItem("primesign-config");
     if (stored) {
       const config = JSON.parse(stored);
@@ -437,7 +438,7 @@ function getDynamicServices(): any[] | null {
               images: serviceImages,
               thumbnail: heroImg ? cacheBustUrl(heroImg) : (serviceImages[0] || getServiceImage(s.name)),
               tag: s.badge === "popular" ? "Most Popular" : s.badge === "new" ? "New" : null,
-              category: getCategoryFromServiceName(s.name),
+              category: s.category || getCategoryFromServiceName(s.name),
             };
           });
       }
