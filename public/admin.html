@@ -2477,47 +2477,17 @@
         <div class="section-header">
           <h2 class="section-title">
             <div class="section-title-icon">🏆</div>
-            Primesign Advantage
+            Primesign Advantage Icons
           </h2>
-          <p class="section-desc">Manage the Advantage section - text icons and grid images</p>
+          <p class="section-desc">These 6 images/icons appear in the "Why Choose Us" section alongside each benefit</p>
         </div>
-        
-        <!-- Advantage Title & Subtitle -->
         <div class="card mb-4">
           <div class="card-header">
-            <div class="card-title">📄 Section Text</div>
-          </div>
-          <div class="card-body">
-            <div class="field-group">
-              <label class="field-label">Section Title</label>
-              <input type="text" class="field-input" data-path="advantage.title" placeholder="ENGINEERED FOR EXCELLENCE.">
-            </div>
-            <div class="field-group">
-              <label class="field-label">Section Subtitle</label>
-              <textarea class="field-textarea" data-path="advantage.subtitle" rows="2" placeholder="In a crowded city like Bangalore, standing out requires more than just a bright light..."></textarea>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Small Icons (6 items) -->
-        <div class="card mb-4">
-          <div class="card-header">
-            <div class="card-title">🎯 Benefit Icons (6 items)</div>
+            <div class="card-title">Advantage Icons</div>
           </div>
           <div class="card-body">
             <div id="advantageImagesGrid" class="portfolio-grid"></div>
-            <p class="text-muted mt-3" style="font-size: 13px;">These small icons appear next to each benefit text (Premium Quality Materials, etc.)</p>
-          </div>
-        </div>
-        
-        <!-- Grid Images (4 square boxes) -->
-        <div class="card mb-4">
-          <div class="card-header">
-            <div class="card-title">🖼️ Grid Images (4 Square Boxes)</div>
-          </div>
-          <div class="card-body">
-            <div id="advantageGridImagesGrid" class="portfolio-grid"></div>
-            <p class="text-muted mt-3" style="font-size: 13px;">These 4 images appear in the square grid on the right side of the Advantage section</p>
+            <p class="text-muted mt-3" style="font-size: 13px;">Upload icons or images for each benefit in the Primesign Advantage section.</p>
           </div>
         </div>
       </div>
@@ -5365,80 +5335,6 @@
           <input type="file" id="advantageFile-${idx}" accept="image/*" style="display:none" onchange="handleAdvantageImageUpload(${idx}, event)">
         </div>
       `).join('');
-      
-      // Render grid images too
-      renderAdvantageGridImages();
-    }
-
-    function renderAdvantageGridImages() {
-      const container = document.getElementById('advantageGridImagesGrid');
-      if (!container) return;
-
-      // Ensure advantage.gridImages array exists
-      if (!config.advantage.gridImages) {
-        config.advantage.gridImages = [
-          "/images/glow/6.webp",
-          "/images/wall/5.webp",
-          "/images/led/3.webp",
-          "/images/square/resto-square.webp"
-        ];
-      }
-
-      container.innerHTML = config.advantage.gridImages.map((img, idx) => `
-        <div class="portfolio-card">
-          <div class="portfolio-image" style="aspect-ratio: 1;">
-            <img src="${img}" alt="Grid image ${idx + 1}" style="width: 100%; height: 100%; object-fit: cover;">
-            <div class="portfolio-overlay">
-              <button class="btn btn-gold btn-sm" onclick="triggerGridImageUpload(${idx})">📁 Change</button>
-            </div>
-          </div>
-          <div class="portfolio-actions">
-            <button class="btn btn-cyan btn-sm" onclick="moveGridImage(${idx}, -1)" ${idx === 0 ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : ''}>⬆️ Up</button>
-            <button class="btn btn-cyan btn-sm" onclick="moveGridImage(${idx}, 1)" ${idx === config.advantage.gridImages.length - 1 ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : ''}>⬇️ Down</button>
-            <button class="btn btn-danger btn-sm" onclick="removeGridImage(${idx})">🗑️ Remove</button>
-          </div>
-          <input type="file" id="gridFile-${idx}" accept="image/*" style="display:none" onchange="handleGridImageUpload(${idx}, event)">
-        </div>
-      `).join('');
-    }
-
-    function triggerGridImageUpload(idx) {
-      document.getElementById(`gridFile-${idx}`).click();
-    }
-
-    async function handleGridImageUpload(idx, event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      try {
-        const dataUrl = await fileToDataUrl(file);
-        const webpUrl = await convertToWebP(dataUrl, 0.9, 600);
-
-        if (!config.advantage.gridImages) config.advantage.gridImages = [];
-        config.advantage.gridImages[idx] = webpUrl;
-        renderAdvantageGridImages();
-        updateSaveIndicator(false);
-        showToast('Grid image updated', 'success');
-      } catch (err) {
-        showToast('Failed to process image', 'error');
-      }
-    }
-
-    function moveGridImage(idx, direction) {
-      if (!config.advantage.gridImages) return;
-      const newIdx = idx + direction;
-      if (newIdx < 0 || newIdx >= config.advantage.gridImages.length) return;
-      [config.advantage.gridImages[idx], config.advantage.gridImages[newIdx]] = [config.advantage.gridImages[newIdx], config.advantage.gridImages[idx]];
-      renderAdvantageGridImages();
-      updateSaveIndicator(false);
-    }
-
-    function removeGridImage(idx) {
-      if (!config.advantage.gridImages) return;
-      config.advantage.gridImages.splice(idx, 1);
-      renderAdvantageGridImages();
-      updateSaveIndicator(false);
-      showToast('Grid image removed', 'success');
     }
 
     function triggerAdvantageImageUpload(idx) {
@@ -5941,11 +5837,9 @@
       }
     });
 
-    // Expose functions to window for onclick handlers
+    // Expose functions to window
     window.addService = addService;
-    window.confirmAddService = confirmAddService;
     window.addCategory = addCategory;
-    window.confirmAddCategory = confirmAddCategory;
 
     // ================================================
     // ASYNC INITIALIZATION - Loads config.json as PRIMARY source
