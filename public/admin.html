@@ -363,24 +363,21 @@
         // Save locally
         localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
         
-        // Publish to server
-        const payload = JSON.stringify(config);
-        const blob = new Blob([payload], {type: 'application/json'});
-        
-        const formData = new FormData();
-        formData.append('config', blob, 'config.json');
-        
+        // Publish to server as JSON
         const resp = await fetch('http://3.110.186.195:9998/publish', {
           method: 'POST',
-          body: formData
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(config)
         });
         
-        if (resp.ok) {
+        const result = await resp.json();
+        
+        if (resp.ok && result.ok) {
           hasChanges = false;
           updateStatus('✓ Saved and published!');
           alert('Saved successfully!');
         } else {
-          alert('Failed to publish: ' + resp.status);
+          alert('Failed to publish: ' + (result.error || resp.status));
         }
       } catch(e) {
         console.error('Save error:', e);
