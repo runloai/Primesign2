@@ -2477,17 +2477,37 @@
         <div class="section-header">
           <h2 class="section-title">
             <div class="section-title-icon">🏆</div>
-            Primesign Advantage Icons
+            Primesign Advantage Section
           </h2>
-          <p class="section-desc">These 6 images/icons appear in the "Why Choose Us" section alongside each benefit</p>
+          <p class="section-desc">Edit the advantage section title, subtitle and icons</p>
         </div>
+        
+        <!-- Text Content Card -->
         <div class="card mb-4">
           <div class="card-header">
-            <div class="card-title">Advantage Icons</div>
+            <div class="card-title">Section Text</div>
+          </div>
+          <div class="card-body">
+            <div class="field-group mb-3">
+              <label class="field-label">Section Title</label>
+              <input type="text" class="field-input" id="advantageTitle" value="WHY CHOOSE PRIMESIGN?" 
+                onchange="updateAdvantageText('title', this.value)" placeholder="e.g., WHY CHOOSE PRIMESIGN?">
+            </div>
+            <div class="field-group">
+              <label class="field-label">Section Subtitle</label>
+              <textarea class="field-textarea" id="advantageSubtitle" rows="2"
+                onchange="updateAdvantageText('subtitle', this.value)" placeholder="Brief description...">Experience the Primesign difference with our comprehensive signage solutions.</textarea>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card mb-4">
+          <div class="card-header">
+            <div class="card-title">Advantage Icons/Images</div>
           </div>
           <div class="card-body">
             <div id="advantageImagesGrid" class="portfolio-grid"></div>
-            <p class="text-muted mt-3" style="font-size: 13px;">Upload icons or images for each benefit in the Primesign Advantage section.</p>
+            <p class="text-muted mt-3" style="font-size: 13px;">Upload icons or images for each benefit. Each image should have a label describing the benefit.</p>
           </div>
         </div>
       </div>
@@ -3674,13 +3694,26 @@
         input.addEventListener('change', newChangeHandler);
         input.addEventListener('input', newInputHandler);
       });
+      
+      // Initialize Advantage text fields from config
+      const advantageTitleEl = document.getElementById('advantageTitle');
+      const advantageSubtitleEl = document.getElementById('advantageSubtitle');
+      if (advantageTitleEl && config.advantage?.title) {
+        advantageTitleEl.value = config.advantage.title;
+      }
+      if (advantageSubtitleEl && config.advantage?.subtitle) {
+        advantageSubtitleEl.value = config.advantage.subtitle;
+      }
     }
 
     // Auto-save interval (start once, not per populateAllFields call)
     if (!window._psAutoSaveInterval) {
       window._psAutoSaveInterval = setInterval(() => {
+        // Sync images for website compatibility
         config.aboutImages = (config.about?.images || []).map(i => ({ url: i.url, label: i.label }));
         config.advantageImages = (config.advantage?.images || []).map(i => ({ url: i.url, label: i.label }));
+        // Sync advantage text
+        config.advantage = config.advantage || {};
         localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
       }, 30000);
     }
@@ -5373,6 +5406,13 @@
       if (!config.advantage.images) return;
       config.advantage.images[idx].label = value;
       updateSaveIndicator(false);
+    }
+    
+    function updateAdvantageText(field, value) {
+      if (!config.advantage) config.advantage = {};
+      config.advantage[field] = value;
+      updateSaveIndicator(false);
+      showToast((field === 'title' ? 'Title' : 'Subtitle') + ' updated', 'success');
     }
 
     function removeAdvantageImage(idx) {

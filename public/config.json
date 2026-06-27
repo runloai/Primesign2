@@ -635,13 +635,6 @@
       "label": "Vehicle Wrap 2",
       "category": "vehicle",
       "featured": false
-    },
-    {
-      "id": 9,
-      "url": "https://raw.githubusercontent.com/runloai/PrimeSign/main/data/vehicle/5.webp",
-      "label": "Vehicle Wrap 3",
-      "category": "vehicle",
-      "featured": false
     }
   ],
   "hero": {
@@ -780,12 +773,6 @@
       "label": "DIGITAL PRINTS",
       "icon": "\ud83d\udda8\ufe0f",
       "description": "High-quality digital printing on various media"
-    },
-    {
-      "id": "tst",
-      "label": "tst",
-      "icon": "\ud83d\udce6",
-      "description": "tst"
     }
   ],
   "settings": {
@@ -854,6 +841,6 @@
     ]
   },
   "navbar": {},
-  "_publishedAt": "2026-06-27T03:53:51.346Z",
+  "_publishedAt": "2026-06-27T04:16:14.743Z",
   "_version": "2.1"
 }
