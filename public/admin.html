@@ -2264,7 +2264,7 @@
         <div class="card mb-4">
           <div class="card-header">
             <div class="card-title">📁 Categories</div>
-            <button class="btn btn-cyan btn-sm" onclick="addCategory()">+ Add Category</button>
+            <button class="btn btn-cyan btn-sm" id="addCategoryBtn">+ Add Category</button>
           </div>
           <div class="card-body">
             <div id="categoriesList"></div>
@@ -5842,8 +5842,15 @@
     window.addCategory = addCategory;
     
     // Add event listeners for buttons (more reliable than onclick)
-    document.getElementById('addServiceBtn')?.addEventListener('click', addService);
-    window.addCategory = addCategory;
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('addServiceBtn')?.addEventListener('click', addService);
+      document.getElementById('addCategoryBtn')?.addEventListener('click', addCategory);
+    });
+    // Also attach immediately in case DOMContentLoaded already fired
+    setTimeout(() => {
+      document.getElementById('addServiceBtn')?.addEventListener('click', addService);
+      document.getElementById('addCategoryBtn')?.addEventListener('click', addCategory);
+    }, 100);
 
     // ================================================
     // ASYNC INITIALIZATION - Loads config.json as PRIMARY source
