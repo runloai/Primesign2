@@ -1171,8 +1171,11 @@ export default function Home() {
     : reasons.map((label, i) => ({ label, url: "" }));
 
   const advantageImages = displayReasons.map((r: any) => (typeof r === 'string' ? r : r?.url || "")).filter(Boolean);
-  const showAdvantageImages = advantageImages.length >= 4;
-  const advantageGridImages = showAdvantageImages ? advantageImages.slice(0, 4) : ["/images/glow/6.webp", "/images/wall/5.webp", "/images/led/3.webp", "/images/square/resto-square.webp"];
+  
+  // Use gridImages from config if available
+  const advantageGridImages = adminConfig?.advantage?.gridImages && adminConfig.advantage.gridImages.length >= 4
+    ? adminConfig.advantage.gridImages.slice(0, 4)
+    : ["/images/glow/6.webp", "/images/wall/5.webp", "/images/led/3.webp", "/images/square/resto-square.webp"];
 
   const portfolioCategories = useMemo(() => {
     const categories: string[] = [];
