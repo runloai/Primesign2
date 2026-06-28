@@ -11,14 +11,6 @@ import { useQuoteModal } from "@/context/QuoteModalContext";
 import { PortfolioImage } from "@/components/ui/image-with-skeleton";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { ImageLightbox } from "@/components/ImageLightbox";
-import { 
-  loadSiteConfig, 
-  getServicesByCategory, 
-  imageUrl,
-  type SiteConfig,
-  type Service as ConfigService,
-  type ServiceCategory
-} from "@/lib/site-config";
 
 // Types for admin config
 interface Testimonial {
@@ -999,21 +991,21 @@ export default function Home() {
     if (stored) { sessionStorage.removeItem("arsenal-category"); return stored; }
     return "sign-boards";
   });
-  // Single source of truth: use normalized config
-  const [siteConfig, setSiteConfig] = useState<SiteConfig | null>(null);
   const [adminConfig, setAdminConfig] = useState<{ portfolio?: PortfolioConfig[]; hero?: any; testimonials?: Testimonial[]; services?: ServiceConfig[]; contact?: any; settings?: any; aboutImages?: any[]; advantageImages?: any[]; colorScheme?: any; serviceCategories?: any[]; about?: any; footer?: any; navbar?: any } | null>(null);
   const [testimonialIndex, setTestimonialIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const prefersReducedMotion = useReducedMotion();
 
-  // Load config using new shared loader
+  // Load config from localStorage (preview) or config.json (shared) on mount
   useEffect(() => {
-    loadSiteConfig({ includeLocalDraft: true }).then(config => {
-      setSiteConfig(config);
-      // Also set adminConfig for backward compatibility with other sections
-      setAdminConfig(config as any);
-    });
+    const loadConfig = async () => {
+      const config = await getEffectiveConfig();
+      if (config) {
+        setAdminConfig(config);
+      }
+    };
+    loadConfig();
   }, []);
 
   // Listen for navbar dropdown category changes + specific service scroll
@@ -1048,29 +1040,19 @@ export default function Home() {
     }));
   }, [rawDisplayServices]);
 
-  // Get service categories - use new normalized config if available
+  // Get service categories from config or fallback
+  const dynamicServiceCategories = getDynamicServiceCategories();
   const serviceCategories = useMemo(() => {
-    // Use normalized config from shared loader
-    if (siteConfig) {
-      return getServicesByCategory(siteConfig).map(({ category, services }) => ({
-        id: category.id,
-        label: category.label,
-        description: category.description,
-        icon: category.icon,
-        items: services,
-      }));
-    }
-    // Fallback to dynamic categories if available (legacy)
-    const dynamicServiceCategories = getDynamicServiceCategories();
+    // Use dynamic categories if available (includes ALL categories, even with 0 items)
     if (Array.isArray(dynamicServiceCategories) && dynamicServiceCategories.length > 0) {
       return dynamicServiceCategories;
     }
-    // Final fallback: building from adminConfig services
+    // Fallback to building from adminConfig services
     if (adminConfig?.services && adminConfig.services.length > 0) {
       return buildServiceCategoriesFromServices(adminConfig.services);
     }
     return [];
-  }, [siteConfig, adminConfig]) || [];
+  }, [dynamicServiceCategories, adminConfig]) || [];
 
   // Get hero data from config or fallback
   const heroBgImage = adminConfig?.hero?.bgImage || "/images/portfolio/01.webp";
@@ -1474,7 +1456,9 @@ export default function Home() {
                     ? "bg-primary text-primary-foreground shadow-[0_0_20px_rgba(240,168,48,0.3)]"
                     : "bg-white/5 text-white/70 hover:bg-white/10 hover:text-white"
                 }`}
-              >{category.label}</button>
+              >
+                {category.title}
+              </button>
             ))}
           </div>
 
@@ -1491,35 +1475,28 @@ export default function Home() {
             transition={{ duration: prefersReducedMotion ? 0.01 : 0.4 }}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
           >
-            {(currentCategory?.items || []).map((service: any, index: number) => {
-              // Handle both old ServiceCategoryItem format and new Service format
-              const serviceName = service.name || 'Service';
-              const serviceDesc = service.description || service.desc || '';
-              const serviceImg = service.img || (service.heroImage?.url) || (service.galleryImages?.[0]?.url) || '/images/led/1.webp';
-              const serviceBadge = service.badge === 'popular' ? 'MOST POPULAR' : service.badge === 'new' ? 'NEW' : service.badge;
-              
-              return (
+            {(currentCategory?.items || []).map((service: ServiceCategoryItem, index: number) => (
               <motion.div
-                key={serviceName + '-' + index}
-                id={`svc-${serviceName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '')}`}
+                key={service.name}
+                id={`svc-${service.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '')}`}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: prefersReducedMotion ? 0.01 : 0.5, delay: index * 0.05 }}
                 className="group relative bg-card rounded-2xl overflow-hidden border border-white/5 hover:border-primary/50 hover:shadow-[0_0_40px_rgba(240,168,48,0.15)] transition-all duration-500 cursor-pointer"
                 onClick={() => {
-                  openServiceDetail({ name: serviceName, desc: serviceDesc, img: serviceImg });
+                  openServiceDetail(service);
                 }}
               >
-                {serviceBadge && (
+                {service.badge && (
                   <div className="absolute top-3 right-3 z-20 bg-primary text-primary-foreground text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full">
-                    {serviceBadge}
+                    {service.badge}
                   </div>
                 )}
                 <div className="aspect-[4/3] overflow-hidden">
                   <img
-                    src={serviceImg}
-                    alt={serviceName}
+                    src={service.img}
+                    alt={service.name}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     loading="lazy"
                   />
@@ -1527,21 +1504,20 @@ export default function Home() {
                 </div>
                 <div className="absolute bottom-0 left-0 right-0 p-5">
                   <h4 className="text-lg font-display font-bold mb-1 group-hover:text-primary transition-colors">
-                    {serviceName}
+                    {service.name}
                   </h4>
                   <p className="text-muted-foreground text-sm">
-                    {serviceDesc}
+                    {service.desc}
                   </p>
                   <button
-                    onClick={(e) => { e.stopPropagation(); openServiceDetail({ name: serviceName, desc: serviceDesc, img: serviceImg }); }}
+                    onClick={(e) => { e.stopPropagation(); openServiceDetail(service); }}
                     className="mt-2 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary hover:text-primary/80 transition-colors"
                   >
                     See Work →
                   </button>
                 </div>
               </motion.div>
-            );
-            })}
+            ))}
           </motion.div>
 
           {/* View All CTA */}
