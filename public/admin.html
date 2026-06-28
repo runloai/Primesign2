@@ -5838,17 +5838,29 @@
       }
     });
 
-    // Expose functions to window
-    window.addService = addService;
-    window.addCategory = addCategory;
-    window.handleHeroUpload = handleHeroUpload;
-    window.handleLogoUpload = handleLogoUpload;
-    window.handleServiceHeroUpload = handleServiceHeroUpload;
-    window.handleServicePortfolioUpload = handleServicePortfolioUpload;
-    window.handlePortfolioUpload = handlePortfolioUpload;
-    window.handlePortfolioNewUpload = handlePortfolioNewUpload;
-    window.handleAboutImageUpload = handleAboutImageUpload;
-    window.handleAdvantageImageUpload = handleAdvantageImageUpload;
+    // Expose functions to window for onclick handlers
+    [
+      addService, addCategory, saveCategory, closeCategoryModal, confirmAddService,
+      doLogin, doLogout, switchTab, saveConfig, exportData, addPhone, addEmail, addHeroStat,
+      addTestimonial, removeEmail, removeHeroImage, removeAboutImage, removeAdvantageImage,
+      removeServiceImage, removeServiceHeroImage, removeServicePortfolioImage,
+      openCropper, closeCropper, applyCrop, applyUrl, triggerUpload,
+      editCategory, deleteCategory, editServicePortfolioLabel,
+      deleteTestimonial, deleteStat, moveAboutImage, moveAdvantageImage,
+      movePortfolio, moveServiceImage, moveServicePortfolioImage, moveTestimonial,
+      pickIconForAdvantage, handleHeroUpload, handleLogoUpload,
+      handleServiceHeroUpload, handleServicePortfolioUpload,
+      handlePortfolioUpload, handlePortfolioNewUpload, handleAboutImageUpload,
+      handleAdvantageImageUpload, showAddPortfolioModal, closePortfolioAddModal,
+      selectAllPortfolio, clearPortfolioSelection, bulkDeletePortfolio,
+      deleteServiceHeroImage, deleteServicePortfolioImage, deleteServiceImage,
+      addServiceImageToPortfolio, closeConfirmDialog, executeConfirmation,
+      toggleUrlInput, saveContact
+    ].forEach(fn => {
+      if (typeof fn === 'function') {
+        window[fn.name] = fn;
+      }
+    });
     
     // Add event listeners for buttons (more reliable than onclick)
     document.addEventListener('DOMContentLoaded', function() {
