@@ -1,5 +1,5 @@
-// Netlify Function: Publish site config to GitHub
-// This allows admin panel to persist changes server-side
+const SUPABASE_TABLE = process.env.SUPABASE_CONFIG_TABLE || 'site_config';
+const SUPABASE_KEY = process.env.SITE_CONFIG_KEY || 'primary';
 
 export async function handler(event) {
   const json = (statusCode, body) => ({
@@ -17,24 +17,23 @@ export async function handler(event) {
     return json(405, { error: 'Method not allowed' });
   }
 
-  // Get environment variables
+  const headers = event.headers || {};
+  const providedToken = headers['x-admin-token'] || headers['X-Admin-Token'];
+  const adminToken = process.env.ADMIN_PUBLISH_TOKEN;
+
+  if (!adminToken) {
+    return json(500, { error: 'Server misconfiguration: missing ADMIN_PUBLISH_TOKEN' });
+  }
+
+  if (providedToken !== adminToken) {
+    return json(401, { error: 'Unauthorized' });
+  }
+
+  // Get GitHub environment variables used by the legacy fallback publisher.
   const token = process.env.GITHUB_TOKEN;
   const owner = process.env.GITHUB_OWNER || 'runloai';
   const repo = process.env.GITHUB_REPO || 'primesign2';
   const branch = process.env.GITHUB_BRANCH || 'main';
-  const adminToken = process.env.ADMIN_PUBLISH_TOKEN;
-
-  // Validate environment
-  if (!token || !adminToken) {
-    return json(500, { error: 'Server misconfiguration: missing GITHUB_TOKEN or ADMIN_PUBLISH_TOKEN' });
-  }
-
-  // Validate admin token from header
-  const headers = event.headers || {};
-  const providedToken = headers['x-admin-token'] || headers['X-Admin-Token'];
-  if (providedToken !== adminToken) {
-    return json(401, { error: 'Unauthorized' });
-  }
 
   // Parse request body
   let payload;
@@ -99,6 +98,45 @@ export async function handler(event) {
   };
   payload._version = payload.meta.version;
   payload._publishedAt = payload.meta.publishedAt;
+
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (supabaseUrl && supabaseServiceKey) {
+    const endpoint = `${supabaseUrl.replace(/\/$/, '')}/rest/v1/${SUPABASE_TABLE}?on_conflict=id`;
+    const saveResp = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        apikey: supabaseServiceKey,
+        Authorization: 'Bearer ' + supabaseServiceKey,
+        'Content-Type': 'application/json',
+        Prefer: 'resolution=merge-duplicates,return=representation',
+      },
+      body: JSON.stringify({
+        id: SUPABASE_KEY,
+        config: payload,
+        updated_at: payload.meta.publishedAt,
+      }),
+    });
+
+    if (!saveResp.ok) {
+      const detail = await saveResp.text();
+      console.error('Supabase publish failed:', detail);
+      return json(saveResp.status, { error: 'Supabase publish failed', detail });
+    }
+
+    return json(200, {
+      ok: true,
+      message: 'Config published to database',
+      storage: 'supabase',
+      services: Array.isArray(payload.services) ? payload.services.length : 0,
+      categories: Array.isArray(payload.serviceCategories) ? payload.serviceCategories.length : 0,
+    });
+  }
+
+  if (!token) {
+    return json(500, { error: 'Server misconfiguration: add SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY, or configure GITHUB_TOKEN fallback' });
+  }
 
   const api = 'https://api.github.com';
   const fileUrl = api + '/repos/' + owner + '/' + repo + '/contents/public/config.json?ref=' + branch;

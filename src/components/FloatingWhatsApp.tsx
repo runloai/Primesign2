@@ -6,12 +6,21 @@ export default function FloatingWhatsApp() {
   const [waMessage, setWaMessage] = useState("Hello PrimeSign, I'd like to know more about your signage services.");
 
   useEffect(() => {
-    fetch("/config.json?t=" + Date.now()).then(r => r.json()).then(c => {
-      // Try settings.whatsappNumber first, then fall back to contact.phones[0], then contact.whatsapp
-      const phoneNumber = c.settings?.whatsappNumber || c.contact?.phones?.[0] || c.contact?.whatsapp || "6366525253";
-      setWaNumber(phoneNumber.replace(/[^\d]/g, ''));
-      if (c.settings?.whatsappMessage) setWaMessage(c.settings.whatsappMessage);
-    }).catch(() => {});
+    const readJson = async (url: string) => {
+      const response = await fetch(url);
+      const contentType = response.headers.get("content-type") || "";
+      if (!response.ok || !contentType.includes("application/json")) return null;
+      return response.json();
+    };
+    readJson("/api/config?t=" + Date.now())
+      .then(c => c || readJson("/config.json?t=" + Date.now()))
+      .then(c => {
+        if (!c) return;
+        // Try settings.whatsappNumber first, then fall back to contact.phones[0], then contact.whatsapp
+        const phoneNumber = c.settings?.whatsappNumber || c.contact?.phones?.[0] || c.contact?.whatsapp || "6366525253";
+        setWaNumber(phoneNumber.replace(/[^\d]/g, ''));
+        if (c.settings?.whatsappMessage) setWaMessage(c.settings.whatsappMessage);
+      }).catch(() => {});
   }, []);
 
   const presetMessage = encodeURIComponent(waMessage);

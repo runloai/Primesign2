@@ -74,9 +74,16 @@ export default function Footer() {
   const [location, setLocation] = useLocation();
 
   useEffect(() => {
-    fetch("/config.json?t=" + Date.now())
-      .then(r => r.json())
+    const readJson = async (url: string) => {
+      const response = await fetch(url);
+      const contentType = response.headers.get("content-type") || "";
+      if (!response.ok || !contentType.includes("application/json")) return null;
+      return response.json();
+    };
+    readJson("/api/config?t=" + Date.now())
+      .then(c => c || readJson("/config.json?t=" + Date.now()))
       .then(c => {
+        if (!c) return;
         if (c.settings?.logoType === "text") setUseTextLogo(true);
         if (c.settings?.logoUrl) setLogoSrc(c.settings.logoUrl);
         

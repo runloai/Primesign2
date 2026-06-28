@@ -336,18 +336,30 @@ export async function loadSiteConfig(options?: {
   includeLocalDraft?: boolean;
   PublishedConfigUrl?: string;
 }): Promise<SiteConfig> {
-  const { includeLocalDraft = false, PublishedConfigUrl = '/config.json' } = options || {};
+  const { includeLocalDraft = false, PublishedConfigUrl = '/api/config' } = options || {};
 
   let rawConfig: any = {};
 
-  // Try to load from server first
+  const fetchJson = async (url: string) => {
+    const response = await fetch(url);
+    const contentType = response.headers.get('content-type') || '';
+    if (!response.ok || !contentType.includes('application/json')) return null;
+    return response.json();
+  };
+
+  // Try to load from the live config API first, then static config for local/dev fallback.
   try {
-    const response = await fetch(PublishedConfigUrl);
-    if (response.ok) {
-      rawConfig = await response.json();
-    }
+    rawConfig = await fetchJson(PublishedConfigUrl) || {};
   } catch (e) {
-    console.warn('Failed to load config from server:', e);
+    console.warn('Failed to load config API:', e);
+  }
+
+  if (!rawConfig || Object.keys(rawConfig).length === 0) {
+    try {
+      rawConfig = await fetchJson('/config.json') || rawConfig;
+    } catch (e) {
+      console.warn('Failed to load static config:', e);
+    }
   }
 
   // Merge with localStorage draft if requested

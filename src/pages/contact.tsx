@@ -10,8 +10,14 @@ export default function ContactPage() {
   const [config, setConfig] = useState<{ contact?: any; settings?: any } | null>(null);
 
   useEffect(() => {
-    fetch("/config.json?t=" + Date.now())
-      .then(r => r.json())
+    const readJson = async (url: string) => {
+      const response = await fetch(url);
+      const contentType = response.headers.get("content-type") || "";
+      if (!response.ok || !contentType.includes("application/json")) return null;
+      return response.json();
+    };
+    readJson("/api/config?t=" + Date.now())
+      .then(c => c || readJson("/config.json?t=" + Date.now()))
       .then(c => setConfig(c))
       .catch(() => {});
   }, []);

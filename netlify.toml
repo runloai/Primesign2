@@ -9,6 +9,11 @@
   to = "/.netlify/functions/publish"
   status = 200
 
+[[redirects]]
+  from = "/api/config"
+  to = "/.netlify/functions/config"
+  status = 200
+
 # SPA fallback. Netlify serves existing static files before this redirect.
 [[redirects]]
   from = "/*"

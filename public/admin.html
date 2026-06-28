@@ -3307,19 +3307,25 @@
     // ================================================
     async function loadConfig() {
       let configData = null;
-
-      // Step 1: Fetch /config.json as the PRIMARY source (published config)
-      try {
-        const resp = await fetch('/config.json?_=' + Date.now(), {
+      const fetchJsonConfig = async (url) => {
+        const resp = await fetch(url, {
           method: 'GET',
           headers: { 'Accept': 'application/json' }
         });
-        if (resp.ok) {
-          configData = await resp.json();
-          console.log('Admin: Loaded config from /config.json');
+        const contentType = resp.headers.get('content-type') || '';
+        if (!resp.ok || !contentType.includes('application/json')) return null;
+        return await resp.json();
+      };
+
+      // Step 1: Fetch the published config API first, then static config as fallback.
+      try {
+        configData = await fetchJsonConfig('/api/config?_=' + Date.now());
+        if (!configData) configData = await fetchJsonConfig('/config.json?_=' + Date.now());
+        if (configData) {
+          console.log('Admin: Loaded published config');
         }
       } catch (e) {
-        console.warn('Admin: Could not fetch /config.json', e);
+        console.warn('Admin: Could not fetch published config', e);
       }
 
       // Step 2: Fall back to DEFAULT_CONFIG if fetch failed
@@ -3420,9 +3426,14 @@
 
     async function loadFromServer() {
       try {
-        const resp = await fetch('/config.json?_=' + Date.now());
-        if (resp.ok) {
-          const serverConfig = await resp.json();
+        const readJson = async (url) => {
+          const resp = await fetch(url);
+          const contentType = resp.headers.get('content-type') || '';
+          if (!resp.ok || !contentType.includes('application/json')) return null;
+          return await resp.json();
+        };
+        const serverConfig = await readJson('/api/config?_=' + Date.now()) || await readJson('/config.json?_=' + Date.now());
+        if (serverConfig) {
           // Merge: server is baseline, local unsaved changes overlay
           config = mergeDeep(serverConfig, config || serverConfig);
           localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
@@ -5938,8 +5949,8 @@
         const isLocal = /^(localhost|127\.0\.0\.1|0\.0\.0\.0|::1|\[::1\])$/.test(host);
         // Try publish API on port 9998 first, fall back to server's /api/publish
         const candidates = isLocal
-          ? [`http://localhost:9998/publish`, `http://${host}:8888/api/publish`]
-          : [`http://${host}:9998/publish`, `/.netlify/functions/publish`, `/api/publish`];
+          ? [`http://localhost:9998/publish`, `http://${host}:8888/api/publish`, `/api/publish`]
+          : [`/.netlify/functions/publish`, `/api/publish`];
         let publishToken = sessionStorage.getItem('primesign-publish-token') || '';
         if (!isLocal && !publishToken) {
           publishToken = prompt('Enter the Netlify publish token:') || '';
@@ -5962,8 +5973,12 @@
             }
             const errBody = await resp.json().catch(() => ({}));
             const error = errBody.error || `HTTP ${resp.status}`;
-            if (error.includes('missing GITHUB_TOKEN or ADMIN_PUBLISH_TOKEN')) {
-              lastError = new Error('Netlify publish is not configured. Add GITHUB_TOKEN and ADMIN_PUBLISH_TOKEN in Netlify environment variables.');
+            if (error.includes('SUPABASE_URL') || error.includes('SUPABASE_SERVICE_ROLE_KEY')) {
+              lastError = new Error('Netlify publish is not configured. Add SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, and ADMIN_PUBLISH_TOKEN in Netlify environment variables.');
+            } else if (error.includes('missing ADMIN_PUBLISH_TOKEN')) {
+              lastError = new Error('Netlify publish is not configured. Add ADMIN_PUBLISH_TOKEN in Netlify environment variables.');
+            } else if (error.includes('GITHUB_TOKEN')) {
+              lastError = new Error('Netlify publish needs Supabase env vars or a GitHub token fallback.');
             } else {
               lastError = new Error(error);
             }
