@@ -5879,9 +5879,12 @@
     // ================================================
     (async function initAdmin() {
       await loadConfig();
+      // Expose config getter for debugging
+      window.getConfig = () => config;
       if (localStorage.getItem('primesign-auth') === 'true') {
         showDashboard();
       }
+      console.log('Admin initialized with', config?.serviceCategories?.length || 0, 'categories');
     })().catch(e => console.error('Admin init error:', e));
   </script>
 </body>
