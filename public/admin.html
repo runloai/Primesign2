@@ -498,12 +498,71 @@
       background: var(--success);
     }
 
+    .save-indicator.saving .save-dot {
+      background: var(--warning);
+      animation: pulse-dot 1s ease-in-out infinite;
+    }
+
+    .save-indicator.error .save-dot {
+      background: var(--error);
+    }
+
     .save-dot {
       width: 8px;
       height: 8px;
       border-radius: 50%;
       background: var(--text-muted);
       transition: background var(--transition-fast);
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 0.45; transform: scale(0.85); }
+      50% { opacity: 1; transform: scale(1.15); }
+    }
+
+    .admin-notice {
+      border: 1px solid var(--border-primary);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      background: linear-gradient(135deg, rgba(240,168,48,0.10), rgba(0,212,255,0.06));
+      color: var(--text-secondary);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .workflow-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .workflow-card {
+      border: 1px solid var(--border-primary);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      background: rgba(255,255,255,0.03);
+    }
+
+    .workflow-kicker {
+      font-size: 11px;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    .workflow-title {
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .workflow-copy {
+      color: var(--text-muted);
+      font-size: 12px;
+      line-height: 1.6;
     }
 
     /* Tab Navigation */
@@ -2126,8 +2185,15 @@
             <div class="card-body" style="display:flex;gap:12px;flex-wrap:wrap;">
               <button class="btn btn-gold" onclick="saveConfig()">💾 Save</button>
               <button class="btn btn-outline" onclick="exportData()">📤 Export Backup</button>
+              <button class="btn btn-outline" onclick="switchTab('arsenal')">🛠️ Edit Services</button>
               <a href="/" class="btn btn-outline" target="_blank">🌐 View Site</a>
             </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">✅ Publishing Health</div>
+            </div>
+            <div class="card-body" id="dashboardHealth"></div>
           </div>
           <div class="card">
             <div class="card-header">
@@ -2258,6 +2324,29 @@
             The Arsenal
           </h2>
           <p class="section-desc">Manage your service offerings, categories, and their image galleries</p>
+        </div>
+
+        <div class="workflow-grid">
+          <div class="workflow-card">
+            <div class="workflow-kicker">1. Categories</div>
+            <div class="workflow-title">Navbar + Arsenal tabs</div>
+            <div class="workflow-copy">Add categories here first. Every category with services appears in the public navbar and Arsenal section.</div>
+          </div>
+          <div class="workflow-card">
+            <div class="workflow-kicker">2. Service card image</div>
+            <div class="workflow-title">Shown on Arsenal cards</div>
+            <div class="workflow-copy">Use the Hero Image field for the thumbnail visitors see before opening a service.</div>
+          </div>
+          <div class="workflow-card">
+            <div class="workflow-kicker">3. Service gallery</div>
+            <div class="workflow-title">Shown after clicking See Work</div>
+            <div class="workflow-copy">Gallery Images are the detail images inside each service popup. Crop and order them here.</div>
+          </div>
+          <div class="workflow-card">
+            <div class="workflow-kicker">4. Portfolio images</div>
+            <div class="workflow-title">Shown in Real Installations</div>
+            <div class="workflow-copy">Portfolio Images feed the public work gallery. Use only strong real project photos here.</div>
+          </div>
         </div>
         
         <!-- Categories Management -->
@@ -3286,18 +3375,21 @@
 
     async function saveConfig() {
       showSaveProgress('saving');
+      updateSaveIndicator('saving', 'Saving draft...');
       await new Promise(resolve => setTimeout(resolve, 300));
 
       // Sync top-level arrays for website compatibility
       config.aboutImages = (config.about?.images || []).map(i => ({ url: i.url, label: i.label }));
       config.advantageImages = (config.advantage?.images || []).map(i => ({ url: i.url, label: i.label }));
+      normalizeConfigBeforeSave();
       
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
-        updateSaveIndicator(true);
-        showToast('Saving locally, publishing to website...', 'info', 2000);
+        updateSaveIndicator('saving', 'Draft saved, publishing...');
+        showToast('Draft saved locally. Publishing to website...', 'info', 2500);
       } catch (err) {
         showSaveProgress('');
+        updateSaveIndicator('error', 'Local save failed');
         showToast('Failed to save changes to browser', 'error');
         console.error('Save error:', err);
         return;
@@ -3305,9 +3397,16 @@
       
       // Auto-publish after save
       try {
-        await publishConfig();
+        const published = await publishConfig();
+        if (published) {
+          updateSaveIndicator('saved', 'Saved and published');
+          showSaveProgress('saved');
+        } else {
+          updateSaveIndicator('error', 'Saved locally, publish failed');
+        }
       } catch (err) {
         console.error('Auto-publish error:', err);
+        updateSaveIndicator('error', 'Saved locally, publish failed');
       }
     }
 
@@ -3328,16 +3427,108 @@
       }
     }
 
-    function updateSaveIndicator(saved) {
+    function updateSaveIndicator(state, message) {
       const indicator = document.getElementById('saveIndicator');
       const text = document.getElementById('saveText');
-      if (saved) {
+      if (!indicator || !text) return;
+      indicator.classList.remove('saved', 'saving', 'error');
+
+      if (state === true || state === 'saved') {
         indicator.classList.add('saved');
-        text.textContent = 'All changes saved';
+        text.textContent = message || 'All changes saved';
+      } else if (state === 'saving') {
+        indicator.classList.add('saving');
+        text.textContent = message || 'Saving...';
+      } else if (state === 'error') {
+        indicator.classList.add('error');
+        text.textContent = message || 'Needs attention';
       } else {
-        indicator.classList.remove('saved');
-        text.textContent = 'Unsaved changes';
+        text.textContent = message || 'Unsaved changes';
       }
+    }
+
+    function slugify(value, fallback = 'item') {
+      const slug = String(value || fallback)
+        .toLowerCase()
+        .replace(/[^a-z0-9-]/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '');
+      return slug || fallback;
+    }
+
+    function normalizeImageArray(images) {
+      if (!Array.isArray(images)) return [];
+      return images
+        .map((img, idx) => {
+          if (!img) return null;
+          if (typeof img === 'string') return { url: img, label: `Image ${idx + 1}` };
+          return { ...img, url: img.url || img.src || '' };
+        })
+        .filter(img => img && img.url);
+    }
+
+    function imageUrlFrom(value, fallback = '') {
+      if (!value) return fallback;
+      if (typeof value === 'string') return value || fallback;
+      return value.url || value.src || fallback;
+    }
+
+    function serviceCardImage(service) {
+      return imageUrlFrom(service.heroImage, imageUrlFrom(service.images?.[0], ''));
+    }
+
+    function normalizeConfigBeforeSave() {
+      config.serviceCategories = getCategories().map(cat => ({
+        id: slugify(cat.id || cat.label, 'category'),
+        label: cat.label || cat.name || 'Category',
+        icon: cat.icon || '📦',
+        description: cat.description || '',
+      }));
+
+      const categoryIds = new Set(config.serviceCategories.map(cat => cat.id));
+      config.services = (config.services || []).map((service, index) => {
+        const category = slugify(service.category || service.categoryId || 'other', 'other');
+        if (!categoryIds.has(category)) {
+          categoryIds.add(category);
+          config.serviceCategories.push({
+            id: category,
+            label: category.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+            icon: '📦',
+            description: '',
+          });
+        }
+        return {
+          ...service,
+          id: service.id || index + 1,
+          name: (service.name || 'Untitled Service').trim(),
+          desc: service.desc || service.description || '',
+          description: service.description || service.desc || '',
+          category,
+          categoryId: category,
+          heroImage: imageUrlFrom(service.heroImage, imageUrlFrom(service.images?.[0], '')),
+          images: normalizeImageArray(service.images),
+          portfolioImages: normalizeImageArray(service.portfolioImages),
+        };
+      });
+    }
+
+    function validateConfigForPublish() {
+      normalizeConfigBeforeSave();
+      const errors = [];
+      if (!Array.isArray(config.serviceCategories) || config.serviceCategories.length === 0) {
+        errors.push('Add at least one service category.');
+      }
+      if (!Array.isArray(config.services) || config.services.length === 0) {
+        errors.push('Add at least one service.');
+      }
+      (config.services || []).forEach(service => {
+        if (!service.name || !service.name.trim()) errors.push('Every service needs a name.');
+        if (!service.category) errors.push(`${service.name || 'A service'} needs a category.`);
+        if (!config.serviceCategories.some(cat => cat.id === service.category)) {
+          errors.push(`${service.name || 'A service'} is assigned to a missing category.`);
+        }
+      });
+      return errors;
     }
 
     // Check auth on load - handled by async initAdmin() at end of script
@@ -3444,6 +3635,7 @@
     // ================================================
     function renderDashboard() {
       renderDashboardStats();
+      renderHealthChecks();
       renderInfo();
     }
 
@@ -3487,6 +3679,52 @@
             <div style="font-size:32px;font-weight:700;font-family:'Space Grotesk',sans-serif;">${totalTestimonials}</div>
             <div style="color:var(--text-secondary);font-size:14px;">Testimonials</div>
           </div>
+        </div>
+      `;
+    }
+
+    function renderHealthChecks() {
+      const container = document.getElementById('dashboardHealth');
+      if (!container) return;
+      normalizeConfigBeforeSave();
+      const missingCardImages = (config.services || []).filter(service => !serviceCardImage(service));
+      const emptyGalleries = (config.services || []).filter(service => !service.images || service.images.length === 0);
+      const emptyPortfolio = (config.services || []).filter(service => !service.portfolioImages || service.portfolioImages.length === 0);
+      const validationErrors = validateConfigForPublish();
+      const checks = [
+        {
+          ok: validationErrors.length === 0,
+          label: 'Publish-ready config',
+          detail: validationErrors[0] || 'Categories and services are linked correctly.',
+        },
+        {
+          ok: missingCardImages.length === 0,
+          label: 'Service card images',
+          detail: missingCardImages.length ? `${missingCardImages.length} service(s) need card images.` : 'Every service has a public card image.',
+        },
+        {
+          ok: emptyGalleries.length === 0,
+          label: 'Service detail galleries',
+          detail: emptyGalleries.length ? `${emptyGalleries.length} service(s) have no detail gallery images.` : 'Every service has detail gallery images.',
+        },
+        {
+          ok: emptyPortfolio.length === 0,
+          label: 'Real installation gallery',
+          detail: emptyPortfolio.length ? `${emptyPortfolio.length} service(s) have no portfolio images.` : 'Every service can contribute to the work gallery.',
+        },
+      ];
+
+      container.innerHTML = `
+        <div style="display:grid;gap:10px;">
+          ${checks.map(check => `
+            <div style="display:flex;gap:12px;align-items:flex-start;padding:12px;border:1px solid ${check.ok ? 'rgba(34,197,94,0.25)' : 'rgba(245,158,11,0.35)'};border-radius:var(--radius-md);background:${check.ok ? 'rgba(34,197,94,0.08)' : 'rgba(245,158,11,0.08)'};">
+              <div style="font-size:18px;line-height:1;">${check.ok ? '✓' : '!'}</div>
+              <div>
+                <div style="font-weight:700;color:var(--text-primary);">${check.label}</div>
+                <div style="font-size:13px;color:var(--text-secondary);">${check.detail}</div>
+              </div>
+            </div>
+          `).join('')}
         </div>
       `;
     }
@@ -3847,7 +4085,23 @@
         const item = config.portfolio.find(p => p.id === itemId);
         if (item) imageUrl = item.url;
       } else if (type === 'service') {
-        // Get from service
+        const sep = String(itemId || '').lastIndexOf(':');
+        const serviceId = sep >= 0 ? String(itemId).slice(0, sep) : itemId;
+        const imageIdx = sep >= 0 ? Number(String(itemId).slice(sep + 1)) : -1;
+        const service = config.services.find(s => String(s.id) === String(serviceId));
+        const image = service?.images?.[imageIdx];
+        imageUrl = typeof image === 'string' ? image : (image?.url || '');
+      } else if (type === 'service-hero') {
+        const service = config.services.find(s => String(s.id) === String(itemId));
+        const image = service?.heroImage;
+        imageUrl = typeof image === 'string' ? image : (image?.url || '');
+      } else if (type === 'service-portfolio') {
+        const sep = String(itemId || '').lastIndexOf(':');
+        const serviceId = sep >= 0 ? String(itemId).slice(0, sep) : itemId;
+        const imageIdx = sep >= 0 ? Number(String(itemId).slice(sep + 1)) : -1;
+        const service = config.services.find(s => String(s.id) === String(serviceId));
+        const image = service?.portfolioImages?.[imageIdx];
+        imageUrl = typeof image === 'string' ? image : (image?.url || '');
       }
 
       if (!imageUrl) {
@@ -4003,11 +4257,29 @@
           renderPortfolio();
         }
       } else if (currentCropType === 'service' && currentCropItem) {
-        // Handle service image crop
-        const [serviceId, imageIdx] = currentCropItem.split('-');
-        const service = config.services.find(s => s.id == serviceId);
-        if (service && service.images[imageIdx]) {
-          service.images[imageIdx] = { url: croppedDataUrl, label: service.images[imageIdx].label || "Image" };
+        const sep = String(currentCropItem).lastIndexOf(':');
+        const serviceId = sep >= 0 ? String(currentCropItem).slice(0, sep) : currentCropItem;
+        const imageIdx = sep >= 0 ? Number(String(currentCropItem).slice(sep + 1)) : -1;
+        const service = config.services.find(s => String(s.id) === String(serviceId));
+        if (service && service.images?.[imageIdx]) {
+          const oldImage = service.images[imageIdx];
+          service.images[imageIdx] = { url: croppedDataUrl, label: oldImage?.label || "Image" };
+          renderServices();
+        }
+      } else if (currentCropType === 'service-hero' && currentCropItem) {
+        const service = config.services.find(s => String(s.id) === String(currentCropItem));
+        if (service) {
+          service.heroImage = croppedDataUrl;
+          renderServices();
+        }
+      } else if (currentCropType === 'service-portfolio' && currentCropItem) {
+        const sep = String(currentCropItem).lastIndexOf(':');
+        const serviceId = sep >= 0 ? String(currentCropItem).slice(0, sep) : currentCropItem;
+        const imageIdx = sep >= 0 ? Number(String(currentCropItem).slice(sep + 1)) : -1;
+        const service = config.services.find(s => String(s.id) === String(serviceId));
+        if (service && service.portfolioImages?.[imageIdx]) {
+          const oldImage = service.portfolioImages[imageIdx];
+          service.portfolioImages[imageIdx] = { url: croppedDataUrl, label: oldImage?.label || "Portfolio" };
           renderServices();
         }
       }
@@ -4090,17 +4362,28 @@
             <span class="category-header-count">${catServices.length} service${catServices.length !== 1 ? 's' : ''}</span>
           </div>
         `;
-        html += catServices.map(service => `
-          <div class="service-card" id="service-${service.id}">
-            <div class="service-header" onclick="toggleService(${service.id})">
+        html += catServices.map(service => {
+          const serviceKey = JSON.stringify(String(service.id));
+          const serviceDomId = escapeHtml(String(service.id));
+          const thumbUrl = serviceCardImage(service);
+          const galleryCount = (service.images || []).length;
+          const portfolioCount = (service.portfolioImages || []).length;
+          return `
+          <div class="service-card" id="service-${serviceDomId}">
+            <div class="service-header" onclick="toggleService(${serviceKey})">
               <div class="service-thumb">
-                ${service.images && service.images[0]
-                  ? `<img src="${service.images[0].url || service.images[0]}" alt="">`
+                ${thumbUrl
+                  ? `<img src="${thumbUrl}" alt="">`
                   : '📷'}
               </div>
               <div class="service-info">
                 <div class="service-name">${escapeHtml(service.name)}</div>
                 <div class="service-desc">${escapeHtml(service.desc || '')}</div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">
+                  <span class="badge" style="background:rgba(255,255,255,0.06);color:var(--text-secondary);border:1px solid var(--border-primary);">${galleryCount} gallery</span>
+                  <span class="badge" style="background:rgba(0,212,255,0.10);color:var(--cyan);border:1px solid rgba(0,212,255,0.25);">${portfolioCount} portfolio</span>
+                  ${thumbUrl ? '<span class="badge" style="background:rgba(34,197,94,0.12);color:#4ade80;border:1px solid rgba(34,197,94,0.25);">card image set</span>' : '<span class="badge" style="background:rgba(245,158,11,0.12);color:var(--warning);border:1px solid rgba(245,158,11,0.25);">needs card image</span>'}
+                </div>
                 ${service.badge ? `
                   <div class="service-badges">
                     <span class="badge badge-${service.badge}">${service.badge}</span>
@@ -4108,7 +4391,7 @@
                 ` : ''}
               </div>
               <div class="service-actions">
-                <button class="btn btn-icon btn-outline" onclick="event.stopPropagation(); deleteService(${service.id})" title="Delete">
+                <button class="btn btn-icon btn-outline" onclick="event.stopPropagation(); deleteService(${serviceKey})" title="Delete">
                   🗑️
                 </button>
                 <button class="btn btn-icon btn-outline service-expand-icon" title="Expand">▼</button>
@@ -4119,18 +4402,18 @@
                 <div class="field-group" style="flex: 2;">
                   <label class="field-label">Service Name</label>
                   <input type="text" class="field-input" value="${escapeHtml(service.name)}"
-                    onchange="updateService(${service.id}, 'name', this.value)">
+                    onchange="updateService(${serviceKey}, 'name', this.value)">
                 </div>
                 <div class="field-group">
                   <label class="field-label">Category</label>
-                  <select class="field-select" onchange="updateService(${service.id}, 'category', this.value)">
+                  <select class="field-select" onchange="updateService(${serviceKey}, 'category', this.value)">
                     ${categories.map(cat => `<option value="${cat.id}" ${service.category === cat.id ? 'selected' : ''}>${cat.label}</option>`).join('')}
                     <option value="other" ${service.category === 'other' || !service.category ? 'selected' : ''}>Other</option>
                   </select>
                 </div>
                 <div class="field-group">
                   <label class="field-label">Badge</label>
-                  <select class="field-select" onchange="updateService(${service.id}, 'badge', this.value)">
+                  <select class="field-select" onchange="updateService(${serviceKey}, 'badge', this.value)">
                     <option value="" ${!service.badge ? 'selected' : ''}>None</option>
                     <option value="popular" ${service.badge === 'popular' ? 'selected' : ''}>Most Popular</option>
                     <option value="new" ${service.badge === 'new' ? 'selected' : ''}>New</option>
@@ -4139,30 +4422,31 @@
               </div>
               <div class="field-group">
                 <label class="field-label">Description</label>
-                <textarea class="field-textarea" rows="2" onchange="updateService(${service.id}, 'desc', this.value)">${escapeHtml(service.desc || '')}</textarea>
+                <textarea class="field-textarea" rows="2" onchange="updateService(${serviceKey}, 'desc', this.value)">${escapeHtml(service.desc || '')}</textarea>
               </div>
               <!-- Hero Image Section -->
               <div class="service-hero-section" style="margin-top: 24px; padding: 16px; background: var(--bg-tertiary); border-radius: var(--radius-md); border: 1px solid var(--border-primary);">
                 <div class="gallery-header" style="margin-bottom: 12px;">
-                  <div class="gallery-title">🖼️ Hero Image <span style="font-size: 12px; color: var(--text-muted); font-weight: normal;">(Shown on service cards)</span></div>
+                  <div class="gallery-title">🖼️ Service Card Image <span style="font-size: 12px; color: var(--text-muted); font-weight: normal;">Visitors see this before opening the service</span></div>
                 </div>
                 ${service.heroImage ? `
                   <div class="image-item" style="width: 200px; aspect-ratio: 16/10;">
-                    <img src="${service.heroImage}" alt="Hero" style="width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius-md);">
+                    <img src="${imageUrlFrom(service.heroImage)}" alt="Hero" style="width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius-md);">
                     <div class="image-item-actions" style="position: absolute; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; gap: 8px; opacity: 0; transition: opacity 0.2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0">
                       <label class="btn btn-gold btn-sm" style="cursor: pointer;">
                         🔄 Replace
-                        <input type="file" accept="image/*" style="display: none;" onchange="handleServiceHeroUpload(${service.id}, event)">
+                        <input type="file" accept="image/*" style="display: none;" onchange="handleServiceHeroUpload(${serviceKey}, event)">
                       </label>
-                      <button class="btn btn-danger btn-sm" onclick="deleteServiceHeroImage(${service.id})">🗑️</button>
+                      <button class="btn btn-gold btn-sm" onclick="event.stopPropagation(); openCropper('service-hero', event, ${serviceKey})">✂️</button>
+                      <button class="btn btn-danger btn-sm" onclick="deleteServiceHeroImage(${serviceKey})">🗑️</button>
                     </div>
                   </div>
                 ` : `
                   <div class="upload-zone" style="padding: 24px; border: 2px dashed var(--border-secondary); border-radius: var(--radius-md); text-align: center; cursor: pointer;" onclick="this.querySelector('input').click()">
                     <div class="upload-icon" style="width: 48px; height: 48px; margin: 0 auto 8px;">🖼️</div>
-                    <div class="upload-title" style="font-size: 14px; font-weight: 500;">Add Hero Image</div>
-                    <div class="upload-subtitle" style="font-size: 12px; color: var(--text-muted);">Shown on service cards</div>
-                    <input type="file" accept="image/*" style="display: none;" onchange="handleServiceHeroUpload(${service.id}, event)">
+                    <div class="upload-title" style="font-size: 14px; font-weight: 500;">Add Service Card Image</div>
+                    <div class="upload-subtitle" style="font-size: 12px; color: var(--text-muted);">Best as a clear 4:3 or 16:10 project photo</div>
+                    <input type="file" accept="image/*" style="display: none;" onchange="handleServiceHeroUpload(${serviceKey}, event)">
                   </div>
                 `}
               </div>
@@ -4170,10 +4454,10 @@
               <!-- Portfolio Images Section -->
               <div class="service-portfolio-section" style="margin-top: 24px; padding: 16px; background: var(--bg-tertiary); border-radius: var(--radius-md); border: 1px solid var(--border-primary);">
                 <div class="gallery-header">
-                  <div class="gallery-title">🎯 Portfolio Images <span style="font-size: 12px; color: var(--text-muted); font-weight: normal;">(Shown in portfolio section)</span></div>
+                  <div class="gallery-title">🎯 Real Installations Images <span style="font-size: 12px; color: var(--text-muted); font-weight: normal;">Appear in the public Our Work gallery</span></div>
                   <label class="btn btn-cyan btn-sm" style="cursor: pointer;">
                     + Add Portfolio Image
-                    <input type="file" accept="image/*" style="display: none;" onchange="handleServicePortfolioUpload(${service.id}, event)">
+                    <input type="file" accept="image/*" style="display: none;" onchange="handleServicePortfolioUpload(${serviceKey}, event)">
                   </label>
                 </div>
                 ${service.portfolioImages && service.portfolioImages.length > 0 ? `
@@ -4184,17 +4468,18 @@
                         <div class="image-item-order" style="top: 8px; left: 8px; background: var(--cyan); color: #000;">#${idx + 1}</div>
                         <div class="image-item-badge" style="top: 8px; right: 8px; background: rgba(0,0,0,0.7); color: #fff; font-size: 10px; padding: 2px 6px;">${img.label || 'Portfolio'}</div>
                         <div class="image-item-actions" style="flex-direction: column; gap: 4px;">
-                          <button class="btn btn-icon btn-sm" onclick="moveServicePortfolioImage(${service.id}, ${idx}, -1)" ${idx === 0 ? 'disabled' : ''} title="Move up">↑</button>
-                          <button class="btn btn-icon btn-sm" onclick="moveServicePortfolioImage(${service.id}, ${idx}, 1)" ${idx === service.portfolioImages.length - 1 ? 'disabled' : ''} title="Move down">↓</button>
-                          <button class="btn btn-gold btn-sm" onclick="editServicePortfolioLabel(${service.id}, ${idx}, '${escapeHtml(img.label || '')}')">✏️ Label</button>
-                          <button class="btn btn-danger btn-sm" onclick="deleteServicePortfolioImage(${service.id}, ${idx})">🗑️</button>
+                          <button class="btn btn-icon btn-sm" onclick="moveServicePortfolioImage(${serviceKey}, ${idx}, -1)" ${idx === 0 ? 'disabled' : ''} title="Move up">↑</button>
+                          <button class="btn btn-icon btn-sm" onclick="moveServicePortfolioImage(${serviceKey}, ${idx}, 1)" ${idx === service.portfolioImages.length - 1 ? 'disabled' : ''} title="Move down">↓</button>
+                          <button class="btn btn-gold btn-sm" onclick="openCropper('service-portfolio', event, ${JSON.stringify(`${service.id}:${idx}`)})">✂️</button>
+                          <button class="btn btn-gold btn-sm" onclick="editServicePortfolioLabel(${serviceKey}, ${idx}, ${JSON.stringify(img.label || '')})">✏️ Label</button>
+                          <button class="btn btn-danger btn-sm" onclick="deleteServicePortfolioImage(${serviceKey}, ${idx})">🗑️</button>
                         </div>
                       </div>
                     `).join('')}
                   </div>
                 ` : `
                   <p class="text-muted" style="text-align: center; padding: 20px; color: var(--text-muted);">
-                    No portfolio images yet. Add some to showcase work in the portfolio section.
+                    No portfolio images yet. Add only strong real project photos here.
                   </p>
                 `}
               </div>
@@ -4202,11 +4487,11 @@
               <!-- Regular Gallery Images Section -->
               <div class="service-gallery" style="margin-top: 24px;">
                 <div class="gallery-header">
-                  <div class="gallery-title">📷 Gallery Images (${service.images ? service.images.length : 0}) <span style="font-size: 12px; color: var(--text-muted); font-weight: normal;">(Service detail gallery)</span></div>
+                  <div class="gallery-title">📷 Service Detail Gallery (${galleryCount}) <span style="font-size: 12px; color: var(--text-muted); font-weight: normal;">Shown after visitors click See Work</span></div>
                   <label class="btn btn-cyan btn-sm" style="cursor: pointer;">
                     + Add Gallery Image
                     <input type="file" accept="image/*" style="display: none;"
-                      onchange="handleServiceImageUpload(${service.id}, event)">
+                      onchange="handleServiceImageUpload(${serviceKey}, event)">
                   </label>
                 </div>
                 ${service.images && service.images.length > 0 ? `
@@ -4216,10 +4501,10 @@
                         <img src="${img.url || img}" alt="">
                         <div class="image-item-order">#${idx + 1}</div>
                         <div class="image-item-actions">
-                          <button class="btn btn-icon btn-sm" onclick="moveServiceImage(${service.id}, ${idx}, -1)" ${idx === 0 ? 'disabled' : ''}>↑</button>
-                          <button class="btn btn-icon btn-sm" onclick="moveServiceImage(${service.id}, ${idx}, 1)" ${idx === service.images.length - 1 ? 'disabled' : ''}>↓</button>
-                          <button class="btn btn-gold btn-sm" onclick="openCropper('service', event, '${service.id}-${idx}')">✂️</button>
-                          <button class="btn btn-danger btn-sm" onclick="deleteServiceImage(${service.id}, ${idx})">🗑️</button>
+                          <button class="btn btn-icon btn-sm" onclick="moveServiceImage(${serviceKey}, ${idx}, -1)" ${idx === 0 ? 'disabled' : ''}>↑</button>
+                          <button class="btn btn-icon btn-sm" onclick="moveServiceImage(${serviceKey}, ${idx}, 1)" ${idx === service.images.length - 1 ? 'disabled' : ''}>↓</button>
+                          <button class="btn btn-gold btn-sm" onclick="openCropper('service', event, ${JSON.stringify(`${service.id}:${idx}`)})">✂️</button>
+                          <button class="btn btn-danger btn-sm" onclick="deleteServiceImage(${serviceKey}, ${idx})">🗑️</button>
                         </div>
                       </div>
                     `).join('')}
@@ -4232,14 +4517,19 @@
               </div>
             </div>
           </div>
-        `).join('');
+        `;
+        }).join('');
       }
       container.innerHTML = html;
     }
 
     function toggleService(id) {
       const card = document.getElementById(`service-${id}`);
-      card.classList.toggle('expanded');
+      if (card) card.classList.toggle('expanded');
+    }
+
+    function findServiceById(id) {
+      return (config.services || []).find(s => String(s.id) === String(id));
     }
 
     function addService() {
@@ -4281,13 +4571,15 @@
       const name = document.getElementById('newServiceName').value.trim() || 'New Service';
       const category = document.getElementById('newServiceCategory').value || 'sign-boards';
       
-      const newId = Math.max(...config.services.map(s => s.id), 0) + 1;
+      if (!Array.isArray(config.services)) config.services = [];
+      const newId = Math.max(0, ...config.services.map(s => Number(s.id) || 0)) + 1;
       config.services.push({
         id: newId,
         name: name,
         desc: "",
         badge: "",
         category: category,
+        categoryId: category,
         images: [],
         heroImage: null,
         portfolioImages: []
@@ -4310,7 +4602,7 @@
         confirmText: 'Delete Service',
         confirmClass: 'btn-danger',
         onConfirm: () => {
-          config.services = config.services.filter(s => s.id !== id);
+          config.services = config.services.filter(s => String(s.id) !== String(id));
           renderServices();
           updateSaveIndicator(false);
           showToast('Service deleted', 'success');
@@ -4319,11 +4611,14 @@
     }
 
     function updateService(id, field, value) {
-      const service = config.services.find(s => s.id === id);
+      const service = findServiceById(id);
       if (service) {
         service[field] = value;
-        if (field === 'name' || field === 'desc' || field === 'badge') {
-          // Refresh only if needed
+        if (field === 'category') {
+          service.categoryId = value;
+          renderServices();
+        } else if (field === 'name' || field === 'badge') {
+          renderServices();
         }
         updateSaveIndicator(false);
       }
@@ -4337,7 +4632,7 @@
         const dataUrl = await fileToDataUrl(file);
         const webpUrl = await convertToWebP(dataUrl, 0.9);
 
-        const service = config.services.find(s => s.id === serviceId);
+        const service = findServiceById(serviceId);
         if (service) {
           if (!service.images) service.images = [];
           service.images.push({ url: webpUrl, label: file.name.replace(/\.[^.]+$/, "") });
@@ -4361,7 +4656,7 @@
         const dataUrl = await fileToDataUrl(file);
         const webpUrl = await convertToWebP(dataUrl, 0.9);
 
-        const service = config.services.find(s => s.id === serviceId);
+        const service = findServiceById(serviceId);
         if (service) {
           service.heroImage = webpUrl;
           renderServices();
@@ -4382,7 +4677,7 @@
         confirmText: 'Delete',
         confirmClass: 'btn-danger',
         onConfirm: () => {
-          const service = config.services.find(s => s.id === serviceId);
+          const service = findServiceById(serviceId);
           if (service) {
             service.heroImage = null;
             renderServices();
@@ -4404,7 +4699,7 @@
         const dataUrl = await fileToDataUrl(file);
         const webpUrl = await convertToWebP(dataUrl, 0.9);
 
-        const service = config.services.find(s => s.id === serviceId);
+        const service = findServiceById(serviceId);
         if (service) {
           if (!service.portfolioImages) service.portfolioImages = [];
           service.portfolioImages.push({ url: webpUrl, label: file.name.replace(/\.[^.]+$/, "") });
@@ -4418,7 +4713,7 @@
     }
 
     function moveServicePortfolioImage(serviceId, idx, direction) {
-      const service = config.services.find(s => s.id === serviceId);
+      const service = findServiceById(serviceId);
       if (!service || !service.portfolioImages) return;
 
       const newIdx = idx + direction;
@@ -4438,7 +4733,7 @@
         confirmText: 'Delete',
         confirmClass: 'btn-danger',
         onConfirm: () => {
-          const service = config.services.find(s => s.id === serviceId);
+          const service = findServiceById(serviceId);
           if (service && service.portfolioImages) {
             service.portfolioImages.splice(idx, 1);
             renderServices();
@@ -4452,7 +4747,7 @@
     function editServicePortfolioLabel(serviceId, idx, currentLabel) {
       const newLabel = prompt('Enter portfolio image label:', currentLabel);
       if (newLabel !== null) {
-        const service = config.services.find(s => s.id === serviceId);
+        const service = findServiceById(serviceId);
         if (service && service.portfolioImages && service.portfolioImages[idx]) {
           service.portfolioImages[idx].label = newLabel;
           renderServices();
@@ -4463,7 +4758,7 @@
     }
 
     function moveServiceImage(serviceId, idx, direction) {
-      const service = config.services.find(s => s.id === serviceId);
+      const service = findServiceById(serviceId);
       if (!service || !service.images) return;
 
       const newIdx = idx + direction;
@@ -4483,7 +4778,7 @@
         confirmText: 'Delete',
         confirmClass: 'btn-danger',
         onConfirm: () => {
-          const service = config.services.find(s => s.id === serviceId);
+          const service = findServiceById(serviceId);
           if (service && service.images) {
             service.images.splice(idx, 1);
             renderServices();
@@ -4587,7 +4882,10 @@
         confirmClass: 'btn-danger',
         onConfirm: () => {
           // Move services to 'other' category
-          servicesInCategory.forEach(s => s.category = 'other');
+          servicesInCategory.forEach(s => {
+            s.category = 'other';
+            s.categoryId = 'other';
+          });
           
           categories.splice(index, 1);
           renderCategories();
@@ -4673,7 +4971,10 @@
         categories[editIndex] = newCategory;
         // Update services that use old category ID
         config.services.forEach(s => {
-          if (s.category === oldId) s.category = id;
+          if (s.category === oldId || s.categoryId === oldId) {
+            s.category = id;
+            s.categoryId = id;
+          }
         });
       } else {
         categories.push(newCategory);
@@ -4819,7 +5120,8 @@
     }
 
     function addPortfolioItem() {
-      const newId = Math.max(...config.portfolio.map(p => p.id), 0) + 1;
+      if (!Array.isArray(config.portfolio)) config.portfolio = [];
+      const newId = Math.max(0, ...config.portfolio.map(p => Number(p.id) || 0)) + 1;
       config.portfolio.push({
         id: newId,
         url: "",
@@ -4932,7 +5234,8 @@
         const dataUrl = await fileToDataUrl(file);
         const webpUrl = await convertToWebP(dataUrl, 0.9);
 
-        const newId = Math.max(...config.portfolio.map(p => p.id), 0) + 1;
+        if (!Array.isArray(config.portfolio)) config.portfolio = [];
+        const newId = Math.max(0, ...config.portfolio.map(p => Number(p.id) || 0)) + 1;
         config.portfolio.push({
           id: newId,
           url: webpUrl,
@@ -4999,7 +5302,8 @@
     }
 
     function addServiceImageToPortfolio(url, category) {
-      const newId = Math.max(...config.portfolio.map(p => p.id), 0) + 1;
+      if (!Array.isArray(config.portfolio)) config.portfolio = [];
+      const newId = Math.max(0, ...config.portfolio.map(p => Number(p.id) || 0)) + 1;
       config.portfolio.push({
         id: newId,
         url: url,
@@ -5109,7 +5413,8 @@
 
     function addTestimonial() {
       if (!config.testimonials) config.testimonials = [];
-      const newId = Math.max(...config.testimonials.map(t => t.id), 0) + 1;
+      if (!Array.isArray(config.testimonials)) config.testimonials = [];
+      const newId = Math.max(0, ...config.testimonials.map(t => Number(t.id) || 0)) + 1;
       config.testimonials.push({
         id: newId,
         name: "New Customer",
@@ -5568,6 +5873,12 @@
     // PUBLISH CONFIG - Generate config.json for sharing
     // ================================================
     async function publishConfig() {
+      const validationErrors = validateConfigForPublish();
+      if (validationErrors.length > 0) {
+        showToast(`Fix before publishing: ${validationErrors[0]}`, 'error', 10000);
+        return false;
+      }
+
       const payload = {
         contact: config.contact,
         testimonials: config.testimonials,
@@ -5593,18 +5904,25 @@
         const candidates = isLocal
           ? [`http://localhost:9998/publish`, `http://${host}:8888/api/publish`]
           : [`http://${host}:9998/publish`, `/.netlify/functions/publish`, `/api/publish`];
+        let publishToken = sessionStorage.getItem('primesign-publish-token') || '';
+        if (!isLocal && !publishToken) {
+          publishToken = prompt('Enter the Netlify publish token:') || '';
+          if (publishToken) sessionStorage.setItem('primesign-publish-token', publishToken);
+        }
         let lastError = null;
         for (const publishUrl of candidates) {
           try {
+            const headers = { "Content-Type": "application/json" };
+            if (publishToken) headers["x-admin-token"] = publishToken;
             const resp = await fetch(publishUrl, {
               method: "POST",
-              headers: { "Content-Type": "application/json" },
+              headers,
               body: JSON.stringify(payload)
             });
             if (resp.ok) {
               const result = await resp.json();
               showToast(`🌍 Published! ${result.services} services updated.`, 'success', 6000);
-              return;
+              return true;
             }
             const errBody = await resp.json().catch(() => ({}));
             lastError = new Error(errBody.error || `HTTP ${resp.status}`);
@@ -5615,6 +5933,7 @@
         throw lastError || new Error('No publish endpoint available');
       } catch(e) {
         showToast(`❌ Publish failed: ${e.message}. Ensure the publish API is running.`, 'error', 10000);
+        return false;
       }
     }
 
@@ -5734,6 +6053,7 @@
 
     function showSaveProgress(state) {
       const progress = document.getElementById('saveProgress');
+      if (!progress) return;
       progress.classList.remove('saving', 'saved');
       if (state === 'saving') {
         progress.classList.add('saving');

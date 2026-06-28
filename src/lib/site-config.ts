@@ -22,10 +22,13 @@ export type Service = {
   categoryId: string;
   name: string;
   description: string;
-  badge?: "popular" | "new" | "";
+  badge?: string;
   heroImage?: SiteImage;
   galleryImages: SiteImage[];
   portfolioImages: SiteImage[];
+  category?: string;
+  desc?: string;
+  images?: SiteImage[];
 };
 
 export type PortfolioItem = {
@@ -34,6 +37,9 @@ export type PortfolioItem = {
   categoryId?: string;
   featured?: boolean;
   order?: number;
+  url?: string;
+  category?: string;
+  label?: string;
 };
 
 export type SiteConfig = {
@@ -44,6 +50,7 @@ export type SiteConfig = {
     headline?: string;
     subtitle?: string;
     backgroundImage?: SiteImage;
+    bgImage?: string;
     stats?: { value: string; label: string }[];
   };
   portfolio: PortfolioItem[];
@@ -70,13 +77,21 @@ export type SiteConfig = {
       instagram?: string;
       linkedin?: string;
       whatsapp?: string;
+      youtube?: string;
     };
     workingHours?: string;
+    youtube?: string;
+    facebook?: string;
+    instagram?: string;
   };
   settings: {
     siteName?: string;
     siteDescription?: string;
     logo?: SiteImage;
+    logoUrl?: string;
+    logoType?: string;
+    scheme?: string;
+    workingHours?: string;
     metaTitle?: string;
     metaDescription?: string;
   };
@@ -136,6 +151,10 @@ export function normalizeSiteConfig(raw: any): SiteConfig {
         heroImage: normalizeImage(svc.heroImage),
         galleryImages: normalizeImages(svc.images || svc.galleryImages || []),
         portfolioImages: normalizeImages(svc.portfolioImages || []),
+        // Legacy aliases keep partially migrated components working.
+        category: normalizeCategoryId(categoryId),
+        desc: svc.description || svc.desc || '',
+        images: normalizeImages(svc.images || svc.galleryImages || []),
       };
     });
   }
@@ -156,26 +175,32 @@ export function normalizeSiteConfig(raw: any): SiteConfig {
 
   // Normalize hero
   config.hero = {
+    ...raw.hero,
     badge: raw.hero?.badge,
     headline: raw.hero?.headline || raw.hero?.title,
     subtitle: raw.hero?.subtitle,
     backgroundImage: normalizeImage(raw.hero?.bgImage || raw.hero?.backgroundImage),
+    bgImage: imageUrl(normalizeImage(raw.hero?.bgImage || raw.hero?.backgroundImage)),
     stats: raw.hero?.stats,
   };
 
   // Normalize portfolio
   if (Array.isArray(raw.portfolio)) {
     config.portfolio = raw.portfolio.map((item: any) => ({
-      id: item.id || Math.random().toString(36).substr(2, 9),
+      ...item,
+      id: String(item.id || Math.random().toString(36).substr(2, 9)),
       image: normalizeImage(item.image || item.url),
       categoryId: item.categoryId || item.category,
       featured: item.featured,
       order: item.order,
+      url: imageUrl(normalizeImage(item.image || item.url)),
+      category: item.categoryId || item.category,
     }));
   }
 
   // Normalize about
   config.about = {
+    ...raw.about,
     title: raw.about?.title,
     subtitle: raw.about?.subtitle,
     description: raw.about?.description,
@@ -186,6 +211,7 @@ export function normalizeSiteConfig(raw: any): SiteConfig {
   // Normalize advantage
   const advantageImages = raw.advantage?.images || raw.advantageImages || [];
   config.advantage = {
+    ...raw.advantage,
     title: raw.advantage?.title,
     subtitle: raw.advantage?.subtitle,
     benefits: Array.isArray(advantageImages) 
@@ -210,26 +236,42 @@ export function normalizeSiteConfig(raw: any): SiteConfig {
 
   // Normalize contact
   config.contact = {
+    ...(raw.contact || {}),
     phones: raw.contact?.phones || [],
     emails: raw.contact?.emails || [],
     address: raw.contact?.address,
     mapsUrl: raw.contact?.mapsUrl,
     social: raw.contact?.social,
-    workingHours: raw.contact?.workingHours,
+    workingHours: raw.contact?.workingHours || raw.settings?.workingHours,
   };
 
   // Normalize settings
   config.settings = {
+    ...(raw.settings || {}),
     siteName: raw.settings?.siteName,
     siteDescription: raw.settings?.siteDescription,
-    logo: normalizeImage(raw.settings?.logo),
+    logo: normalizeImage(raw.settings?.logo || raw.settings?.logoUrl),
+    logoUrl: raw.settings?.logoUrl || imageUrl(normalizeImage(raw.settings?.logo)),
     metaTitle: raw.settings?.metaTitle,
     metaDescription: raw.settings?.metaDescription,
   };
 
   // Copy other fields
   config.colorScheme = raw.colorScheme;
-  config.meta = raw.meta;
+  config.meta = raw.meta || {
+    version: raw._version,
+    publishedAt: raw._publishedAt,
+  };
+  config.testimonials = raw.testimonials || [];
+  config.footer = raw.footer;
+  config.navbar = raw.navbar;
+  config.aboutImages = config.about.images;
+  config.advantageImages = config.advantage.benefits.map((benefit) => ({
+    label: benefit.label,
+    icon: benefit.icon,
+    url: benefit.image?.url || '',
+    alt: benefit.image?.alt,
+  }));
 
   return config;
 }

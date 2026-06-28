@@ -1,5 +1,5 @@
 [build]
-  command = "npm ci && npm run build"
+  command = "./node_modules/.bin/vite build && cp -f public/config.json dist/config.json && cp -f public/admin.html dist/admin.html"
   publish = "dist"
   functions = "netlify/functions"
 
@@ -9,32 +9,10 @@
   to = "/.netlify/functions/publish"
   status = 200
 
-# SPA fallback - all routes go to index.html EXCEPT static assets
+# SPA fallback. Netlify serves existing static files before this redirect.
 [[redirects]]
   from = "/*"
   to = "/index.html"
-  status = 200
-  conditions = {Role = ["admin"]}
-
-# Allow static assets through
-[[redirects]]
-  from = "/admin.html"
-  to = "/admin.html"
-  status = 200
-
-[[redirects]]
-  from = "/config.json"
-  to = "/config.json"
-  status = 200
-
-[[redirects]]
-  from = "/images/*"
-  to = "/images/:splat"
-  status = 200
-
-[[redirects]]
-  from = "/assets/*"
-  to = "/assets/:splat"
   status = 200
 
 # Headers for security

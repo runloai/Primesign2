@@ -15,9 +15,7 @@ import {
   loadSiteConfig, 
   getServicesByCategory, 
   imageUrl,
-  type SiteConfig,
-  type Service as ConfigService,
-  type ServiceCategory
+  type SiteConfig
 } from "@/lib/site-config";
 
 // Types for admin config
@@ -54,17 +52,21 @@ interface PortfolioConfig {
 }
 
 interface ServiceCategoryItem {
+  id?: string;
   name: string;
   desc: string;
   img: string;
+  images?: string[];
   badge?: string;
+  categoryId?: string;
 }
 
 interface ServiceCategory {
   id: string;
+  label?: string;
   title: string;
-  description: string;
-  icon: string;
+  description?: string;
+  icon?: string;
   items: ServiceCategoryItem[];
 }
 
@@ -1020,10 +1022,12 @@ export default function Home() {
   useEffect(() => {
     const handler = (e: CustomEvent) => {
       setActiveServiceCategory(e.detail);
+      sessionStorage.setItem("arsenal-category", e.detail);
       document.getElementById("services")?.scrollIntoView({ behavior: "smooth" });
     };
     const svcHandler = (e: CustomEvent) => {
       setActiveServiceCategory(e.detail.category);
+      sessionStorage.setItem("arsenal-category", e.detail.category);
       setTimeout(() => {
         document.getElementById(`svc-${e.detail.serviceId}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
       }, 100);
@@ -1036,47 +1040,74 @@ export default function Home() {
     };
   }, []);
 
-  // Get services from config or fallback to hardcoded
-  const dynamicServices = getDynamicServices();
-  const rawDisplayServices = dynamicServices || adminConfig?.services || services;
-  
-  const displayServices = useMemo(() => {
-    return rawDisplayServices.map((s: any) => ({
-      ...s,
-      images: (s.images || (s.img ? [s.img] : ["/images/led/1.webp"])).filter(Boolean).map((img: string) => cacheBustUrl(img)),
-      thumbnail: cacheBustUrl(s.heroImage || s.thumbnail || s.img || (s.images?.[0]) || "/images/led/1.webp"),
-    }));
-  }, [rawDisplayServices]);
+  const serviceCategories = useMemo<ServiceCategory[]>(() => {
+    if (siteConfig?.services?.length) {
+      return getServicesByCategory(siteConfig)
+        .filter(({ services }) => services.length > 0)
+        .map(({ category, services }) => ({
+          id: category.id,
+          label: category.label,
+          title: category.label,
+          description: category.description,
+          icon: category.icon,
+          items: services.map((service) => {
+            const galleryImages = service.galleryImages.map((img) => imageUrl(img)).filter(Boolean);
+            const hero = imageUrl(service.heroImage, galleryImages[0] || "/images/led/1.webp");
 
-  // Get service categories - use new normalized config if available
-  const serviceCategories = useMemo(() => {
-    // Use normalized config from shared loader
-    if (siteConfig) {
-      return getServicesByCategory(siteConfig).map(({ category, services }) => ({
-        id: category.id,
-        label: category.label,
-        description: category.description,
-        icon: category.icon,
-        items: services,
-      }));
+            return {
+              id: service.id,
+              name: service.name,
+              desc: service.description,
+              img: hero,
+              images: galleryImages.length > 0 ? galleryImages : [hero],
+              badge: service.badge === "popular"
+                ? "Most Popular"
+                : service.badge === "new"
+                  ? "New"
+                  : service.badge || undefined,
+              categoryId: service.categoryId,
+            };
+          }),
+        }));
     }
-    // Fallback to dynamic categories if available (legacy)
+
     const dynamicServiceCategories = getDynamicServiceCategories();
     if (Array.isArray(dynamicServiceCategories) && dynamicServiceCategories.length > 0) {
       return dynamicServiceCategories;
     }
-    // Final fallback: building from adminConfig services
+
     if (adminConfig?.services && adminConfig.services.length > 0) {
       return buildServiceCategoriesFromServices(adminConfig.services);
     }
-    return [];
-  }, [siteConfig, adminConfig]) || [];
 
-  // Get hero data from config or fallback
-  const heroBgImage = adminConfig?.hero?.bgImage || "/images/portfolio/01.webp";
-  const heroBadgeText = adminConfig?.hero?.badge || "Bangalore's Premier Signage Studio";
-  const heroHeadline = adminConfig?.hero?.headline || "WE BUILD <br>UNFORGETTABLE<br>VISIBILITY.";
-  const heroSubtitle = adminConfig?.hero?.subtitle || "From bold LED boards to precision 3D channel letters. We engineer high-impact signage that lights up Bangalore and makes your brand impossible to ignore.";
+    return buildServiceCategoriesFromServices(services.map((service, index) => ({
+      id: index + 1,
+      name: service.title,
+      desc: service.desc,
+      badge: service.tag === "Most Popular" ? "popular" : "",
+      images: service.images,
+      category: service.category,
+    })));
+  }, [siteConfig, adminConfig]);
+
+  const displayServices = useMemo(() => {
+    return serviceCategories.flatMap((category) => category.items.map((service) => ({
+      ...service,
+      title: service.name,
+      category: service.categoryId || category.id,
+    })));
+  }, [serviceCategories]);
+
+  useEffect(() => {
+    if (serviceCategories.length > 0 && !serviceCategories.some((category) => category.id === activeServiceCategory)) {
+      setActiveServiceCategory(serviceCategories[0].id);
+    }
+  }, [serviceCategories, activeServiceCategory]);
+
+  const heroBgImage = imageUrl(siteConfig?.hero?.backgroundImage, adminConfig?.hero?.bgImage || "/images/portfolio/01.webp");
+  const heroBadgeText = siteConfig?.hero?.badge || adminConfig?.hero?.badge || "Bangalore's Premier Signage Studio";
+  const heroHeadline = siteConfig?.hero?.headline || adminConfig?.hero?.headline || "WE BUILD <br>UNFORGETTABLE<br>VISIBILITY.";
+  const heroSubtitle = siteConfig?.hero?.subtitle || adminConfig?.hero?.subtitle || "From bold LED boards to precision 3D channel letters. We engineer high-impact signage that lights up Bangalore and makes your brand impossible to ignore.";
 
   // Get testimonials from config or fallback
   const dynamicTestimonials = getDynamicTestimonials();
@@ -1090,49 +1121,41 @@ export default function Home() {
     return () => clearInterval(timer);
   }, [displayTestimonials.length]);
 
-  // Get portfolio items — curated portfolio items from config.json take priority
-  const getPortfolioItems = () => {
+  const allPortfolioItems = useMemo(() => {
     const allPortfolioItems: { img: string; label: string; cat: string; featured: boolean }[] = [];
-    
-    // First: use curated portfolio items from config.json (managed in admin "Portfolio" tab)
-    if (adminConfig?.portfolio && adminConfig.portfolio.length > 0) {
-      const validPortfolioItems = adminConfig.portfolio.filter((item: PortfolioConfig) => item.url);
-      validPortfolioItems.forEach((item: PortfolioConfig) => {
+
+    if (siteConfig?.portfolio?.length) {
+      siteConfig.portfolio.forEach((item: any) => {
+        const img = imageUrl(item.image || item.url);
+        if (!img) return;
         allPortfolioItems.push({
-          img: item.url,
+          img,
           label: item.label || "Installation",
-          cat: item.category || "led",
+          cat: item.categoryId || item.category || "portfolio",
           featured: item.featured || false,
         });
       });
     }
-    
-    // Second: add portfolioImages from each service
-    if (adminConfig?.services && adminConfig.services.length > 0) {
-      adminConfig.services.forEach((service: any, serviceIdx: number) => {
-        const portfolioImages = service.portfolioImages || [];
-        const category = service.category || getCategoryFromServiceName(service.name || service.title);
-        
-        portfolioImages.forEach((img: any, imgIdx: number) => {
-          const imgUrl = extractImageUrl(img);
-          if (imgUrl) {
+
+    if (siteConfig?.services?.length) {
+      siteConfig.services.forEach((service: any, serviceIdx: number) => {
+        service.portfolioImages.forEach((img: any, imgIdx: number) => {
+          const imgUrl = imageUrl(img);
+          if (!imgUrl) return;
             allPortfolioItems.push({
               img: imgUrl,
               label: img.label || `${service.name || service.title} - Portfolio`,
-              cat: category,
+              cat: service.categoryId || service.category || "portfolio",
               featured: serviceIdx === 0 && imgIdx === 0 && allPortfolioItems.length === 0,
             });
-          }
         });
       });
     }
-    
-    // If we have collected portfolio items, return them
+
     if (allPortfolioItems.length > 0) {
       return allPortfolioItems;
     }
-    
-    // Third: fallback to service images
+
     if (displayServices && displayServices.length > 0) {
       const serviceGalleryItems: { img: string; label: string; cat: string; featured: boolean }[] = [];
       
@@ -1157,8 +1180,7 @@ export default function Home() {
         return serviceGalleryItems;
       }
     }
-    
-    // Final fallback to hardcoded images
+
     return [
       { img: "/images/portfolio/01.webp", label: "Storefront LED Branding", cat: "led", featured: true },
       { img: "/images/glow/4.webp", label: "Glow Sign", cat: "glow", featured: false },
@@ -1170,9 +1192,7 @@ export default function Home() {
       { img: "/images/glow/5.webp", label: "Neon Glow", cat: "glow", featured: false },
       { img: "/images/portfolio/04.webp", label: "Corporate Lobby", cat: "acrylic", featured: false },
     ];
-  };
-
-  const allPortfolioItems = getPortfolioItems();
+  }, [siteConfig, displayServices]);
   
   const featuredItem = useMemo(() => {
     return allPortfolioItems.find(item => item.featured) || null;
@@ -1182,17 +1202,28 @@ export default function Home() {
     return allPortfolioItems.filter(item => !item.featured);
   }, [allPortfolioItems]);
 
-  const aboutImages = (adminConfig?.aboutImages || ["/images/glow/3.webp", "/images/wall/3.webp", "/images/led/2.webp", "/images/square/brass.webp"]).slice(0, 4).map((img: any) => (typeof img === 'string' ? img : img?.url || "")).filter(Boolean);
+  const aboutImages = (siteConfig?.about?.images?.length
+    ? siteConfig.about.images.map((img) => imageUrl(img))
+    : (adminConfig?.aboutImages || ["/images/glow/3.webp", "/images/wall/3.webp", "/images/led/2.webp", "/images/square/brass.webp"]).map((img: any) => (typeof img === 'string' ? img : img?.url || ""))
+  ).slice(0, 4).filter(Boolean);
 
-  const displayReasons = adminConfig?.advantageImages && adminConfig.advantageImages.length >= 6
-    ? adminConfig.advantageImages.slice(0, 6)
-    : reasons.map((label, i) => ({ label, url: "" }));
+  const displayReasons = siteConfig?.advantage?.benefits?.length
+    ? siteConfig.advantage.benefits.slice(0, 6).map((benefit) => ({
+      label: benefit.label,
+      url: imageUrl(benefit.image),
+      icon: benefit.icon,
+    }))
+    : adminConfig?.advantageImages && adminConfig.advantageImages.length >= 6
+      ? adminConfig.advantageImages.slice(0, 6)
+      : reasons.map((label) => ({ label, url: "" }));
 
   const advantageImages = displayReasons.map((r: any) => (typeof r === 'string' ? r : r?.url || "")).filter(Boolean);
   
   // Use gridImages from config if available
-  const advantageGridImages = adminConfig?.advantage?.gridImages && adminConfig.advantage.gridImages.length >= 4
-    ? adminConfig.advantage.gridImages.slice(0, 4)
+  const advantageGridImages = siteConfig?.advantage?.gridImages?.length
+    ? siteConfig.advantage.gridImages.map((img) => imageUrl(img)).filter(Boolean).slice(0, 4)
+    : adminConfig?.advantage?.gridImages && adminConfig.advantage.gridImages.length >= 4
+      ? adminConfig.advantage.gridImages.slice(0, 4).map((img: any) => imageUrl(img)).filter(Boolean)
     : ["/images/glow/6.webp", "/images/wall/5.webp", "/images/led/3.webp", "/images/square/resto-square.webp"];
 
   const portfolioCategories = useMemo(() => {
@@ -1242,38 +1273,11 @@ export default function Home() {
   const [selectedService, setSelectedService] = useState<{ name: string; desc: string; images: string[] } | null>(null);
   const [selectedServiceImageIndex, setSelectedServiceImageIndex] = useState(0);
 
-  // Build a name-to-images lookup from displayServices
-  const serviceImagesLookup = useMemo(() => {
-    const map = new Map<string, string[]>();
-    (displayServices || []).forEach((s: any) => {
-      if (s.title) {
-        const key = s.title.toLowerCase().replace(/\s+/g, ' ').trim();
-        map.set(key, (s.images || []).filter(Boolean));
-      }
-    });
-    return map;
-  }, [displayServices]);
-
-  const getServiceImages = useCallback((serviceName: string, fallbackImg?: string): string[] => {
-    const normalized = serviceName.toLowerCase().replace(/\s+/g, ' ').trim();
-    const exact = serviceImagesLookup.get(normalized);
-    if (exact && exact.length > 0) return exact;
-    const noTrailS = normalized.replace(/s$/, '');
-    for (const [key, imgs] of serviceImagesLookup) {
-      if (typeof key !== 'string' || typeof noTrailS !== 'string') continue;
-      if (key.replace(/s$/, '') === noTrailS && imgs.length > 0) return imgs;
-      if (key.includes(noTrailS) || noTrailS.includes(key)) {
-        if (imgs.length > 0) return imgs;
-      }
-    }
-    return fallbackImg ? [fallbackImg] : ["/images/led/1.webp"];
-  }, [serviceImagesLookup]);
-
-  const openServiceDetail = useCallback((item: { name: string; desc: string; img?: string }) => {
-    const images = getServiceImages(item.name, item.img);
+  const openServiceDetail = useCallback((item: ServiceCategoryItem) => {
+    const images = item.images?.filter(Boolean) || (item.img ? [item.img] : ["/images/led/1.webp"]);
     setSelectedService({ name: item.name, desc: item.desc, images });
     setSelectedServiceImageIndex(0);
-  }, [getServiceImages]);
+  }, []);
 
   // Keyboard navigation for service detail
   useEffect(() => {
@@ -1299,6 +1303,7 @@ export default function Home() {
   const currentCategory = serviceCategories.length > 0
     ? (serviceCategories.find((c: ServiceCategory) => c.id === activeServiceCategory) || serviceCategories[0])
     : null;
+  const currentServiceCount = currentCategory?.items?.length || 0;
 
   return (
     <div className="w-full">
@@ -1468,7 +1473,10 @@ export default function Home() {
             {serviceCategories.map((category: ServiceCategory) => (
               <button
                 key={category.id}
-                onClick={() => setActiveServiceCategory(category.id)}
+                onClick={() => {
+                  sessionStorage.setItem("arsenal-category", category.id);
+                  setActiveServiceCategory(category.id);
+                }}
                 className={`px-6 py-3 rounded-full text-sm font-bold uppercase tracking-wider transition-all duration-300 ${
                   activeServiceCategory === category.id
                     ? "bg-primary text-primary-foreground shadow-[0_0_20px_rgba(240,168,48,0.3)]"
@@ -1480,7 +1488,9 @@ export default function Home() {
 
           {/* Active Category Description */}
           <div className="text-center mb-10">
-            <p className="text-muted-foreground text-lg">{currentCategory?.description}</p>
+            <p className="text-muted-foreground text-lg">
+              {currentCategory?.description || `${currentServiceCount} service${currentServiceCount !== 1 ? 's' : ''} available in this category.`}
+            </p>
           </div>
 
           {/* Services Grid */}
@@ -1500,13 +1510,13 @@ export default function Home() {
               
               return (
               <motion.div
-                key={serviceName + '-' + index}
+                key={service.id || serviceName + '-' + index}
                 id={`svc-${serviceName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '')}`}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: prefersReducedMotion ? 0.01 : 0.5, delay: index * 0.05 }}
-                className="group relative bg-card rounded-2xl overflow-hidden border border-white/5 hover:border-primary/50 hover:shadow-[0_0_40px_rgba(240,168,48,0.15)] transition-all duration-500 cursor-pointer"
+                className="group relative bg-card rounded-xl overflow-hidden border border-white/10 hover:border-primary/50 hover:shadow-[0_0_32px_rgba(240,168,48,0.14)] transition-all duration-500 cursor-pointer flex flex-col"
                 onClick={() => {
                   openServiceDetail({ name: serviceName, desc: serviceDesc, img: serviceImg });
                 }}
@@ -1523,20 +1533,29 @@ export default function Home() {
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     loading="lazy"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
                 </div>
-                <div className="absolute bottom-0 left-0 right-0 p-5">
+                <div className="p-5 flex min-h-[190px] flex-col bg-card">
+                  <div className="mb-3 flex items-center justify-between gap-3">
+                    <span className="text-[11px] font-bold uppercase tracking-widest text-primary/90">
+                      {service.images?.length || 1} photo{(service.images?.length || 1) !== 1 ? 's' : ''}
+                    </span>
+                    {currentCategory?.title && (
+                      <span className="truncate text-[11px] uppercase tracking-wider text-muted-foreground">
+                        {currentCategory.title}
+                      </span>
+                    )}
+                  </div>
                   <h4 className="text-lg font-display font-bold mb-1 group-hover:text-primary transition-colors">
                     {serviceName}
                   </h4>
-                  <p className="text-muted-foreground text-sm">
+                  <p className="text-muted-foreground text-sm leading-relaxed line-clamp-3">
                     {serviceDesc}
                   </p>
                   <button
                     onClick={(e) => { e.stopPropagation(); openServiceDetail({ name: serviceName, desc: serviceDesc, img: serviceImg }); }}
-                    className="mt-2 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary hover:text-primary/80 transition-colors"
+                    className="mt-auto pt-4 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary hover:text-primary/80 transition-colors"
                   >
-                    See Work →
+                    View Gallery →
                   </button>
                 </div>
               </motion.div>
