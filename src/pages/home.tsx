@@ -452,25 +452,40 @@ function getDynamicServices(): any[] | null {
 // Build services categories from server config OR localStorage
 // This ensures categories added in admin show in both navbar AND Arsenal
 function getDynamicServiceCategories(): ServiceCategory[] | null {
-  try {
-    // First check localStorage (will have latest from admin save)
-    const stored = localStorage.getItem("primesign-config");
-    if (stored) {
-      const config = JSON.parse(stored);
-      if (config.services && config.services.length > 0) {
-        return buildServiceCategoriesFromServices(config.services);
-      }
+try {
+  // First check localStorage (will have latest from admin save)
+  const stored = localStorage.getItem("primesign-config");
+  if (stored) {
+    const config = JSON.parse(stored);
+    // Use serviceCategories array if available (includes categories with 0 services)
+    if (config.serviceCategories && config.serviceCategories.length > 0) {
+      return config.serviceCategories.map((cat: any) => ({
+        id: cat.id,
+        title: cat.label || cat.title || cat.id, // Support both label and title
+        description: cat.description || '',
+        items: (config.services || []).filter((s: any) => s.category === cat.id).map((s: any) => ({
+          name: s.name,
+          desc: s.description || s.desc || '',
+          img: s.heroImage || s.img || '/images/led/1.webp',
+          badge: s.badge || '',
+          images: s.images || []
+        }))
+      }));
     }
-    
-    // Also check server config via cached fetch if available
-    // Use a global cache that gets updated when config loads
-    if ((window as any)._serverServiceCategories) {
-      return (window as any)._serverServiceCategories;
+    // Fallback: build from services
+    if (config.services && config.services.length > 0) {
+      return buildServiceCategoriesFromServices(config.services);
     }
-  } catch (e) {
-    // Silent fail
   }
-  return null;
+    
+  // Also check server config via cached fetch if available
+  if ((window as any)._serverServiceCategories) {
+    return (window as any)._serverServiceCategories;
+  }
+} catch (e) {
+  // Silent fail
+}
+return null;
 }
 
 // Call this after config loads to cache server categories globally
