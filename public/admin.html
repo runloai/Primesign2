@@ -5878,14 +5878,23 @@
     // ASYNC INITIALIZATION - Loads config.json as PRIMARY source
     // ================================================
     (async function initAdmin() {
-      await loadConfig();
-      // Expose config getter for debugging
-      window.getConfig = () => config;
-      if (localStorage.getItem('primesign-auth') === 'true') {
-        showDashboard();
+      try {
+        await loadConfig();
+        // Expose config getter for debugging
+        window.getConfig = () => config;
+        console.log('Admin initialized with', config?.serviceCategories?.length || 0, 'categories,', config?.services?.length || 0, 'services');
+        
+        if (localStorage.getItem('primesign-auth') === 'true') {
+          showDashboard();
+        }
+      } catch (e) {
+        console.error('Admin init error:', e);
+        // Try to show dashboard anyway with default config
+        if (localStorage.getItem('primesign-auth') === 'true') {
+          showDashboard();
+        }
       }
-      console.log('Admin initialized with', config?.serviceCategories?.length || 0, 'categories');
-    })().catch(e => console.error('Admin init error:', e));
+    })();
   </script>
 </body>
 </html>
