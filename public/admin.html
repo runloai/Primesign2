@@ -3733,6 +3733,25 @@
       showToast('Image URL applied', 'success');
     }
 
+    // Upload file to server and return URL (instead of base64)
+    async function uploadFileToServer(file) {
+      const formData = new FormData();
+      formData.append('image', file);
+      
+      const resp = await fetch('http://localhost:9998/upload-image', {
+        method: 'POST',
+        body: formData
+      });
+      
+      if (!resp.ok) {
+        const err = await resp.json();
+        throw new Error(err.error || 'Upload failed');
+      }
+      
+      const data = await resp.json();
+      return data.url; // Returns "/images/uploads/20240628_123456_abc12345.webp"
+    }
+
     async function handleHeroUpload(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -3743,13 +3762,16 @@
       }
 
       try {
-        const dataUrl = await fileToDataUrl(file);
-        config.hero.bgImage = await convertToWebP(dataUrl, 0.9);
+        showToast('Uploading image...', 'info');
+        
+        // Upload to server instead of base64
+        const imageUrl = await uploadFileToServer(file);
+        config.hero.bgImage = imageUrl;
         renderHero();
         updateSaveIndicator(false);
         showToast('Hero image uploaded', 'success');
       } catch (err) {
-        showToast('Failed to process image', 'error');
+        showToast('Failed to upload image: ' + err.message, 'error');
         console.error(err);
       }
     }
@@ -4334,19 +4356,19 @@
       if (!file) return;
 
       try {
-        const dataUrl = await fileToDataUrl(file);
-        const webpUrl = await convertToWebP(dataUrl, 0.9);
+        showToast('Uploading image...', 'info');
+        const imageUrl = await uploadFileToServer(file);
 
         const service = config.services.find(s => s.id === serviceId);
         if (service) {
           if (!service.images) service.images = [];
-          service.images.push({ url: webpUrl, label: file.name.replace(/\.[^.]+$/, "") });
+          service.images.push({ url: imageUrl, label: file.name.replace(/\\.[^.]+$/, "") });
           renderServices();
           updateSaveIndicator(false);
           showToast('Image added to gallery', 'success');
         }
       } catch (err) {
-        showToast('Failed to process image', 'error');
+        showToast('Upload failed: ' + err.message, 'error');
       }
     }
 
@@ -4358,18 +4380,18 @@
       if (!file) return;
 
       try {
-        const dataUrl = await fileToDataUrl(file);
-        const webpUrl = await convertToWebP(dataUrl, 0.9);
+        showToast('Uploading image...', 'info');
+        const imageUrl = await uploadFileToServer(file);
 
         const service = config.services.find(s => s.id === serviceId);
         if (service) {
-          service.heroImage = webpUrl;
+          service.heroImage = imageUrl;
           renderServices();
           updateSaveIndicator(false);
           showToast('Hero image updated', 'success');
         }
       } catch (err) {
-        showToast('Failed to process hero image', 'error');
+        showToast('Upload failed: ' + err.message, 'error');
       }
     }
 
@@ -4401,19 +4423,21 @@
       if (!file) return;
 
       try {
-        const dataUrl = await fileToDataUrl(file);
-        const webpUrl = await convertToWebP(dataUrl, 0.9);
+        showToast('Uploading portfolio image...', 'info');
+        
+        // Upload to server instead of base64
+        const imageUrl = await uploadFileToServer(file);
 
         const service = config.services.find(s => s.id === serviceId);
         if (service) {
           if (!service.portfolioImages) service.portfolioImages = [];
-          service.portfolioImages.push({ url: webpUrl, label: file.name.replace(/\.[^.]+$/, "") });
+          service.portfolioImages.push({ url: imageUrl, label: file.name.replace(/\.[^.]+$/, "") });
           renderServices();
           updateSaveIndicator(false);
           showToast('Portfolio image added', 'success');
         }
       } catch (err) {
-        showToast('Failed to process portfolio image', 'error');
+        showToast('Failed to upload portfolio image: ' + err.message, 'error');
       }
     }
 
@@ -4892,18 +4916,18 @@
       if (!file) return;
 
       try {
-        const dataUrl = await fileToDataUrl(file);
-        const webpUrl = await convertToWebP(dataUrl, 0.9);
+        showToast('Uploading image...', 'info');
+        const imageUrl = await uploadFileToServer(file);
 
         const item = config.portfolio.find(p => p.id === id);
         if (item) {
-          item.url = webpUrl;
+          item.url = imageUrl;
           renderPortfolio();
           updateSaveIndicator(false);
           showToast('Image uploaded', 'success');
         }
       } catch (err) {
-        showToast('Failed to process image', 'error');
+        showToast('Upload failed: ' + err.message, 'error');
       }
     }
 
@@ -4929,14 +4953,14 @@
       if (!file) return;
 
       try {
-        const dataUrl = await fileToDataUrl(file);
-        const webpUrl = await convertToWebP(dataUrl, 0.9);
+        showToast('Uploading image...', 'info');
+        const imageUrl = await uploadFileToServer(file);
 
         const newId = Math.max(...config.portfolio.map(p => p.id), 0) + 1;
         config.portfolio.push({
           id: newId,
-          url: webpUrl,
-          label: file.name.replace(/\.[^.]+$/, ""),
+          url: imageUrl,
+          label: file.name.replace(/\\.[^.]+$/, ""),
           category: pendingPortfolioCategory,
           featured: false
         });
@@ -4946,7 +4970,7 @@
         closePortfolioAddModal();
         showToast('New portfolio item added', 'success');
       } catch (err) {
-        showToast('Failed to process image', 'error');
+        showToast('Upload failed: ' + err.message, 'error');
       }
     }
 
@@ -5230,16 +5254,16 @@
       if (!file) return;
 
       try {
-        const dataUrl = await fileToDataUrl(file);
-        const webpUrl = await convertToWebP(dataUrl, 0.9);
+        showToast('Uploading image...', 'info');
+        const imageUrl = await uploadFileToServer(file);
 
         if (!config.about.images) config.about.images = [];
-        config.about.images[idx] = { url: webpUrl, label: file.name.replace(/\.[^.]+$/, "") };
+        config.about.images[idx] = { url: imageUrl, label: file.name.replace(/\\.[^.]+$/, "") };
         renderAboutImages();
         updateSaveIndicator(false);
         showToast('About image updated', 'success');
       } catch (err) {
-        showToast('Failed to process image', 'error');
+        showToast('Upload failed: ' + err.message, 'error');
       }
     }
 
@@ -5347,16 +5371,16 @@
       if (!file) return;
 
       try {
-        const dataUrl = await fileToDataUrl(file);
-        const webpUrl = await convertToWebP(dataUrl, 0.9, 400);
+        showToast('Uploading image...', 'info');
+        const imageUrl = await uploadFileToServer(file);
 
         if (!config.advantage.images) config.advantage.images = [];
-        config.advantage.images[idx] = { ...config.advantage.images[idx], url: webpUrl };
+        config.advantage.images[idx] = { ...config.advantage.images[idx], url: imageUrl };
         renderAdvantageImages();
         updateSaveIndicator(false);
         showToast('Advantage image updated', 'success');
       } catch (err) {
-        showToast('Failed to process image', 'error');
+        showToast('Upload failed: ' + err.message, 'error');
       }
     }
 
@@ -5526,13 +5550,13 @@
         return;
       }
       try {
-        const dataUrl = await fileToDataUrl(file);
-        config.settings.logoUrl = await convertToWebP(dataUrl, 0.9, 400);
+        showToast('Uploading image...', 'info');
+        config.settings.logoUrl = await uploadFileToServer(file);
         renderLogoPreview();
         updateSaveIndicator(false);
         showToast('Logo uploaded', 'success');
       } catch (err) {
-        showToast('Failed to process logo', 'error');
+        showToast('Upload failed: ' + err.message, 'error');
       }
     }
 

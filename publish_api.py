@@ -3,13 +3,17 @@
 
 Writes to public/config.json AND dist/config.json on every publish.
 Includes health check, CORS, payload validation, and OOM protection.
+Also handles image uploads - saves to public/images/uploads/
 """
-import json, os, sys, signal
+import json, os, sys, signal, base64, uuid
+from datetime import datetime
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 PUBLIC_CONFIG = os.path.join(BASE, "public", "config.json")
 DIST_CONFIG = os.path.join(BASE, "dist", "config.json")
+UPLOAD_DIR = os.path.join(BASE, "public", "images", "uploads")
+os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 class PublishAPI(BaseHTTPRequestHandler):
     def _set_headers(self, status=200, content_type="application/json"):
@@ -89,6 +93,68 @@ class PublishAPI(BaseHTTPRequestHandler):
                 self._respond(500, {"error": f"write failed: {e}"})
             except Exception as e:
                 print(f"Publish error: {e}")
+                self._respond(500, {"error": str(e)})
+        elif self.path == "/upload-image":
+            # Handle image upload - save to file instead of base64
+            try:
+                content_type = self.headers.get("Content-Type", "")
+                if "multipart/form-data" not in content_type:
+                    self._respond(400, {"error": "expected multipart/form-data"})
+                    return
+                
+                raw_length = int(self.headers.get("Content-Length", 0))
+                if raw_length > 20 * 1024 * 1024:  # 20MB max
+                    self._respond(400, {"error": "file too large (max 20MB)"})
+                    return
+                
+                raw = self.rfile.read(raw_length)
+                
+                # Parse multipart form data
+                boundary = content_type.split("boundary=")[1].encode()
+                parts = raw.split(b"--" + boundary)
+                
+                file_data = None
+                filename = None
+                
+                for part in parts:
+                    if b"Content-Disposition" in part and b"filename=" in part:
+                        # Extract filename
+                        disposition = part.split(b"\r\n\r\n")[0].decode(errors='ignore')
+                        filename_start = disposition.find('filename="') + 10
+                        filename_end = disposition.find('"', filename_start)
+                        filename = disposition[filename_start:filename_end]
+                        
+                        # Extract file data
+                        file_data = part.split(b"\r\n\r\n", 1)[1].rsplit(b"\r\n--", 1)[0]
+                        break
+                
+                if not file_data or not filename:
+                    self._respond(400, {"error": "no file found in upload"})
+                    return
+                
+                # Generate unique filename
+                ext = os.path.splitext(filename)[1].lower() or ".webp"
+                if ext not in [".jpg", ".jpeg", ".png", ".webp", ".gif"]:
+                    ext = ".webp"
+                
+                unique_name = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:8]}{ext}"
+                filepath = os.path.join(UPLOAD_DIR, unique_name)
+                
+                # Write file
+                with open(filepath, "wb") as f:
+                    f.write(file_data)
+                
+                # Also copy to dist
+                dist_filepath = os.path.join(BASE, "dist", "images", "uploads", unique_name)
+                os.makedirs(os.path.dirname(dist_filepath), exist_ok=True)
+                with open(dist_filepath, "wb") as f:
+                    f.write(file_data)
+                
+                url = f"/images/uploads/{unique_name}"
+                print(f"Uploaded image: {url}")
+                self._respond(200, {"ok": True, "url": url, "filename": unique_name})
+            except Exception as e:
+                print(f"Upload error: {e}")
                 self._respond(500, {"error": str(e)})
         else:
             self._respond(404, {"error": "not found"})
