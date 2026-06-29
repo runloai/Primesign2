@@ -1331,13 +1331,6 @@
       "icon": "\ud83d\udce6",
       "description": "",
       "items": []
-    },
-    {
-      "id": "my NEW-category",
-      "label": "MY NEW CATEGORY",
-      "icon": "\ud83d\udcc1",
-      "description": "",
-      "items": []
     }
   ],
   "settings": {
@@ -1406,6 +1399,6 @@
     ]
   },
   "navbar": {},
-  "_publishedAt": "2026-06-29T06:03:04.677Z",
+  "_publishedAt": "2026-06-29T17:06:27.232Z",
   "_version": "2.1"
 }
