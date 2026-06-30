@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { Link } from "wouter";
 import { SiWhatsapp } from "react-icons/si";
-import { ArrowRight, CheckCircle2, ChevronLeft, ChevronRight, X, PhoneCall, Star, MapPin, Mail, Clock, Upload, Send } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight, X, PhoneCall, Star, MapPin, Mail, Clock, Upload, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -11,6 +11,11 @@ import { useQuoteModal } from "@/context/QuoteModalContext";
 import { PortfolioImage } from "@/components/ui/image-with-skeleton";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { ImageLightbox } from "@/components/ImageLightbox";
+import { useSiteConfig } from "@/hooks/use-site-config";
+import {
+  getServicesByCategory,
+  imageUrl
+} from "@/lib/site-config";
 
 // Types for admin config
 interface Testimonial {
@@ -32,8 +37,12 @@ interface ServiceConfig {
   id?: number;
   name: string;
   desc?: string;
+  description?: string;
   badge?: string;
+  heroImage?: ServiceImage | string;
+  galleryImages?: ServiceImage[] | string[];
   images?: ServiceImage[] | string[];
+  categoryId?: string;
   category?: string;
 }
 
@@ -46,118 +55,31 @@ interface PortfolioConfig {
 }
 
 interface ServiceCategoryItem {
+  id?: string;
   name: string;
   desc: string;
   img: string;
+  images?: string[];
   badge?: string;
+  categoryId?: string;
 }
 
 interface ServiceCategory {
   id: string;
+  label?: string;
   title: string;
-  description: string;
-  icon: string;
+  description?: string;
+  icon?: string;
   items: ServiceCategoryItem[];
 }
 
 
-
-// Shared config cache
-let sharedConfig: { portfolio?: PortfolioConfig[]; hero?: any; services?: ServiceConfig[]; testimonials?: Testimonial[]; contact?: any; settings?: any; aboutImages?: any[]; advantageImages?: any[]; colorScheme?: any; serviceCategories?: any[]; about?: any; footer?: any; navbar?: any } | null = null;
-let sharedConfigFetched = false;
 
 // Cache-busting helper: append timestamp to any URL
 const cacheBustUrl = (url: string | null | undefined): string => {
   if (!url || typeof url !== 'string') return '/images/led/1.webp';
   return url + (url.includes('?') ? '&' : '?') + 't=' + Date.now();
 };
-
-// Helper function to read admin config from localStorage (preview mode)
-function getAdminConfig(): { portfolio?: PortfolioConfig[]; hero?: any; services?: ServiceConfig[]; testimonials?: Testimonial[]; contact?: any; settings?: any; aboutImages?: any[]; advantageImages?: any[]; colorScheme?: any; serviceCategories?: any[]; about?: any; footer?: any; navbar?: any } | null {
-  try {
-    // Admin/localStorage config takes priority for preview mode
-    const stored = localStorage.getItem("primesign-config");
-    if (stored) {
-      const config = JSON.parse(stored);
-      return {
-        portfolio: config.portfolio,
-        hero: config.hero,
-        services: config.services,
-        testimonials: config.testimonials,
-        contact: config.contact,
-        settings: config.settings,
-        aboutImages: config.aboutImages || config.about?.images,
-        advantageImages: config.advantageImages || config.advantage?.images,
-        colorScheme: config.colorScheme,
-        serviceCategories: config.serviceCategories,
-        about: config.about,
-        footer: config.footer,
-        navbar: config.navbar,
-      };
-    }
-  } catch (e) {
-    // Silent fail - config not available
-  }
-  return null;
-}
-
-// Helper to fetch shared config from config.json (public shared config)
-async function fetchSharedConfig(): Promise<{ portfolio?: PortfolioConfig[]; hero?: any; services?: ServiceConfig[]; testimonials?: Testimonial[]; contact?: any; settings?: any; aboutImages?: any[]; advantageImages?: any[]; colorScheme?: any; serviceCategories?: any[]; about?: any; footer?: any; navbar?: any } | null> {
-  if (sharedConfigFetched) return sharedConfig;
-  
-  try {
-    const response = await fetch('/config.json?t=' + Date.now(), { 
-      method: 'GET',
-      headers: { 'Accept': 'application/json' }
-    });
-    
-    if (response.ok) {
-      const config = await response.json();
-      sharedConfig = {
-        portfolio: config.portfolio,
-        hero: config.hero,
-        services: config.services,
-        testimonials: config.testimonials,
-        contact: config.contact,
-        settings: config.settings,
-        aboutImages: config.aboutImages || config.about?.images,
-        advantageImages: config.advantageImages || config.advantage?.images,
-        colorScheme: config.colorScheme,
-        serviceCategories: config.serviceCategories,
-        about: config.about,
-        footer: config.footer,
-        navbar: config.navbar,
-      };
-    }
-  } catch (e) {
-    // Silent fail - shared config not available
-  }
-  
-  sharedConfigFetched = true;
-  return sharedConfig;
-}
-
-// Get effective config (localStorage overrides shared config for admin preview)
-async function getEffectiveConfig(): Promise<{ portfolio?: PortfolioConfig[]; hero?: any; services?: ServiceConfig[]; testimonials?: Testimonial[]; contact?: any; settings?: any; aboutImages?: any[]; advantageImages?: any[]; colorScheme?: any; serviceCategories?: any[]; about?: any; footer?: any; navbar?: any } | null> {
-  // First fetch the shared config from config.json
-  const shared = await fetchSharedConfig();
-  // Then check for admin/localStorage override (preview mode)
-  const admin = getAdminConfig();
-  // Admin/localStorage override takes priority for preview
-  return admin || shared;
-}
-
-// Synchronous version for backward compatibility (fallback only)
-function getEffectiveConfigSync(): { portfolio?: PortfolioConfig[]; hero?: any; services?: ServiceConfig[]; testimonials?: Testimonial[]; contact?: any; settings?: any; aboutImages?: any[]; advantageImages?: any[]; colorScheme?: any; serviceCategories?: any[]; about?: any; footer?: any; navbar?: any } | null {
-  // First try localStorage/admin config (preview)
-  const admin = getAdminConfig();
-  if (admin) return admin;
-  // Fall back to cached shared config
-  return sharedConfig;
-}
-
-// Fetch config on module load (silent - doesn't block rendering)
-fetchSharedConfig().catch(() => {});
 
 const HERO_SLIDES = [
   "/images/portfolio/01.webp",
@@ -168,8 +90,7 @@ const HERO_SLIDES = [
 ];
 
 // ============ SERVICES CATEGORIES ============
-// Built dynamically from config.json services array - see buildServiceCategoriesFromServices()
-// Will be populated at runtime from config.json or localStorage preview
+// Built dynamically from the shared site config, with static demo content as a last resort.
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 40 },
@@ -315,15 +236,6 @@ const services = [
   },
 ];
 
-const reasons = [
-  "Premium Quality Materials",
-  "Rapid Turnaround Times",
-  "Expert Installation Team",
-  "End-to-End Service",
-  "Competitive Pricing",
-  "Bangalore-Based Manufacturing",
-];
-
 const testimonials = [
   {
     id: 1,
@@ -354,23 +266,8 @@ const testimonials = [
   },
 ];
 
-// Helper to get dynamic testimonials from config/localStorage (preview mode only)
+// Testimonials are read from shared site config inside the Home component.
 function getDynamicTestimonials(): Testimonial[] | null {
-  try {
-    const stored = localStorage.getItem("primesign-config");
-    if (stored) {
-      const config = JSON.parse(stored);
-      if (config.testimonials && config.testimonials.length > 0) {
-        return config.testimonials.map((t: Testimonial) => ({
-          ...t,
-          avatar: t.avatar || "",
-          name: t.name || t.author || "Client",
-        }));
-      }
-    }
-  } catch (e) {
-    // Silent fail
-  }
   return null;
 }
 
@@ -416,83 +313,6 @@ function getCategoryFromServiceName(serviceName: string): string {
   return firstWord || "led";
 }
 
-// Helper to get dynamic services from admin config (preview mode only)
-function getDynamicServices(): any[] | null {
-  try {
-    // Check localStorage first (has latest from admin)
-    const stored = localStorage.getItem("primesign-config");
-    if (stored) {
-      const config = JSON.parse(stored);
-      if (config.services && config.services.length > 0) {
-        return config.services
-          .filter((s: ServiceConfig) => s.name)
-          .map((s: ServiceConfig) => {
-            const serviceImages = s.images && s.images.length > 0
-              ? s.images.map((img: ServiceImage | string) => cacheBustUrl(extractImageUrl(img))).filter(Boolean)
-              : [getServiceImage(s.name)];
-            
-            const heroImg = (s as any).heroImage;
-            return {
-              title: s.name,
-              desc: s.desc || "",
-              images: serviceImages,
-              thumbnail: heroImg ? cacheBustUrl(heroImg) : (serviceImages[0] || getServiceImage(s.name)),
-              tag: s.badge === "popular" ? "Most Popular" : s.badge === "new" ? "New" : null,
-              category: s.category || getCategoryFromServiceName(s.name),
-            };
-          });
-      }
-    }
-  } catch (e) {
-    // Silent fail
-  }
-  return null;
-}
-
-// Build services categories from server config OR localStorage
-// This ensures categories added in admin show in both navbar AND Arsenal
-function getDynamicServiceCategories(): ServiceCategory[] | null {
-try {
-  // First check localStorage (will have latest from admin save)
-  const stored = localStorage.getItem("primesign-config");
-  if (stored) {
-    const config = JSON.parse(stored);
-    // Use serviceCategories array if available (includes categories with 0 services)
-    if (config.serviceCategories && config.serviceCategories.length > 0) {
-      return config.serviceCategories.map((cat: any) => ({
-        id: cat.id,
-        title: cat.label || cat.title || cat.id, // Support both label and title
-        description: cat.description || '',
-        items: (config.services || []).filter((s: any) => s.category === cat.id).map((s: any) => ({
-          name: s.name,
-          desc: s.description || s.desc || '',
-          img: s.heroImage || s.img || '/images/led/1.webp',
-          badge: s.badge || '',
-          images: s.images || []
-        }))
-      }));
-    }
-    // Fallback: build from services
-    if (config.services && config.services.length > 0) {
-      return buildServiceCategoriesFromServices(config.services);
-    }
-  }
-    
-  // Also check server config via cached fetch if available
-  if ((window as any)._serverServiceCategories) {
-    return (window as any)._serverServiceCategories;
-  }
-} catch (e) {
-  // Silent fail
-}
-return null;
-}
-
-// Call this after config loads to cache server categories globally
-function cacheServerCategories(services: ServiceConfig[]) {
-  (window as any)._serverServiceCategories = buildServiceCategoriesFromServices(services);
-}
-
 // Category display names and descriptions
 const CATEGORY_DETAILS: Record<string, { title: string; description: string }> = {
   "sign-boards": { title: "SIGN BOARDS", description: "Premium signage solutions including LED, glow, acrylic, wall branding, vehicle wraps, hoardings & more" },
@@ -500,21 +320,27 @@ const CATEGORY_DETAILS: Record<string, { title: string; description: string }> =
   "digital": { title: "DIGITAL PRINTS", description: "High-quality digital printing services" },
 };
 
-// Build SERVICES_CATEGORIES dynamically from a services array (config.json or localStorage)
+// Build service categories from a fallback services array when no shared config is available.
 function buildServiceCategoriesFromServices(services: ServiceConfig[]): ServiceCategory[] {
   const grouped = new Map<string, { id: string; title: string; description: string; icon: string; items: any[] }>();
   services.forEach(s => {
-    const cat = s.category || "General";
+    const cat = s.categoryId || s.category || "General";
     if (!grouped.has(cat)) {
       const details = CATEGORY_DETAILS[cat] || { title: cat.toUpperCase(), description: "Professional " + cat + " services" };
       grouped.set(cat, { id: cat, title: details.title, description: details.description, icon: "sign", items: [] });
     }
-    const heroImg = (s as any).heroImage;
+    const heroImg = extractImageUrl(s.heroImage as any);
+    const galleryImages = (s.galleryImages?.length ? s.galleryImages : s.images || [])
+      .map((img: ServiceImage | string) => cacheBustUrl(extractImageUrl(img)))
+      .filter(Boolean);
+    const thumbnail = cacheBustUrl(heroImg || galleryImages[0] || getServiceImage(s.name));
     grouped.get(cat)!.items.push({
       name: s.name,
-      desc: s.desc || "",
-      img: cacheBustUrl(heroImg || extractImageUrl(s.images?.[0] as any) || getServiceImage(s.name)),
+      desc: s.description || s.desc || "",
+      img: thumbnail,
+      images: [thumbnail, ...galleryImages].filter((src, idx, arr) => src && arr.indexOf(src) === idx),
       badge: s.badge === "popular" ? "Most Popular" : s.badge === "new" ? "New" : s.badge || undefined,
+      categoryId: cat,
     });
   });
   const order = ["sign-boards", "promotional", "digital"];
@@ -999,6 +825,7 @@ function ContactSection({ prefersReducedMotion, adminConfig }: { prefersReducedM
 // Main Home Component
 export default function Home() {
   const { open: openQuote } = useQuoteModal();
+  const { data: siteConfigData } = useSiteConfig();
   const [heroIndex, setHeroIndex] = useState(0);
   const [portfolioFilter] = useState<string | null>(null);
   const [activeServiceCategory, setActiveServiceCategory] = useState<string>(() => {
@@ -1006,31 +833,24 @@ export default function Home() {
     if (stored) { sessionStorage.removeItem("arsenal-category"); return stored; }
     return "sign-boards";
   });
-  const [adminConfig, setAdminConfig] = useState<{ portfolio?: PortfolioConfig[]; hero?: any; testimonials?: Testimonial[]; services?: ServiceConfig[]; contact?: any; settings?: any; aboutImages?: any[]; advantageImages?: any[]; colorScheme?: any; serviceCategories?: any[]; about?: any; footer?: any; navbar?: any } | null>(null);
+  // Single source of truth: use normalized config
+  const siteConfig = siteConfigData ?? null;
+  const adminConfig = siteConfig as ({ portfolio?: PortfolioConfig[]; hero?: any; testimonials?: Testimonial[]; services?: ServiceConfig[]; contact?: any; settings?: any; aboutImages?: any[]; advantageImages?: any[]; advantage?: any; colorScheme?: any; serviceCategories?: any[]; about?: any; footer?: any; navbar?: any } | null);
   const [testimonialIndex, setTestimonialIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const prefersReducedMotion = useReducedMotion();
 
-  // Load config from localStorage (preview) or config.json (shared) on mount
-  useEffect(() => {
-    const loadConfig = async () => {
-      const config = await getEffectiveConfig();
-      if (config) {
-        setAdminConfig(config);
-      }
-    };
-    loadConfig();
-  }, []);
-
   // Listen for navbar dropdown category changes + specific service scroll
   useEffect(() => {
     const handler = (e: CustomEvent) => {
       setActiveServiceCategory(e.detail);
+      sessionStorage.setItem("arsenal-category", e.detail);
       document.getElementById("services")?.scrollIntoView({ behavior: "smooth" });
     };
     const svcHandler = (e: CustomEvent) => {
       setActiveServiceCategory(e.detail.category);
+      sessionStorage.setItem("arsenal-category", e.detail.category);
       setTimeout(() => {
         document.getElementById(`svc-${e.detail.serviceId}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
       }, 100);
@@ -1043,41 +863,76 @@ export default function Home() {
     };
   }, []);
 
-  // Get services from config or fallback to hardcoded
-  const dynamicServices = getDynamicServices();
-  const rawDisplayServices = dynamicServices || adminConfig?.services || services;
-  
+  const serviceCategories = useMemo<ServiceCategory[]>(() => {
+    if (siteConfig?.serviceCategories?.length) {
+      return getServicesByCategory(siteConfig)
+        .map(({ category, services }) => ({
+          id: category.id,
+          label: category.label,
+          title: category.label,
+          description: category.description,
+          icon: category.icon,
+          items: services.map((service) => {
+            const galleryImages = service.galleryImages.map((img) => imageUrl(img)).filter(Boolean);
+            const hero = imageUrl(service.heroImage, galleryImages[0] || "/images/led/1.webp");
+            const detailImages = [hero, ...galleryImages].filter((src, idx, arr) => src && arr.indexOf(src) === idx);
+
+            return {
+              id: service.id,
+              name: service.name,
+              desc: service.description,
+              img: hero,
+              images: detailImages.length > 0 ? detailImages : [hero],
+              badge: service.badge === "popular"
+                ? "Most Popular"
+                : service.badge === "new"
+                  ? "New"
+                  : service.badge || undefined,
+              categoryId: service.categoryId,
+            };
+          }),
+        }));
+    }
+
+    return buildServiceCategoriesFromServices(services.map((service, index) => ({
+      id: index + 1,
+      name: service.title,
+      desc: service.desc,
+      badge: service.tag === "Most Popular" ? "popular" : "",
+      galleryImages: service.images,
+      categoryId: service.category,
+    })));
+  }, [siteConfig]);
+
   const displayServices = useMemo(() => {
-    return rawDisplayServices.map((s: any) => ({
-      ...s,
-      images: (s.images || (s.img ? [s.img] : ["/images/led/1.webp"])).filter(Boolean).map((img: string) => cacheBustUrl(img)),
-      thumbnail: cacheBustUrl(s.heroImage || s.thumbnail || s.img || (s.images?.[0]) || "/images/led/1.webp"),
-    }));
-  }, [rawDisplayServices]);
+    return serviceCategories.flatMap((category) => category.items.map((service) => ({
+      ...service,
+      title: service.name,
+      category: service.categoryId || category.id,
+    })));
+  }, [serviceCategories]);
 
-  // Get service categories from config or fallback
-  const dynamicServiceCategories = getDynamicServiceCategories();
-  const serviceCategories = useMemo(() => {
-    // Use dynamic categories if available (includes ALL categories, even with 0 items)
-    if (Array.isArray(dynamicServiceCategories) && dynamicServiceCategories.length > 0) {
-      return dynamicServiceCategories;
+  useEffect(() => {
+    if (serviceCategories.length > 0 && !serviceCategories.some((category) => category.id === activeServiceCategory)) {
+      setActiveServiceCategory(serviceCategories[0].id);
     }
-    // Fallback to building from adminConfig services
-    if (adminConfig?.services && adminConfig.services.length > 0) {
-      return buildServiceCategoriesFromServices(adminConfig.services);
-    }
-    return [];
-  }, [dynamicServiceCategories, adminConfig]) || [];
+  }, [serviceCategories, activeServiceCategory]);
 
-  // Get hero data from config or fallback
-  const heroBgImage = adminConfig?.hero?.bgImage || "/images/portfolio/01.webp";
-  const heroBadgeText = adminConfig?.hero?.badge || "Bangalore's Premier Signage Studio";
-  const heroHeadline = adminConfig?.hero?.headline || "WE BUILD <br>UNFORGETTABLE<br>VISIBILITY.";
-  const heroSubtitle = adminConfig?.hero?.subtitle || "From bold LED boards to precision 3D channel letters. We engineer high-impact signage that lights up Bangalore and makes your brand impossible to ignore.";
+  const heroBgImage = imageUrl(siteConfig?.hero?.backgroundImage, adminConfig?.hero?.bgImage || "/images/portfolio/01.webp");
+  const heroBadgeText = siteConfig?.hero?.badge || adminConfig?.hero?.badge || "Bangalore's Premier Signage Studio";
+  const heroHeadline = siteConfig?.hero?.headline || adminConfig?.hero?.headline || "WE BUILD <br>UNFORGETTABLE<br>VISIBILITY.";
+  const heroSubtitle = siteConfig?.hero?.subtitle || adminConfig?.hero?.subtitle || "From bold LED boards to precision 3D channel letters. We engineer high-impact signage that lights up Bangalore and makes your brand impossible to ignore.";
 
   // Get testimonials from config or fallback
   const dynamicTestimonials = getDynamicTestimonials();
-  const displayTestimonials = dynamicTestimonials || adminConfig?.testimonials || testimonials;
+  const siteTestimonials = Array.isArray((siteConfig as any)?.testimonials)
+    ? (siteConfig as any).testimonials.map((t: Testimonial) => ({
+        ...t,
+        avatar: t.avatar || "",
+        name: t.name || t.author || "Client",
+      }))
+    : null;
+  const displayTestimonials = siteTestimonials || dynamicTestimonials || adminConfig?.testimonials || testimonials;
 
   // Auto-rotate testimonials
   useEffect(() => {
@@ -1087,55 +942,47 @@ export default function Home() {
     return () => clearInterval(timer);
   }, [displayTestimonials.length]);
 
-  // Get portfolio items — curated portfolio items from config.json take priority
-  const getPortfolioItems = () => {
+  const allPortfolioItems = useMemo(() => {
     const allPortfolioItems: { img: string; label: string; cat: string; featured: boolean }[] = [];
-    
-    // First: use curated portfolio items from config.json (managed in admin "Portfolio" tab)
-    if (adminConfig?.portfolio && adminConfig.portfolio.length > 0) {
-      const validPortfolioItems = adminConfig.portfolio.filter((item: PortfolioConfig) => item.url);
-      validPortfolioItems.forEach((item: PortfolioConfig) => {
+
+    if (siteConfig?.portfolio?.length) {
+      siteConfig.portfolio.forEach((item: any) => {
+        const img = imageUrl(item.image || item.url);
+        if (!img) return;
         allPortfolioItems.push({
-          img: item.url,
+          img,
           label: item.label || "Installation",
-          cat: item.category || "led",
+          cat: item.categoryId || item.category || "portfolio",
           featured: item.featured || false,
         });
       });
     }
-    
-    // Second: add portfolioImages from each service
-    if (adminConfig?.services && adminConfig.services.length > 0) {
-      adminConfig.services.forEach((service: any, serviceIdx: number) => {
-        const portfolioImages = service.portfolioImages || [];
-        const category = service.category || getCategoryFromServiceName(service.name || service.title);
-        
-        portfolioImages.forEach((img: any, imgIdx: number) => {
-          const imgUrl = extractImageUrl(img);
-          if (imgUrl) {
+
+    if (siteConfig?.services?.length) {
+      siteConfig.services.forEach((service: any, serviceIdx: number) => {
+        service.portfolioImages.forEach((img: any, imgIdx: number) => {
+          const imgUrl = imageUrl(img);
+          if (!imgUrl) return;
             allPortfolioItems.push({
               img: imgUrl,
               label: img.label || `${service.name || service.title} - Portfolio`,
-              cat: category,
+              cat: service.categoryId || service.category || "portfolio",
               featured: serviceIdx === 0 && imgIdx === 0 && allPortfolioItems.length === 0,
             });
-          }
         });
       });
     }
-    
-    // If we have collected portfolio items, return them
+
     if (allPortfolioItems.length > 0) {
       return allPortfolioItems;
     }
-    
-    // Third: fallback to service images
+
     if (displayServices && displayServices.length > 0) {
       const serviceGalleryItems: { img: string; label: string; cat: string; featured: boolean }[] = [];
       
       displayServices.forEach((service: any, serviceIdx: number) => {
         const serviceImages = service.images || [];
-        const category = service.category || getCategoryFromServiceName(service.title);
+        const category = service.categoryId || service.category || getCategoryFromServiceName(service.title);
         
         serviceImages.forEach((img: any, imgIdx: number) => {
           const imgUrl = extractImageUrl(img);
@@ -1154,8 +1001,7 @@ export default function Home() {
         return serviceGalleryItems;
       }
     }
-    
-    // Final fallback to hardcoded images
+
     return [
       { img: "/images/portfolio/01.webp", label: "Storefront LED Branding", cat: "led", featured: true },
       { img: "/images/glow/4.webp", label: "Glow Sign", cat: "glow", featured: false },
@@ -1167,9 +1013,7 @@ export default function Home() {
       { img: "/images/glow/5.webp", label: "Neon Glow", cat: "glow", featured: false },
       { img: "/images/portfolio/04.webp", label: "Corporate Lobby", cat: "acrylic", featured: false },
     ];
-  };
-
-  const allPortfolioItems = getPortfolioItems();
+  }, [siteConfig, displayServices]);
   
   const featuredItem = useMemo(() => {
     return allPortfolioItems.find(item => item.featured) || null;
@@ -1179,26 +1023,34 @@ export default function Home() {
     return allPortfolioItems.filter(item => !item.featured);
   }, [allPortfolioItems]);
 
-  const aboutImages = (adminConfig?.aboutImages || ["/images/glow/3.webp", "/images/wall/3.webp", "/images/led/2.webp", "/images/square/brass.webp"]).slice(0, 4).map((img: any) => (typeof img === 'string' ? img : img?.url || "")).filter(Boolean);
+  const aboutImages = (siteConfig?.about?.images?.length
+    ? siteConfig.about.images.map((img) => imageUrl(img))
+    : (adminConfig?.aboutImages || ["/images/glow/3.webp", "/images/wall/3.webp", "/images/led/2.webp", "/images/square/brass.webp"]).map((img: any) => (typeof img === 'string' ? img : img?.url || ""))
+  ).slice(0, 4).filter(Boolean);
 
-  const displayReasons = adminConfig?.advantageImages && adminConfig.advantageImages.length >= 6
-    ? adminConfig.advantageImages.slice(0, 6)
-    : reasons.map((label, i) => ({ label, url: "" }));
-
-  const advantageImages = displayReasons.map((r: any) => (typeof r === 'string' ? r : r?.url || "")).filter(Boolean);
-  
-  // Use gridImages from config if available
-  const advantageGridImages = adminConfig?.advantage?.gridImages && adminConfig.advantage.gridImages.length >= 4
-    ? adminConfig.advantage.gridImages.slice(0, 4)
-    : ["/images/glow/6.webp", "/images/wall/5.webp", "/images/led/3.webp", "/images/square/resto-square.webp"];
+  const advantageGridImages = (siteConfig?.advantage?.gridImages?.length
+    ? siteConfig.advantage.gridImages
+    : adminConfig?.advantage?.gridImages?.length
+      ? adminConfig.advantage.gridImages
+      : [
+          { url: "/images/led/2.webp", label: "LED signage detail" },
+          { url: "/images/glow/1.webp", label: "Glow sign detail" },
+          { url: "/images/wall/3.webp", label: "Wall branding detail" },
+          { url: "/images/square/brass.webp", label: "Brass sign detail" },
+        ]
+  ).slice(0, 4).map((img: any, i: number) => ({
+    src: imageUrl(img, ["/images/led/2.webp", "/images/glow/1.webp", "/images/wall/3.webp", "/images/square/brass.webp"][i]),
+    label: img?.label || `Primesign advantage photo ${i + 1}`,
+  }));
 
   const portfolioCategories = useMemo(() => {
     const categories: string[] = [];
     const seen = new Set<string>();
     displayServices.forEach((service: any) => {
-      if (service.category && !seen.has(service.category.toLowerCase())) {
-        seen.add(service.category.toLowerCase());
-        categories.push(service.category.toLowerCase());
+      const category = service.categoryId || service.category;
+      if (category && !seen.has(category.toLowerCase())) {
+        seen.add(category.toLowerCase());
+        categories.push(category.toLowerCase());
       }
     });
     return categories;
@@ -1239,38 +1091,11 @@ export default function Home() {
   const [selectedService, setSelectedService] = useState<{ name: string; desc: string; images: string[] } | null>(null);
   const [selectedServiceImageIndex, setSelectedServiceImageIndex] = useState(0);
 
-  // Build a name-to-images lookup from displayServices
-  const serviceImagesLookup = useMemo(() => {
-    const map = new Map<string, string[]>();
-    (displayServices || []).forEach((s: any) => {
-      if (s.title) {
-        const key = s.title.toLowerCase().replace(/\s+/g, ' ').trim();
-        map.set(key, (s.images || []).filter(Boolean));
-      }
-    });
-    return map;
-  }, [displayServices]);
-
-  const getServiceImages = useCallback((serviceName: string, fallbackImg?: string): string[] => {
-    const normalized = serviceName.toLowerCase().replace(/\s+/g, ' ').trim();
-    const exact = serviceImagesLookup.get(normalized);
-    if (exact && exact.length > 0) return exact;
-    const noTrailS = normalized.replace(/s$/, '');
-    for (const [key, imgs] of serviceImagesLookup) {
-      if (typeof key !== 'string' || typeof noTrailS !== 'string') continue;
-      if (key.replace(/s$/, '') === noTrailS && imgs.length > 0) return imgs;
-      if (key.includes(noTrailS) || noTrailS.includes(key)) {
-        if (imgs.length > 0) return imgs;
-      }
-    }
-    return fallbackImg ? [fallbackImg] : ["/images/led/1.webp"];
-  }, [serviceImagesLookup]);
-
-  const openServiceDetail = useCallback((item: { name: string; desc: string; img?: string }) => {
-    const images = getServiceImages(item.name, item.img);
+  const openServiceDetail = useCallback((item: ServiceCategoryItem) => {
+    const images = item.images?.filter(Boolean) || (item.img ? [item.img] : ["/images/led/1.webp"]);
     setSelectedService({ name: item.name, desc: item.desc, images });
     setSelectedServiceImageIndex(0);
-  }, [getServiceImages]);
+  }, []);
 
   // Keyboard navigation for service detail
   useEffect(() => {
@@ -1296,6 +1121,7 @@ export default function Home() {
   const currentCategory = serviceCategories.length > 0
     ? (serviceCategories.find((c: ServiceCategory) => c.id === activeServiceCategory) || serviceCategories[0])
     : null;
+  const currentServiceCount = currentCategory?.items?.length || 0;
 
   return (
     <div className="w-full">
@@ -1465,21 +1291,24 @@ export default function Home() {
             {serviceCategories.map((category: ServiceCategory) => (
               <button
                 key={category.id}
-                onClick={() => setActiveServiceCategory(category.id)}
+                onClick={() => {
+                  sessionStorage.setItem("arsenal-category", category.id);
+                  setActiveServiceCategory(category.id);
+                }}
                 className={`px-6 py-3 rounded-full text-sm font-bold uppercase tracking-wider transition-all duration-300 ${
                   activeServiceCategory === category.id
                     ? "bg-primary text-primary-foreground shadow-[0_0_20px_rgba(240,168,48,0.3)]"
                     : "bg-white/5 text-white/70 hover:bg-white/10 hover:text-white"
                 }`}
-              >
-                {category.title}
-              </button>
+              >{category.label}</button>
             ))}
           </div>
 
           {/* Active Category Description */}
           <div className="text-center mb-10">
-            <p className="text-muted-foreground text-lg">{currentCategory?.description}</p>
+            <p className="text-muted-foreground text-lg">
+              {currentCategory?.description || `${currentServiceCount} service${currentServiceCount !== 1 ? 's' : ''} available in this category.`}
+            </p>
           </div>
 
           {/* Services Grid */}
@@ -1490,49 +1319,74 @@ export default function Home() {
             transition={{ duration: prefersReducedMotion ? 0.01 : 0.4 }}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
           >
-            {(currentCategory?.items || []).map((service: ServiceCategoryItem, index: number) => (
+            {(currentCategory?.items || []).map((service: any, index: number) => {
+              // Handle both old ServiceCategoryItem format and new Service format
+              const serviceName = service.name || 'Service';
+              const serviceDesc = service.description || service.desc || '';
+              const serviceImages = service.images?.filter(Boolean) || [];
+              const serviceImg = service.img || serviceImages[0] || (service.heroImage?.url) || (service.galleryImages?.[0]?.url) || '/images/led/1.webp';
+              const detailImages = [serviceImg, ...serviceImages].filter((src, idx, arr) => src && arr.indexOf(src) === idx);
+              const serviceBadge = service.badge === 'popular' ? 'MOST POPULAR' : service.badge === 'new' ? 'NEW' : service.badge;
+
+              return (
               <motion.div
-                key={service.name}
-                id={`svc-${service.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '')}`}
+                key={service.id || serviceName + '-' + index}
+                id={`svc-${serviceName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '')}`}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: prefersReducedMotion ? 0.01 : 0.5, delay: index * 0.05 }}
-                className="group relative bg-card rounded-2xl overflow-hidden border border-white/5 hover:border-primary/50 hover:shadow-[0_0_40px_rgba(240,168,48,0.15)] transition-all duration-500 cursor-pointer"
+                className="group relative bg-card rounded-xl overflow-hidden border border-white/10 hover:border-primary/50 hover:shadow-[0_0_32px_rgba(240,168,48,0.14)] transition-all duration-500 cursor-pointer flex flex-col"
                 onClick={() => {
-                  openServiceDetail(service);
+                  openServiceDetail({ name: serviceName, desc: serviceDesc, img: serviceImg, images: detailImages });
                 }}
               >
-                {service.badge && (
+                {serviceBadge && (
                   <div className="absolute top-3 right-3 z-20 bg-primary text-primary-foreground text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full">
-                    {service.badge}
+                    {serviceBadge}
                   </div>
                 )}
                 <div className="aspect-[4/3] overflow-hidden">
                   <img
-                    src={service.img}
-                    alt={service.name}
+                    src={serviceImg}
+                    alt={serviceName}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     loading="lazy"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
                 </div>
-                <div className="absolute bottom-0 left-0 right-0 p-5">
+                <div className="p-5 flex min-h-[190px] flex-col bg-card">
+                  <div className="mb-3 flex items-center justify-between gap-3">
+                    <span className="text-[11px] font-bold uppercase tracking-widest text-primary/90">
+                      {service.images?.length || 1} photo{(service.images?.length || 1) !== 1 ? 's' : ''}
+                    </span>
+                    {currentCategory?.title && (
+                      <span className="truncate text-[11px] uppercase tracking-wider text-muted-foreground">
+                        {currentCategory.title}
+                      </span>
+                    )}
+                  </div>
                   <h4 className="text-lg font-display font-bold mb-1 group-hover:text-primary transition-colors">
-                    {service.name}
+                    {serviceName}
                   </h4>
-                  <p className="text-muted-foreground text-sm">
-                    {service.desc}
+                  <p className="text-muted-foreground text-sm leading-relaxed line-clamp-3">
+                    {serviceDesc}
                   </p>
                   <button
-                    onClick={(e) => { e.stopPropagation(); openServiceDetail(service); }}
-                    className="mt-2 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary hover:text-primary/80 transition-colors"
+                    onClick={(e) => { e.stopPropagation(); openServiceDetail({ name: serviceName, desc: serviceDesc, img: serviceImg, images: detailImages }); }}
+                    className="mt-auto pt-4 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary hover:text-primary/80 transition-colors"
                   >
-                    See Work →
+                    View Gallery →
                   </button>
                 </div>
               </motion.div>
-            ))}
+            );
+            })}
+            {currentServiceCount === 0 && (
+              <div className="col-span-full rounded-xl border border-white/10 bg-card/70 p-10 text-center">
+                <p className="text-lg font-display font-bold text-white">No services added here yet.</p>
+                <p className="mt-2 text-muted-foreground">Add services to this category from the admin panel and they will appear here automatically.</p>
+              </div>
+            )}
           </motion.div>
 
           {/* View All CTA */}
@@ -1638,45 +1492,36 @@ export default function Home() {
 
       {/* ============ WHY CHOOSE US / ADVANTAGES ============ */}
       <section id="why-us" className="py-24 bg-card text-card-foreground relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-white/20 via-transparent to-transparent opacity-50" />
+        <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(240,168,48,0.18),transparent_42%,rgba(255,255,255,0.08))]" />
         <div className="container mx-auto px-4 md:px-6 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
+          <div className="grid items-center gap-10 lg:grid-cols-[0.95fr_1.05fr]">
             <div>
               <h2 className="text-sm font-bold tracking-widest uppercase mb-4 text-white/80">The Primesign Advantage</h2>
-              <h3 className="text-4xl md:text-6xl font-display font-bold leading-tight mb-8">
+              <h3 className="text-4xl md:text-6xl font-display font-bold leading-tight mb-6">
                 ENGINEERED FOR EXCELLENCE.
               </h3>
-              <p className="text-xl font-light leading-relaxed mb-10 text-white/90">
-                In a crowded city like Bangalore, standing out requires more than just a bright light.
-                It requires structural integrity, flawless design, and reliable execution.
+              <p className="text-lg md:text-xl font-light leading-relaxed text-white/90">
+                In a crowded city like Bangalore, standing out requires more than a bright light. It takes structural integrity, disciplined fabrication, and reliable execution from start to finish.
               </p>
-              <div className="grid sm:grid-cols-2 gap-6">
-                {displayReasons.map((reason: any, i: number) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.1 }}
-                    className="flex items-start gap-3"
-                  >
-                    <CheckCircle2 className="w-6 h-6 shrink-0 mt-0.5 text-primary" />
-                    <span className="font-bold text-lg">{reason.label}</span>
-                  </motion.div>
-                ))}
-              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              {advantageGridImages.map((src: string, i: number) => (
-                <div key={i} className="aspect-square rounded-xl overflow-hidden">
-                  <img 
-                    src={src} 
-                    alt={`Primesign quality work sample ${i + 1}`} 
-                    loading="lazy"
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" 
-                  />
-                </div>
+              {advantageGridImages.map((image: any, i: number) => (
+              <motion.div
+                key={image.src || i}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08 }}
+                className="aspect-[4/3] overflow-hidden rounded-xl border border-white/10 bg-background/45 shadow-[0_18px_50px_rgba(0,0,0,0.18)]"
+              >
+                <img
+                  src={image.src}
+                  alt={image.label}
+                  className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
+                  loading="lazy"
+                />
+              </motion.div>
               ))}
             </div>
           </div>

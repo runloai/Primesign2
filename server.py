@@ -61,6 +61,23 @@ class PublishHandler(http.server.SimpleHTTPRequestHandler):
             self.send_response(200)
             self.end_headers()
             self.wfile.write(b"OK")
+        elif self.path.split("?", 1)[0] == "/api/config":
+            config_path = os.path.join(DIST_DIR, "config.json")
+            if not os.path.exists(config_path):
+                config_path = CONFIG_PATH
+            try:
+                with open(config_path, "rb") as f:
+                    body = f.read()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Cache-Control", "no-store")
+                self.end_headers()
+                self.wfile.write(body)
+            except Exception as e:
+                self.send_response(500)
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": str(e)}).encode())
         elif self.path == "/" or "." not in self.path.split("/")[-1]:
             # Serve index.html for all non-file paths (SPA routing)
             self.path = "/index.html"

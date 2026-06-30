@@ -2,6 +2,8 @@ import { Link, useLocation } from "wouter";
 import { SiWhatsapp, SiYoutube, SiInstagram, SiFacebook, SiGooglemaps, SiThreads } from "react-icons/si";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { useState, useEffect } from "react";
+import { imageUrl } from "@/lib/site-config";
+import { useSiteConfig } from "@/hooks/use-site-config";
 
 interface ContactConfig {
   phones?: string[];
@@ -67,60 +69,51 @@ const DEFAULT_FOOTER: FooterConfig = {
 };
 
 export default function Footer() {
+  const { data: siteConfig } = useSiteConfig();
   const [useTextLogo, setUseTextLogo] = useState(false);
-  const [logoSrc, setLogoSrc] = useState("https://raw.githubusercontent.com/runloai/PrimeSign/main/data/logo/logo.webp");
+  const [logoSrc, setLogoSrc] = useState("/images/logo/logo.webp");
   const [contact, setContact] = useState<ContactConfig>(DEFAULT_CONTACT);
   const [footer, setFooter] = useState<FooterConfig>(DEFAULT_FOOTER);
   const [location, setLocation] = useLocation();
 
   useEffect(() => {
-    fetch("/config.json?t=" + Date.now())
-      .then(r => r.json())
-      .then(c => {
-        if (c.settings?.logoType === "text") setUseTextLogo(true);
-        if (c.settings?.logoUrl) setLogoSrc(c.settings.logoUrl);
-        
-        // Load footer config
-        const footerConfig = { ...DEFAULT_FOOTER, ...c.footer };
-        
-        // Process copyright with year replacement
-        if (footerConfig.copyright) {
-          const currentYear = new Date().getFullYear();
-          footerConfig.copyright = footerConfig.copyright.replace(/{year}/g, currentYear.toString());
+    if (!siteConfig) return;
+    setUseTextLogo(siteConfig.settings?.logoType === "text");
+    const logo = imageUrl(siteConfig.settings?.logo, siteConfig.settings?.logoUrl);
+    setLogoSrc(logo || "/images/logo/logo.webp");
+
+    const footerConfig = { ...DEFAULT_FOOTER, ...siteConfig.footer };
+    if (footerConfig.copyright) {
+      const currentYear = new Date().getFullYear();
+      footerConfig.copyright = footerConfig.copyright.replace(/{year}/g, currentYear.toString());
+    }
+
+    const socialPlatforms = [
+      { platform: "whatsapp", url: siteConfig.contact?.whatsapp || DEFAULT_CONTACT.whatsapp },
+      { platform: "youtube", url: siteConfig.contact?.youtube || DEFAULT_CONTACT.youtube },
+      { platform: "instagram", url: siteConfig.contact?.instagram || DEFAULT_CONTACT.instagram },
+      { platform: "facebook", url: siteConfig.contact?.facebook || DEFAULT_CONTACT.facebook },
+      { platform: "threads", url: siteConfig.contact?.threadsUrl || DEFAULT_CONTACT.threadsUrl },
+      { platform: "maps", url: siteConfig.contact?.mapsUrl || DEFAULT_CONTACT.mapsUrl }
+    ];
+
+    if (!footerConfig.socialLinks || footerConfig.socialLinks.length === 0) {
+      footerConfig.socialLinks = socialPlatforms.map(p => ({ ...p, enabled: !!p.url }));
+    } else {
+      footerConfig.socialLinks = footerConfig.socialLinks.map((link: { platform: string; url?: string; enabled: boolean }) => {
+        const platformData = socialPlatforms.find(p => p.platform === link.platform);
+        if (platformData && (!link.url || link.url === "")) {
+          return { ...link, url: platformData.url };
         }
-        
-        // Merge social links from contact config
-        const socialPlatforms = [
-          { platform: "whatsapp", url: c.contact?.whatsapp || DEFAULT_CONTACT.whatsapp },
-          { platform: "youtube", url: c.contact?.youtube || DEFAULT_CONTACT.youtube },
-          { platform: "instagram", url: c.contact?.instagram || DEFAULT_CONTACT.instagram },
-          { platform: "facebook", url: c.contact?.facebook || DEFAULT_CONTACT.facebook },
-          { platform: "threads", url: c.contact?.threadsUrl || DEFAULT_CONTACT.threadsUrl },
-          { platform: "maps", url: c.contact?.mapsUrl || DEFAULT_CONTACT.mapsUrl }
-        ];
-        
-        if (!footerConfig.socialLinks || footerConfig.socialLinks.length === 0) {
-          footerConfig.socialLinks = socialPlatforms.map(p => ({ ...p, enabled: !!p.url }));
-        } else {
-          // Update social links URLs from contact config
-          footerConfig.socialLinks = footerConfig.socialLinks.map((link: { platform: string; url?: string; enabled: boolean }) => {
-            const platformData = socialPlatforms.find(p => p.platform === link.platform);
-            if (platformData && (!link.url || link.url === "")) {
-              return { ...link, url: platformData.url };
-            }
-            return link;
-          });
-        }
-        
-        setFooter(footerConfig);
-        
-        // Load contact config
-        if (c.contact) {
-          setContact({ ...DEFAULT_CONTACT, ...c.contact });
-        }
-      })
-      .catch(() => {});
-  }, []);
+        return link;
+      });
+    }
+
+    setFooter(footerConfig);
+    if (siteConfig.contact) {
+      setContact({ ...DEFAULT_CONTACT, ...siteConfig.contact });
+    }
+  }, [siteConfig]);
 
   const phones = contact.phones?.length ? contact.phones : DEFAULT_CONTACT.phones || [];
   const emails = contact.emails?.length ? contact.emails : DEFAULT_CONTACT.emails || [];

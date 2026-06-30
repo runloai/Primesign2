@@ -101,7 +101,27 @@ The application supports 15 built-in color themes:
 
 ## 🔧 Admin Configuration
 
-Content can be dynamically configured via browser's localStorage by creating a `primesign-config` object:
+Content is edited through `/admin.html`. Draft edits are stored in the browser first, then published through the Netlify function at `/api/publish`. In production, configure Supabase environment variables in Netlify so edits publish to the database and the public site reads them from `/api/config`.
+
+Supabase table:
+
+```sql
+create table if not exists public.site_config (
+  id text primary key,
+  config jsonb not null,
+  updated_at timestamptz not null default now()
+);
+```
+
+Required Netlify environment variables:
+
+- `SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `ADMIN_PUBLISH_TOKEN`
+
+The browser never stores Supabase or GitHub secrets. Local development still falls back to `public/config.json`.
+
+The core config shape is:
 
 ```json
 {

@@ -4,17 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useSiteConfig } from "@/hooks/use-site-config";
 
 export default function ContactPage() {
-  const [config, setConfig] = useState<{ contact?: any; settings?: any } | null>(null);
-
-  useEffect(() => {
-    fetch("/config.json?t=" + Date.now())
-      .then(r => r.json())
-      .then(c => setConfig(c))
-      .catch(() => {});
-  }, []);
+  const { data: config } = useSiteConfig();
 
   const contact = config?.contact || {};
   const settings = config?.settings || {};

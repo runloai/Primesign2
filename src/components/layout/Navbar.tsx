@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "wouter";
 import { Menu, X, ChevronDown, Clock, Phone, Mail, Facebook, Instagram, Youtube } from "lucide-react";
 import { useQuoteModal } from "@/context/QuoteModalContext";
+import { getServicesByCategory, imageUrl } from "@/lib/site-config";
+import { useSiteConfig } from "@/hooks/use-site-config";
 
 const COLOR_SCHEMES = {
   "Obsidian Gold": { p: "38 95% 55%", s: "190 100% 55%", b: "220 15% 6%", f: "0 0% 98%" },
@@ -92,41 +94,58 @@ function DropdownMenu({ title, items, isOpen, onMouseEnter, onMouseLeave, onClic
 
 export default function Navbar() {
   const { open } = useQuoteModal();
+  const { data: siteConfig } = useSiteConfig();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scheme, setScheme] = useState("Obsidian Gold");
   const [useTextLogo, setUseTextLogo] = useState(false);
-  const [logoSrc, setLogoSrc] = useState("https://raw.githubusercontent.com/runloai/PrimeSign/main/data/logo/logo.webp");
+  const [logoSrc, setLogoSrc] = useState("/images/logo/logo.webp");
   const [serviceMenu, setServiceMenu] = useState<Record<string, DropdownMenuItem[]>>({});
   const [serviceCategories, setServiceCategories] = useState<{ id: string; label: string }[]>([]);
   const [configContact, setConfigContact] = useState<{ phones?: string[]; emails?: string[]; facebook?: string; instagram?: string; youtube?: string } | null>(null);
   const [workingHours, setWorkingHours] = useState("Mon-Sat: 9:00 AM - 7:00 PM<br>Sunday: Closed");
 
   useEffect(() => {
-    fetch("/config.json?t=" + Date.now()).then(r => r.json()).then(c => {
-      if (c.settings?.logoType === "text") setUseTextLogo(true);
-      if (c.settings?.logoUrl) setLogoSrc(c.settings.logoUrl);
-      const schemeName = c.settings?.scheme as keyof typeof COLOR_SCHEMES;
-      if (schemeName && schemeName in COLOR_SCHEMES) setScheme(schemeName);
-      if (c.settings?.workingHours) setWorkingHours(c.settings.workingHours);
-      if (c.contact) setConfigContact(c.contact);
-      if (c.serviceCategories) setServiceCategories(c.serviceCategories);
-      if (c.services && c.services.length > 0) {
-        const categories = c.serviceCategories || [];
-        const catLabelMap: Record<string, string> = {};
-        categories.forEach((cat: { id: string; label: string }) => { catLabelMap[cat.id] = cat.label; });
-        const grouped: Record<string, DropdownMenuItem[]> = {};
-        c.services.forEach((s: any) => {
-          const cat = s.category || "General";
-          const title = catLabelMap[cat] || cat.toUpperCase();
-          if (!grouped[title]) grouped[title] = [];
-          const serviceId = s.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '');
-          grouped[title].push({ name: s.name, href: "/#services", filter: cat, serviceId });
-        });
-        setServiceMenu(grouped);
-      }
-    }).catch(() => {});
-  }, []);
+    if (!siteConfig) return;
+
+    setUseTextLogo(siteConfig.settings?.logoType === "text");
+    const logo = imageUrl(siteConfig.settings?.logo, siteConfig.settings?.logoUrl);
+    setLogoSrc(logo || "/images/logo/logo.webp");
+
+    const schemeName = siteConfig.settings?.scheme as keyof typeof COLOR_SCHEMES;
+    if (schemeName && schemeName in COLOR_SCHEMES) setScheme(schemeName);
+    const nextWorkingHours = siteConfig.contact?.workingHours || siteConfig.settings?.workingHours;
+    if (nextWorkingHours) setWorkingHours(nextWorkingHours);
+    if (siteConfig.contact) {
+      setConfigContact({
+        ...siteConfig.contact,
+        facebook: siteConfig.contact.facebook || siteConfig.contact.social?.facebook,
+        instagram: siteConfig.contact.instagram || siteConfig.contact.social?.instagram,
+        youtube: siteConfig.contact.youtube || siteConfig.contact.social?.youtube,
+      });
+    }
+
+    const grouped: Record<string, DropdownMenuItem[]> = {};
+    const categories = getServicesByCategory(siteConfig);
+    setServiceCategories(categories.map(({ category }) => ({ id: category.id, label: category.label })));
+
+    categories.forEach(({ category, services }) => {
+      grouped[category.label] = services.length > 0
+        ? services.map((service) => ({
+            name: service.name,
+            href: "/#services",
+            filter: category.id,
+            serviceId: service.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, ''),
+          }))
+        : [{
+            name: `View ${category.label}`,
+            href: "/#services",
+            filter: category.id,
+          }];
+    });
+
+    setServiceMenu(grouped);
+  }, [siteConfig]);
   const [location] = useLocation();
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [showTopBar, setShowTopBar] = useState(true);
@@ -461,7 +480,7 @@ function MobileDropdownSection({ title, items, onItemClick }: MobileDropdownSect
   const [isOpen, setIsOpen] = useState(false);
   const [location, setLocation] = useLocation();
 
-  const handleItemClick = (e: React.MouseEvent, href: string) => {
+  const handleItemClick = (e: React.MouseEvent, item: DropdownMenuItem) => {
     e.preventDefault();
     e.stopPropagation();
     
@@ -469,14 +488,13 @@ function MobileDropdownSection({ title, items, onItemClick }: MobileDropdownSect
     onItemClick();
     
     // Handle navigation with filter if present
-    const item = items.find(i => i.href === href);
-    if (item && 'filter' in item && item.filter) {
+    if (item.filter) {
       // Navigate to services with filter
       setLocation('/#services');
-      sessionStorage.setItem('arsenal-category', item.filter as string);
+      sessionStorage.setItem('arsenal-category', item.filter);
       window.dispatchEvent(new CustomEvent("arsenal-filter", { detail: item.filter }));
       // Scroll to specific service if serviceId exists
-      if ('serviceId' in item && item.serviceId) {
+      if (item.serviceId) {
         setTimeout(() => {
           window.dispatchEvent(new CustomEvent("scroll-to-service", { 
             detail: { category: item.filter, serviceId: item.serviceId } 
@@ -484,7 +502,7 @@ function MobileDropdownSection({ title, items, onItemClick }: MobileDropdownSect
         }, 150);
       }
     } else {
-      setLocation(href);
+      setLocation(item.href);
     }
   };
 
@@ -508,7 +526,7 @@ function MobileDropdownSection({ title, items, onItemClick }: MobileDropdownSect
             <a
               key={item.name}
               href={item.href}
-              onClick={(e) => handleItemClick(e, item.href)}
+              onClick={(e) => handleItemClick(e, item)}
               className="block py-2 text-sm text-foreground/70 hover:text-primary transition-colors cursor-pointer"
             >
               {item.name}

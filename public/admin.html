@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PrimeSign | Admin Control Center</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -498,12 +499,71 @@
       background: var(--success);
     }
 
+    .save-indicator.saving .save-dot {
+      background: var(--warning);
+      animation: pulse-dot 1s ease-in-out infinite;
+    }
+
+    .save-indicator.error .save-dot {
+      background: var(--error);
+    }
+
     .save-dot {
       width: 8px;
       height: 8px;
       border-radius: 50%;
       background: var(--text-muted);
       transition: background var(--transition-fast);
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 0.45; transform: scale(0.85); }
+      50% { opacity: 1; transform: scale(1.15); }
+    }
+
+    .admin-notice {
+      border: 1px solid var(--border-primary);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      background: linear-gradient(135deg, rgba(240,168,48,0.10), rgba(0,212,255,0.06));
+      color: var(--text-secondary);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .workflow-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .workflow-card {
+      border: 1px solid var(--border-primary);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      background: rgba(255,255,255,0.03);
+    }
+
+    .workflow-kicker {
+      font-size: 11px;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    .workflow-title {
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .workflow-copy {
+      color: var(--text-muted);
+      font-size: 12px;
+      line-height: 1.6;
     }
 
     /* Tab Navigation */
@@ -2126,8 +2186,15 @@
             <div class="card-body" style="display:flex;gap:12px;flex-wrap:wrap;">
               <button class="btn btn-gold" onclick="saveConfig()">💾 Save</button>
               <button class="btn btn-outline" onclick="exportData()">📤 Export Backup</button>
+              <button class="btn btn-outline" onclick="switchTab('arsenal')">🛠️ Edit Services</button>
               <a href="/" class="btn btn-outline" target="_blank">🌐 View Site</a>
             </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">✅ Publishing Health</div>
+            </div>
+            <div class="card-body" id="dashboardHealth"></div>
           </div>
           <div class="card">
             <div class="card-header">
@@ -2258,6 +2325,29 @@
             The Arsenal
           </h2>
           <p class="section-desc">Manage your service offerings, categories, and their image galleries</p>
+        </div>
+
+        <div class="workflow-grid">
+          <div class="workflow-card">
+            <div class="workflow-kicker">1. Categories</div>
+            <div class="workflow-title">Navbar + Arsenal tabs</div>
+            <div class="workflow-copy">Add categories here first. Every category with services appears in the public navbar and Arsenal section.</div>
+          </div>
+          <div class="workflow-card">
+            <div class="workflow-kicker">2. Service card image</div>
+            <div class="workflow-title">Shown on Arsenal cards</div>
+            <div class="workflow-copy">Use the Hero Image field for the thumbnail visitors see before opening a service.</div>
+          </div>
+          <div class="workflow-card">
+            <div class="workflow-kicker">3. Service gallery</div>
+            <div class="workflow-title">Shown after clicking See Work</div>
+            <div class="workflow-copy">Gallery Images are the detail images inside each service popup. Crop and order them here.</div>
+          </div>
+          <div class="workflow-card">
+            <div class="workflow-kicker">4. Portfolio images</div>
+            <div class="workflow-title">Shown in Real Installations</div>
+            <div class="workflow-copy">Portfolio Images feed the public work gallery. Use only strong real project photos here.</div>
+          </div>
         </div>
         
         <!-- Categories Management -->
@@ -2477,17 +2567,17 @@
         <div class="section-header">
           <h2 class="section-title">
             <div class="section-title-icon">🏆</div>
-            Primesign Advantage Icons
+            Primesign Advantage Photos
           </h2>
-          <p class="section-desc">These 6 images/icons appear in the "Why Choose Us" section alongside each benefit</p>
+          <p class="section-desc">Edit the four photos shown beside the "Why Choose Us" section</p>
         </div>
         <div class="card mb-4">
           <div class="card-header">
-            <div class="card-title">Advantage Icons</div>
+            <div class="card-title">Advantage Photo Grid</div>
           </div>
           <div class="card-body">
             <div id="advantageImagesGrid" class="portfolio-grid"></div>
-            <p class="text-muted mt-3" style="font-size: 13px;">Upload icons or images for each benefit in the Primesign Advantage section.</p>
+            <p class="text-muted mt-3" style="font-size: 13px;">These four images render as the 2x2 photo grid on the website.</p>
           </div>
         </div>
       </div>
@@ -2683,6 +2773,10 @@
       </div>
       <div class="modal-body">
         <p style="margin-bottom: 20px; color: var(--text-secondary);">Choose how you want to add an image to the portfolio:</p>
+        <div class="field-group">
+          <label class="field-label">Portfolio Category</label>
+          <select class="field-select" id="portfolioNewCategory"></select>
+        </div>
         <div style="display: grid; gap: 16px;">
           <button class="btn btn-gold btn-block" onclick="triggerPortfolioUploadNew()" style="padding: 20px; flex-direction: column; gap: 8px;">
             <span style="font-size: 24px;">📤</span>
@@ -2746,9 +2840,57 @@
     // CONFIGURATION & STATE
     // ================================================
     const ADMIN_USER = atob("QURNSU4=");
-    const ADMIN_PASS = atob("UFJJTUVTSUdOQmFuZ2Fsb3JlQDIwMjYqI0AhMjExMg==");
+    const ADMIN_SESSION_KEY = "primesign-admin-session";
+    const LEGACY_PUBLISH_TOKEN_KEY = "primesign-publish-token";
+    const ADMIN_PASSWORD_HASHES = [
+      "70c5a5f6472c4af85b3134b44ca737b791e71c1933d40f2c06fe189d50ac0201",
+      "dde79aae9bbe9d350719d36811c74ef5ce4005adf50ed13cf2877416b188c5d7"
+    ];
     const STORAGE_KEY = "primesign-config";
     const SCHEME_KEY = "primesign-scheme";
+
+    function isLocalAdminHost() {
+      return /^(localhost|127\.0\.0\.1|0\.0\.0\.0|::1|\[::1\])$/.test(window.location.hostname);
+    }
+
+    async function sha256Hex(value) {
+      const data = new TextEncoder().encode(String(value || ""));
+      const hash = await crypto.subtle.digest("SHA-256", data);
+      return Array.from(new Uint8Array(hash)).map(byte => byte.toString(16).padStart(2, "0")).join("");
+    }
+
+    async function isAllowedAdminPassword(password) {
+      const hash = await sha256Hex(password);
+      return ADMIN_PASSWORD_HASHES.includes(hash);
+    }
+
+    async function isValidAdminLogin(username, password) {
+      const normalizedUser = String(username || "").trim().toLowerCase();
+      return normalizedUser === ADMIN_USER.toLowerCase() && await isAllowedAdminPassword(password);
+    }
+
+    async function requestAdminSession(username, password) {
+      if (isLocalAdminHost()) return null;
+
+      const candidates = ["/api/admin-login", "/.netlify/functions/admin-login"];
+      let lastError = null;
+      for (const loginUrl of candidates) {
+        try {
+          const resp = await fetch(loginUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, password })
+          });
+          const result = await resp.json().catch(() => ({}));
+          if (resp.ok && result.session) return result.session;
+          if (resp.status === 401) throw new Error("Invalid username or password.");
+          lastError = new Error(result.error || `Admin session failed with HTTP ${resp.status}`);
+        } catch (err) {
+          lastError = err;
+        }
+      }
+      throw lastError || new Error("Could not create admin session.");
+    }
 
     const DEFAULT_CONFIG = {
       contact: {
@@ -2801,13 +2943,11 @@
         ]
       },
       advantage: {
-        images: [
-          { url: "/images/glow/1.webp", label: "Premium Quality Materials" },
-          { url: "/images/acrylic/1.webp", label: "Rapid Turnaround Times" },
-          { url: "/images/wall/1.webp", label: "Expert Installation Team" },
-          { url: "/images/vehicle/1.webp", label: "End-to-End Service" },
-          { url: "/images/pvc/1.webp", label: "Competitive Pricing" },
-          { url: "/images/led/1.webp", label: "Bangalore-Based Manufacturing" }
+        gridImages: [
+          { url: "/images/led/2.webp", label: "LED signage detail" },
+          { url: "/images/glow/1.webp", label: "Glow sign detail" },
+          { url: "/images/wall/3.webp", label: "Wall branding detail" },
+          { url: "/images/square/brass.webp", label: "Brass sign detail" }
         ]
       },
       services: [
@@ -3212,25 +3352,32 @@
     let aspectRatio = 'free';
     let isDragging = false;
     let dragStart = { x: 0, y: 0 };
+    let configLoadPromise = null;
 
     // ================================================
     // INITIALIZATION - Async load config.json as PRIMARY source
     // ================================================
     async function loadConfig() {
       let configData = null;
-
-      // Step 1: Fetch /config.json as the PRIMARY source (published config)
-      try {
-        const resp = await fetch('/config.json?_=' + Date.now(), {
+      const fetchJsonConfig = async (url) => {
+        const resp = await fetch(url, {
           method: 'GET',
           headers: { 'Accept': 'application/json' }
         });
-        if (resp.ok) {
-          configData = await resp.json();
-          console.log('Admin: Loaded config from /config.json');
+        const contentType = resp.headers.get('content-type') || '';
+        if (!resp.ok || !contentType.includes('application/json')) return null;
+        return await resp.json();
+      };
+
+      // Step 1: Fetch the published config API first, then static config as fallback.
+      try {
+        configData = await fetchJsonConfig('/api/config?_=' + Date.now());
+        if (!configData) configData = await fetchJsonConfig('/config.json?_=' + Date.now());
+        if (configData) {
+          console.log('Admin: Loaded published config');
         }
       } catch (e) {
-        console.warn('Admin: Could not fetch /config.json', e);
+        console.warn('Admin: Could not fetch published config', e);
       }
 
       // Step 2: Fall back to DEFAULT_CONFIG if fetch failed
@@ -3239,33 +3386,45 @@
         console.log('Admin: Using DEFAULT_CONFIG as fallback');
       }
 
-      // Step 3: Merge localStorage draft on top (unsaved changes from last session)
+      // Step 3: Merge only a newer localStorage draft on top.
+      // Older browser drafts must not resurrect deleted categories or stale image paths.
       try {
         const saved = localStorage.getItem(STORAGE_KEY);
         if (saved) {
           const parsed = JSON.parse(saved);
+          const draftTime = Date.parse(parsed._draftSavedAt || '');
+          const publishedTime = Date.parse(configData._publishedAt || configData.meta?.publishedAt || '');
+          const shouldUseDraft = !Number.isFinite(publishedTime) || (Number.isFinite(draftTime) && draftTime > publishedTime);
           // Skip old-format configs
-          if (!(parsed.contact && parsed.contact.phone1 && !parsed.contact.phones)) {
+          if (shouldUseDraft && !(parsed.contact && parsed.contact.phone1 && !parsed.contact.phones)) {
             configData = mergeDeep(configData, parsed);
             console.log('Admin: Merged localStorage draft');
+          } else {
+            localStorage.removeItem(STORAGE_KEY);
+            console.log('Admin: Ignored stale localStorage draft');
           }
         }
       } catch (e) {
         console.warn('Admin: Could not merge localStorage draft', e);
       }
 
-      // Step 4: Ensure top-level arrays exist for website compatibility
+      // Step 4: Ensure shared image fields exist for website compatibility
       if (!configData.aboutImages && configData.about?.images) {
         configData.aboutImages = configData.about.images.map(i => ({ url: i.url, label: i.label }));
       }
-      if (!configData.advantageImages && configData.advantage?.images) {
-        configData.advantageImages = configData.advantage.images.map(i => ({ url: i.url, label: i.label }));
-      }
+      normalizeAdvantageGrid(configData);
 
       // Persist merged config to localStorage
       config = configData;
+      normalizeConfigBeforeSave();
       localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
       return config;
+    }
+
+    function ensureConfigLoaded() {
+      if (config) return Promise.resolve(config);
+      if (!configLoadPromise) configLoadPromise = loadConfig();
+      return configLoadPromise;
     }
 
     function mergeDeep(defaultObj, savedObj) {
@@ -3286,18 +3445,23 @@
 
     async function saveConfig() {
       showSaveProgress('saving');
+      updateSaveIndicator('saving', 'Saving draft...');
       await new Promise(resolve => setTimeout(resolve, 300));
 
       // Sync top-level arrays for website compatibility
       config.aboutImages = (config.about?.images || []).map(i => ({ url: i.url, label: i.label }));
-      config.advantageImages = (config.advantage?.images || []).map(i => ({ url: i.url, label: i.label }));
+      normalizeConfigBeforeSave();
+      config.advantageImages = (config.advantage?.gridImages || []).map(i => ({ url: i.url, label: i.label }));
+      config.advantageGridImages = config.advantageImages;
+      config._draftSavedAt = new Date().toISOString();
       
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
-        updateSaveIndicator(true);
-        showToast('Saving locally, publishing to website...', 'info', 2000);
+        updateSaveIndicator('saving', 'Draft saved, publishing...');
+        showToast('Draft saved locally. Publishing to website...', 'info', 2500);
       } catch (err) {
         showSaveProgress('');
+        updateSaveIndicator('error', 'Local save failed');
         showToast('Failed to save changes to browser', 'error');
         console.error('Save error:', err);
         return;
@@ -3305,19 +3469,31 @@
       
       // Auto-publish after save
       try {
-        await publishConfig();
+        const published = await publishConfig();
+        if (published) {
+          updateSaveIndicator('saved', 'Saved and published');
+          showSaveProgress('saved');
+        } else {
+          updateSaveIndicator('error', 'Saved locally, publish failed');
+        }
       } catch (err) {
         console.error('Auto-publish error:', err);
+        updateSaveIndicator('error', 'Saved locally, publish failed');
       }
     }
 
     async function loadFromServer() {
       try {
-        const resp = await fetch('/config.json?_=' + Date.now());
-        if (resp.ok) {
-          const serverConfig = await resp.json();
-          // Merge: server is baseline, local unsaved changes overlay
-          config = mergeDeep(serverConfig, config || serverConfig);
+        const readJson = async (url) => {
+          const resp = await fetch(url);
+          const contentType = resp.headers.get('content-type') || '';
+          if (!resp.ok || !contentType.includes('application/json')) return null;
+          return await resp.json();
+        };
+        const serverConfig = await readJson('/api/config?_=' + Date.now()) || await readJson('/config.json?_=' + Date.now());
+        if (serverConfig) {
+          config = serverConfig;
+          normalizeConfigBeforeSave();
           localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
           populateAllFields();
           renderAllTabs();
@@ -3328,16 +3504,166 @@
       }
     }
 
-    function updateSaveIndicator(saved) {
+    function updateSaveIndicator(state, message) {
       const indicator = document.getElementById('saveIndicator');
       const text = document.getElementById('saveText');
-      if (saved) {
+      if (!indicator || !text) return;
+      indicator.classList.remove('saved', 'saving', 'error');
+
+      if (state === true || state === 'saved') {
         indicator.classList.add('saved');
-        text.textContent = 'All changes saved';
+        text.textContent = message || 'All changes saved';
+      } else if (state === 'saving') {
+        indicator.classList.add('saving');
+        text.textContent = message || 'Saving...';
+      } else if (state === 'error') {
+        indicator.classList.add('error');
+        text.textContent = message || 'Needs attention';
       } else {
-        indicator.classList.remove('saved');
-        text.textContent = 'Unsaved changes';
+        text.textContent = message || 'Unsaved changes';
       }
+    }
+
+    function slugify(value, fallback = 'item') {
+      const slug = String(value || fallback)
+        .toLowerCase()
+        .replace(/[^a-z0-9-]/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '');
+      return slug || fallback;
+    }
+
+    function normalizeImageArray(images) {
+      if (!Array.isArray(images)) return [];
+      return images
+        .map((img, idx) => {
+          if (!img) return null;
+          if (typeof img === 'string') return { url: img, label: `Image ${idx + 1}` };
+          return { ...img, url: img.url || img.src || '' };
+        })
+        .filter(img => img && img.url);
+    }
+
+    function imageUrlFrom(value, fallback = '') {
+      if (!value) return fallback;
+      if (typeof value === 'string') return value || fallback;
+      return value.url || value.src || fallback;
+    }
+
+    function normalizeServiceRecord(service, index = 0) {
+      const categoryId = slugify(service.categoryId || service.category || 'other', 'other');
+      const galleryImages = normalizeImageArray(service.galleryImages || service.images || []);
+      const heroImage = imageUrlFrom(service.heroImage, imageUrlFrom(galleryImages[0], ''));
+      return {
+        ...service,
+        id: service.id || index + 1,
+        name: (service.name || 'Untitled Service').trim(),
+        desc: service.desc || service.description || '',
+        description: service.description || service.desc || '',
+        categoryId,
+        category: categoryId,
+        heroImage: heroImage || null,
+        galleryImages,
+        images: galleryImages,
+        portfolioImages: normalizeImageArray(service.portfolioImages),
+      };
+    }
+
+    function normalizeServices(targetConfig = config) {
+      targetConfig.services = (targetConfig.services || []).map((service, index) => normalizeServiceRecord(service, index));
+    }
+
+    function serviceGalleryImages(service) {
+      if (!service) return [];
+      const galleryImages = normalizeImageArray(service.galleryImages || service.images || []);
+      service.galleryImages = galleryImages;
+      service.images = galleryImages;
+      return galleryImages;
+    }
+
+    function serviceCardImage(service) {
+      return imageUrlFrom(service.heroImage, imageUrlFrom(serviceGalleryImages(service)[0], ''));
+    }
+
+    function defaultAdvantageGridImages() {
+      return [
+        { url: "/images/led/2.webp", label: "LED signage detail" },
+        { url: "/images/glow/1.webp", label: "Glow sign detail" },
+        { url: "/images/wall/3.webp", label: "Wall branding detail" },
+        { url: "/images/square/brass.webp", label: "Brass sign detail" }
+      ];
+    }
+
+    function normalizeAdvantageGrid(targetConfig = config) {
+      if (!targetConfig.advantage) targetConfig.advantage = {};
+      const existingGrid = Array.isArray(targetConfig.advantage.gridImages)
+        ? targetConfig.advantage.gridImages
+        : Array.isArray(targetConfig.advantageGridImages)
+          ? targetConfig.advantageGridImages
+          : [];
+      const source = existingGrid.length > 0 ? existingGrid : defaultAdvantageGridImages();
+      targetConfig.advantage.gridImages = source.slice(0, 4).map((img, idx) => ({
+        url: imageUrlFrom(img, defaultAdvantageGridImages()[idx]?.url || ""),
+        label: img?.label || defaultAdvantageGridImages()[idx]?.label || `Advantage photo ${idx + 1}`
+      }));
+      while (targetConfig.advantage.gridImages.length < 4) {
+        targetConfig.advantage.gridImages.push(defaultAdvantageGridImages()[targetConfig.advantage.gridImages.length]);
+      }
+      targetConfig.advantageImages = targetConfig.advantage.gridImages.map(i => ({ url: i.url, label: i.label }));
+      targetConfig.advantageGridImages = targetConfig.advantageImages;
+    }
+
+    function normalizeConfigBeforeSave() {
+      normalizeAdvantageGrid(config);
+      normalizeServices(config);
+      const normalizedCategories = [];
+      const seenCategoryIds = new Set();
+      getCategories().forEach(cat => {
+        const id = slugify(cat.id || cat.label, 'category');
+        if (seenCategoryIds.has(id)) return;
+        seenCategoryIds.add(id);
+        normalizedCategories.push({
+          id,
+          label: cat.label || cat.name || 'Category',
+          icon: cat.icon || '📦',
+          description: cat.description || '',
+        });
+      });
+      config.serviceCategories = normalizedCategories;
+
+      const categoryIds = new Set(config.serviceCategories.map(cat => cat.id));
+      config.services = (config.services || []).map((service, index) => {
+        const normalized = normalizeServiceRecord(service, index);
+        if (!categoryIds.has(normalized.categoryId)) {
+          categoryIds.add(normalized.categoryId);
+          config.serviceCategories.push({
+            id: normalized.categoryId,
+            label: normalized.categoryId.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+            icon: '📦',
+            description: '',
+          });
+        }
+        return normalized;
+      });
+    }
+
+    function validateConfigForPublish() {
+      normalizeConfigBeforeSave();
+      const errors = [];
+      if (!Array.isArray(config.serviceCategories) || config.serviceCategories.length === 0) {
+        errors.push('Add at least one service category.');
+      }
+      if (!Array.isArray(config.services) || config.services.length === 0) {
+        errors.push('Add at least one service.');
+      }
+      (config.services || []).forEach(service => {
+        if (!service.name || !service.name.trim()) errors.push('Every service needs a name.');
+        if (!service.categoryId) errors.push(`${service.name || 'A service'} needs a category.`);
+        if (!config.serviceCategories.some(cat => cat.id === service.categoryId)) {
+          errors.push(`${service.name || 'A service'} is assigned to a missing category.`);
+        }
+      });
+      return errors;
     }
 
     // Check auth on load - handled by async initAdmin() at end of script
@@ -3345,13 +3671,25 @@
     // ================================================
     // AUTHENTICATION
     // ================================================
-    function doLogin() {
+    async function doLogin() {
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value;
 
-      if ((username === 'admin' && password === 'Primesign@2021') ||
-          (username === ADMIN_USER && password === ADMIN_PASS)) {
+      if (await isValidAdminLogin(username, password)) {
+        try {
+          const session = await requestAdminSession(username, password);
+          if (session) sessionStorage.setItem(ADMIN_SESSION_KEY, session);
+          sessionStorage.removeItem(LEGACY_PUBLISH_TOKEN_KEY);
+        } catch (err) {
+          showToast(`Login session failed: ${err.message}`, 'error', 8000);
+          document.getElementById('loginError').classList.add('visible');
+          setTimeout(() => {
+            document.getElementById('loginError').classList.remove('visible');
+          }, 3000);
+          return;
+        }
         localStorage.setItem('primesign-auth', 'true');
+        await ensureConfigLoaded();
         showDashboard();
         showToast('Welcome back, Admin!', 'success');
       } else {
@@ -3364,10 +3702,19 @@
 
     function doLogout() {
       localStorage.removeItem('primesign-auth');
+      sessionStorage.removeItem(ADMIN_SESSION_KEY);
+      sessionStorage.removeItem(LEGACY_PUBLISH_TOKEN_KEY);
       location.reload();
     }
 
     function showDashboard() {
+      if (!config) {
+        ensureConfigLoaded()
+          .then(showDashboard)
+          .catch(e => console.error('Config load before dashboard failed:', e));
+        return;
+      }
+
       document.getElementById('loginScreen').classList.add('hidden');
       document.getElementById('dashboard').classList.add('active');
       populateAllFields();
@@ -3383,11 +3730,21 @@
     // TAB NAVIGATION
     // ================================================
     function switchTab(tabName) {
+      if (!config) {
+        ensureConfigLoaded()
+          .then(() => switchTab(tabName))
+          .catch(e => console.error('Config load before tab switch failed:', e));
+        return;
+      }
+
       document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
 
-      document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
-      document.getElementById(`tab-${tabName}`).classList.add('active');
+      const tabButton = document.querySelector(`[data-tab="${tabName}"]`);
+      const tabContent = document.getElementById(`tab-${tabName}`);
+      if (!tabButton || !tabContent) return;
+      tabButton.classList.add('active');
+      tabContent.classList.add('active');
 
       renderTab(tabName);
     }
@@ -3444,6 +3801,7 @@
     // ================================================
     function renderDashboard() {
       renderDashboardStats();
+      renderHealthChecks();
       renderInfo();
     }
 
@@ -3454,7 +3812,7 @@
       const totalServices = (config.services || []).length;
       let totalServiceImages = 0;
       (config.services || []).forEach(s => {
-        totalServiceImages += (s.images || []).length;
+        totalServiceImages += serviceGalleryImages(s).length;
       });
       const totalPortfolio = (config.portfolio || []).length;
       const totalTestimonials = (config.testimonials || []).length;
@@ -3487,6 +3845,52 @@
             <div style="font-size:32px;font-weight:700;font-family:'Space Grotesk',sans-serif;">${totalTestimonials}</div>
             <div style="color:var(--text-secondary);font-size:14px;">Testimonials</div>
           </div>
+        </div>
+      `;
+    }
+
+    function renderHealthChecks() {
+      const container = document.getElementById('dashboardHealth');
+      if (!container) return;
+      normalizeConfigBeforeSave();
+      const missingCardImages = (config.services || []).filter(service => !serviceCardImage(service));
+      const emptyGalleries = (config.services || []).filter(service => serviceGalleryImages(service).length === 0);
+      const emptyPortfolio = (config.services || []).filter(service => !service.portfolioImages || service.portfolioImages.length === 0);
+      const validationErrors = validateConfigForPublish();
+      const checks = [
+        {
+          ok: validationErrors.length === 0,
+          label: 'Publish-ready config',
+          detail: validationErrors[0] || 'Categories and services are linked correctly.',
+        },
+        {
+          ok: missingCardImages.length === 0,
+          label: 'Service card images',
+          detail: missingCardImages.length ? `${missingCardImages.length} service(s) need card images.` : 'Every service has a public card image.',
+        },
+        {
+          ok: emptyGalleries.length === 0,
+          label: 'Service detail galleries',
+          detail: emptyGalleries.length ? `${emptyGalleries.length} service(s) have no detail gallery images.` : 'Every service has detail gallery images.',
+        },
+        {
+          ok: emptyPortfolio.length === 0,
+          label: 'Real installation gallery',
+          detail: emptyPortfolio.length ? `${emptyPortfolio.length} service(s) have no portfolio images.` : 'Every service can contribute to the work gallery.',
+        },
+      ];
+
+      container.innerHTML = `
+        <div style="display:grid;gap:10px;">
+          ${checks.map(check => `
+            <div style="display:flex;gap:12px;align-items:flex-start;padding:12px;border:1px solid ${check.ok ? 'rgba(34,197,94,0.25)' : 'rgba(245,158,11,0.35)'};border-radius:var(--radius-md);background:${check.ok ? 'rgba(34,197,94,0.08)' : 'rgba(245,158,11,0.08)'};">
+              <div style="font-size:18px;line-height:1;">${check.ok ? '✓' : '!'}</div>
+              <div>
+                <div style="font-weight:700;color:var(--text-primary);">${check.label}</div>
+                <div style="font-size:13px;color:var(--text-secondary);">${check.detail}</div>
+              </div>
+            </div>
+          `).join('')}
         </div>
       `;
     }
@@ -3680,7 +4084,7 @@
     if (!window._psAutoSaveInterval) {
       window._psAutoSaveInterval = setInterval(() => {
         config.aboutImages = (config.about?.images || []).map(i => ({ url: i.url, label: i.label }));
-        config.advantageImages = (config.advantage?.images || []).map(i => ({ url: i.url, label: i.label }));
+        normalizeAdvantageGrid(config);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
       }, 30000);
     }
@@ -3733,25 +4137,6 @@
       showToast('Image URL applied', 'success');
     }
 
-    // Upload file to server and return URL (instead of base64)
-    async function uploadFileToServer(file) {
-      const formData = new FormData();
-      formData.append('image', file);
-      
-      const resp = await fetch('http://13.206.80.106:9998/upload-image', {
-        method: 'POST',
-        body: formData
-      });
-      
-      if (!resp.ok) {
-        const err = await resp.json();
-        throw new Error(err.error || 'Upload failed');
-      }
-      
-      const data = await resp.json();
-      return data.url; // Returns "/images/uploads/20240628_123456_abc12345.webp"
-    }
-
     async function handleHeroUpload(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -3762,16 +4147,13 @@
       }
 
       try {
-        showToast('Uploading image...', 'info');
-        
-        // Upload to server instead of base64
-        const imageUrl = await uploadFileToServer(file);
-        config.hero.bgImage = imageUrl;
+        const dataUrl = await fileToDataUrl(file);
+        config.hero.bgImage = await convertToWebP(dataUrl, 0.9);
         renderHero();
         updateSaveIndicator(false);
         showToast('Hero image uploaded', 'success');
       } catch (err) {
-        showToast('Failed to upload image: ' + err.message, 'error');
+        showToast('Failed to process image', 'error');
         console.error(err);
       }
     }
@@ -3869,7 +4251,23 @@
         const item = config.portfolio.find(p => p.id === itemId);
         if (item) imageUrl = item.url;
       } else if (type === 'service') {
-        // Get from service
+        const sep = String(itemId || '').lastIndexOf(':');
+        const serviceId = sep >= 0 ? String(itemId).slice(0, sep) : itemId;
+        const imageIdx = sep >= 0 ? Number(String(itemId).slice(sep + 1)) : -1;
+        const service = config.services.find(s => String(s.id) === String(serviceId));
+        const image = service?.images?.[imageIdx];
+        imageUrl = typeof image === 'string' ? image : (image?.url || '');
+      } else if (type === 'service-hero') {
+        const service = config.services.find(s => String(s.id) === String(itemId));
+        const image = service?.heroImage;
+        imageUrl = typeof image === 'string' ? image : (image?.url || '');
+      } else if (type === 'service-portfolio') {
+        const sep = String(itemId || '').lastIndexOf(':');
+        const serviceId = sep >= 0 ? String(itemId).slice(0, sep) : itemId;
+        const imageIdx = sep >= 0 ? Number(String(itemId).slice(sep + 1)) : -1;
+        const service = config.services.find(s => String(s.id) === String(serviceId));
+        const image = service?.portfolioImages?.[imageIdx];
+        imageUrl = typeof image === 'string' ? image : (image?.url || '');
       }
 
       if (!imageUrl) {
@@ -4025,11 +4423,32 @@
           renderPortfolio();
         }
       } else if (currentCropType === 'service' && currentCropItem) {
-        // Handle service image crop
-        const [serviceId, imageIdx] = currentCropItem.split('-');
-        const service = config.services.find(s => s.id == serviceId);
-        if (service && service.images[imageIdx]) {
-          service.images[imageIdx] = { url: croppedDataUrl, label: service.images[imageIdx].label || "Image" };
+        const sep = String(currentCropItem).lastIndexOf(':');
+        const serviceId = sep >= 0 ? String(currentCropItem).slice(0, sep) : currentCropItem;
+        const imageIdx = sep >= 0 ? Number(String(currentCropItem).slice(sep + 1)) : -1;
+        const service = config.services.find(s => String(s.id) === String(serviceId));
+        const galleryImages = serviceGalleryImages(service);
+        if (service && galleryImages[imageIdx]) {
+          const oldImage = galleryImages[imageIdx];
+          galleryImages[imageIdx] = { url: croppedDataUrl, label: oldImage?.label || "Image" };
+          service.galleryImages = galleryImages;
+          service.images = galleryImages;
+          renderServices();
+        }
+      } else if (currentCropType === 'service-hero' && currentCropItem) {
+        const service = config.services.find(s => String(s.id) === String(currentCropItem));
+        if (service) {
+          service.heroImage = croppedDataUrl;
+          renderServices();
+        }
+      } else if (currentCropType === 'service-portfolio' && currentCropItem) {
+        const sep = String(currentCropItem).lastIndexOf(':');
+        const serviceId = sep >= 0 ? String(currentCropItem).slice(0, sep) : currentCropItem;
+        const imageIdx = sep >= 0 ? Number(String(currentCropItem).slice(sep + 1)) : -1;
+        const service = config.services.find(s => String(s.id) === String(serviceId));
+        if (service && service.portfolioImages?.[imageIdx]) {
+          const oldImage = service.portfolioImages[imageIdx];
+          service.portfolioImages[imageIdx] = { url: croppedDataUrl, label: oldImage?.label || "Portfolio" };
           renderServices();
         }
       }
@@ -4080,7 +4499,7 @@
         return;
       }
 
-      if (servicesToRender.length === 0) {
+      if (servicesFilterText && servicesToRender.length === 0) {
         container.innerHTML = '';
         if (emptyState) emptyState.classList.remove('hidden');
         return;
@@ -4089,6 +4508,7 @@
       if (emptyState) emptyState.classList.add('hidden');
 
       // Group services by category
+      normalizeServices(config);
       const categories = getCategories();
       const categoriesMap = {};
       categories.forEach(cat => {
@@ -4097,14 +4517,24 @@
 
       const grouped = {};
       servicesToRender.forEach(s => {
-        const cat = s.category || 'other';
+        const cat = s.categoryId || 'other';
         if (!grouped[cat]) grouped[cat] = [];
         grouped[cat].push(s);
       });
 
+      const categoryOrder = [...categories];
+      Object.keys(grouped).forEach(catKey => {
+        if (!categoryOrder.some(cat => cat.id === catKey)) {
+          categoryOrder.push({ id: catKey, label: catKey.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()), icon: '📋', description: '' });
+        }
+      });
+
       let html = '';
-      for (const [catKey, catServices] of Object.entries(grouped)) {
-        const catInfo = categoriesMap[catKey] || { label: 'Other', icon: '📋' };
+      for (const cat of categoryOrder) {
+        const catKey = cat.id;
+        const catServices = grouped[catKey] || [];
+        if (servicesFilterText && catServices.length === 0) continue;
+        const catInfo = categoriesMap[catKey] || { label: cat.label || 'Other', icon: cat.icon || '📋' };
         html += `
           <div class="category-header">
             <span class="category-header-icon">${catInfo.icon}</span>
@@ -4112,17 +4542,41 @@
             <span class="category-header-count">${catServices.length} service${catServices.length !== 1 ? 's' : ''}</span>
           </div>
         `;
-        html += catServices.map(service => `
-          <div class="service-card" id="service-${service.id}">
-            <div class="service-header" onclick="toggleService(${service.id})">
+        if (catServices.length === 0) {
+          html += `
+            <div class="empty-state" style="margin-bottom: 18px; padding: 24px;">
+              <div class="empty-icon">📂</div>
+              <div class="empty-title">No services in ${escapeHtml(catInfo.label)} yet</div>
+              <p>Add a service and assign it to this category to show it on the website and navbar.</p>
+              <button class="btn btn-cyan btn-sm mt-3" onclick="addServiceToCategory('${escapeHtml(catKey)}')">+ Add Service Here</button>
+            </div>
+          `;
+          continue;
+        }
+        html += catServices.map(service => {
+          const serviceKey = JSON.stringify(String(service.id));
+          const serviceKeyArg = escapeHtml(serviceKey);
+          const serviceDomId = escapeHtml(String(service.id));
+          const thumbUrl = serviceCardImage(service);
+          const galleryImages = serviceGalleryImages(service);
+          const galleryCount = galleryImages.length;
+          const portfolioCount = (service.portfolioImages || []).length;
+          return `
+          <div class="service-card" id="service-${serviceDomId}">
+            <div class="service-header" onclick="toggleService(${serviceKeyArg})">
               <div class="service-thumb">
-                ${service.images && service.images[0]
-                  ? `<img src="${service.images[0].url || service.images[0]}" alt="">`
+                ${thumbUrl
+                  ? `<img src="${thumbUrl}" alt="">`
                   : '📷'}
               </div>
               <div class="service-info">
                 <div class="service-name">${escapeHtml(service.name)}</div>
                 <div class="service-desc">${escapeHtml(service.desc || '')}</div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">
+                  <span class="badge" style="background:rgba(255,255,255,0.06);color:var(--text-secondary);border:1px solid var(--border-primary);">${galleryCount} gallery</span>
+                  <span class="badge" style="background:rgba(0,212,255,0.10);color:var(--cyan);border:1px solid rgba(0,212,255,0.25);">${portfolioCount} portfolio</span>
+                  ${thumbUrl ? '<span class="badge" style="background:rgba(34,197,94,0.12);color:#4ade80;border:1px solid rgba(34,197,94,0.25);">card image set</span>' : '<span class="badge" style="background:rgba(245,158,11,0.12);color:var(--warning);border:1px solid rgba(245,158,11,0.25);">needs card image</span>'}
+                </div>
                 ${service.badge ? `
                   <div class="service-badges">
                     <span class="badge badge-${service.badge}">${service.badge}</span>
@@ -4130,10 +4584,10 @@
                 ` : ''}
               </div>
               <div class="service-actions">
-                <button class="btn btn-icon btn-outline" onclick="event.stopPropagation(); deleteService(${service.id})" title="Delete">
+                <button class="btn btn-icon btn-outline" onclick="event.stopPropagation(); deleteService(${serviceKeyArg})" title="Delete">
                   🗑️
                 </button>
-                <button class="btn btn-icon btn-outline service-expand-icon" title="Expand">▼</button>
+                <button type="button" class="btn btn-icon btn-outline service-expand-icon" title="Expand service" aria-expanded="false" onclick="event.stopPropagation(); toggleService(${serviceKeyArg})">▼</button>
               </div>
             </div>
             <div class="service-body">
@@ -4141,18 +4595,17 @@
                 <div class="field-group" style="flex: 2;">
                   <label class="field-label">Service Name</label>
                   <input type="text" class="field-input" value="${escapeHtml(service.name)}"
-                    onchange="updateService(${service.id}, 'name', this.value)">
+                    onchange="updateService(${serviceKeyArg}, 'name', this.value)">
                 </div>
                 <div class="field-group">
                   <label class="field-label">Category</label>
-                  <select class="field-select" onchange="updateService(${service.id}, 'category', this.value)">
-                    ${categories.map(cat => `<option value="${cat.id}" ${service.category === cat.id ? 'selected' : ''}>${cat.label}</option>`).join('')}
-                    <option value="other" ${service.category === 'other' || !service.category ? 'selected' : ''}>Other</option>
+                  <select class="field-select" onchange="updateService(${serviceKeyArg}, 'categoryId', this.value)">
+                    ${categoryOptionsHtml(service.categoryId)}
                   </select>
                 </div>
                 <div class="field-group">
                   <label class="field-label">Badge</label>
-                  <select class="field-select" onchange="updateService(${service.id}, 'badge', this.value)">
+                  <select class="field-select" onchange="updateService(${serviceKeyArg}, 'badge', this.value)">
                     <option value="" ${!service.badge ? 'selected' : ''}>None</option>
                     <option value="popular" ${service.badge === 'popular' ? 'selected' : ''}>Most Popular</option>
                     <option value="new" ${service.badge === 'new' ? 'selected' : ''}>New</option>
@@ -4161,30 +4614,31 @@
               </div>
               <div class="field-group">
                 <label class="field-label">Description</label>
-                <textarea class="field-textarea" rows="2" onchange="updateService(${service.id}, 'desc', this.value)">${escapeHtml(service.desc || '')}</textarea>
+                <textarea class="field-textarea" rows="2" onchange="updateService(${serviceKeyArg}, 'desc', this.value)">${escapeHtml(service.desc || '')}</textarea>
               </div>
               <!-- Hero Image Section -->
               <div class="service-hero-section" style="margin-top: 24px; padding: 16px; background: var(--bg-tertiary); border-radius: var(--radius-md); border: 1px solid var(--border-primary);">
                 <div class="gallery-header" style="margin-bottom: 12px;">
-                  <div class="gallery-title">🖼️ Hero Image <span style="font-size: 12px; color: var(--text-muted); font-weight: normal;">(Shown on service cards)</span></div>
+                  <div class="gallery-title">🖼️ Service Card Image <span style="font-size: 12px; color: var(--text-muted); font-weight: normal;">Visitors see this before opening the service</span></div>
                 </div>
                 ${service.heroImage ? `
                   <div class="image-item" style="width: 200px; aspect-ratio: 16/10;">
-                    <img src="${service.heroImage}" alt="Hero" style="width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius-md);">
+                    <img src="${imageUrlFrom(service.heroImage)}" alt="Hero" style="width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius-md);">
                     <div class="image-item-actions" style="position: absolute; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; gap: 8px; opacity: 0; transition: opacity 0.2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0">
                       <label class="btn btn-gold btn-sm" style="cursor: pointer;">
                         🔄 Replace
-                        <input type="file" accept="image/*" style="display: none;" onchange="handleServiceHeroUpload(${service.id}, event)">
+                        <input type="file" accept="image/*" style="display: none;" onchange="handleServiceHeroUpload(${serviceKeyArg}, event)">
                       </label>
-                      <button class="btn btn-danger btn-sm" onclick="deleteServiceHeroImage(${service.id})">🗑️</button>
+                      <button class="btn btn-gold btn-sm" onclick="event.stopPropagation(); openCropper('service-hero', event, ${serviceKeyArg})">✂️</button>
+                      <button class="btn btn-danger btn-sm" onclick="deleteServiceHeroImage(${serviceKeyArg})">🗑️</button>
                     </div>
                   </div>
                 ` : `
                   <div class="upload-zone" style="padding: 24px; border: 2px dashed var(--border-secondary); border-radius: var(--radius-md); text-align: center; cursor: pointer;" onclick="this.querySelector('input').click()">
                     <div class="upload-icon" style="width: 48px; height: 48px; margin: 0 auto 8px;">🖼️</div>
-                    <div class="upload-title" style="font-size: 14px; font-weight: 500;">Add Hero Image</div>
-                    <div class="upload-subtitle" style="font-size: 12px; color: var(--text-muted);">Shown on service cards</div>
-                    <input type="file" accept="image/*" style="display: none;" onchange="handleServiceHeroUpload(${service.id}, event)">
+                    <div class="upload-title" style="font-size: 14px; font-weight: 500;">Add Service Card Image</div>
+                    <div class="upload-subtitle" style="font-size: 12px; color: var(--text-muted);">Best as a clear 4:3 or 16:10 project photo</div>
+                    <input type="file" accept="image/*" style="display: none;" onchange="handleServiceHeroUpload(${serviceKeyArg}, event)">
                   </div>
                 `}
               </div>
@@ -4192,10 +4646,10 @@
               <!-- Portfolio Images Section -->
               <div class="service-portfolio-section" style="margin-top: 24px; padding: 16px; background: var(--bg-tertiary); border-radius: var(--radius-md); border: 1px solid var(--border-primary);">
                 <div class="gallery-header">
-                  <div class="gallery-title">🎯 Portfolio Images <span style="font-size: 12px; color: var(--text-muted); font-weight: normal;">(Shown in portfolio section)</span></div>
+                  <div class="gallery-title">🎯 Real Installations Images <span style="font-size: 12px; color: var(--text-muted); font-weight: normal;">Appear in the public Our Work gallery</span></div>
                   <label class="btn btn-cyan btn-sm" style="cursor: pointer;">
                     + Add Portfolio Image
-                    <input type="file" accept="image/*" style="display: none;" onchange="handleServicePortfolioUpload(${service.id}, event)">
+                    <input type="file" accept="image/*" style="display: none;" onchange="handleServicePortfolioUpload(${serviceKeyArg}, event)">
                   </label>
                 </div>
                 ${service.portfolioImages && service.portfolioImages.length > 0 ? `
@@ -4206,17 +4660,18 @@
                         <div class="image-item-order" style="top: 8px; left: 8px; background: var(--cyan); color: #000;">#${idx + 1}</div>
                         <div class="image-item-badge" style="top: 8px; right: 8px; background: rgba(0,0,0,0.7); color: #fff; font-size: 10px; padding: 2px 6px;">${img.label || 'Portfolio'}</div>
                         <div class="image-item-actions" style="flex-direction: column; gap: 4px;">
-                          <button class="btn btn-icon btn-sm" onclick="moveServicePortfolioImage(${service.id}, ${idx}, -1)" ${idx === 0 ? 'disabled' : ''} title="Move up">↑</button>
-                          <button class="btn btn-icon btn-sm" onclick="moveServicePortfolioImage(${service.id}, ${idx}, 1)" ${idx === service.portfolioImages.length - 1 ? 'disabled' : ''} title="Move down">↓</button>
-                          <button class="btn btn-gold btn-sm" onclick="editServicePortfolioLabel(${service.id}, ${idx}, '${escapeHtml(img.label || '')}')">✏️ Label</button>
-                          <button class="btn btn-danger btn-sm" onclick="deleteServicePortfolioImage(${service.id}, ${idx})">🗑️</button>
+                          <button class="btn btn-icon btn-sm" onclick="moveServicePortfolioImage(${serviceKeyArg}, ${idx}, -1)" ${idx === 0 ? 'disabled' : ''} title="Move up">↑</button>
+                          <button class="btn btn-icon btn-sm" onclick="moveServicePortfolioImage(${serviceKeyArg}, ${idx}, 1)" ${idx === service.portfolioImages.length - 1 ? 'disabled' : ''} title="Move down">↓</button>
+                          <button class="btn btn-gold btn-sm" onclick="openCropper('service-portfolio', event, ${escapeHtml(JSON.stringify(`${service.id}:${idx}`))})">✂️</button>
+                          <button class="btn btn-gold btn-sm" onclick="editServicePortfolioLabel(${serviceKeyArg}, ${idx}, ${escapeHtml(JSON.stringify(img.label || ''))})">✏️ Label</button>
+                          <button class="btn btn-danger btn-sm" onclick="deleteServicePortfolioImage(${serviceKeyArg}, ${idx})">🗑️</button>
                         </div>
                       </div>
                     `).join('')}
                   </div>
                 ` : `
                   <p class="text-muted" style="text-align: center; padding: 20px; color: var(--text-muted);">
-                    No portfolio images yet. Add some to showcase work in the portfolio section.
+                    No portfolio images yet. Add only strong real project photos here.
                   </p>
                 `}
               </div>
@@ -4224,24 +4679,24 @@
               <!-- Regular Gallery Images Section -->
               <div class="service-gallery" style="margin-top: 24px;">
                 <div class="gallery-header">
-                  <div class="gallery-title">📷 Gallery Images (${service.images ? service.images.length : 0}) <span style="font-size: 12px; color: var(--text-muted); font-weight: normal;">(Service detail gallery)</span></div>
+                  <div class="gallery-title">📷 Service Detail Gallery (${galleryCount}) <span style="font-size: 12px; color: var(--text-muted); font-weight: normal;">Shown after visitors click See Work</span></div>
                   <label class="btn btn-cyan btn-sm" style="cursor: pointer;">
                     + Add Gallery Image
                     <input type="file" accept="image/*" style="display: none;"
-                      onchange="handleServiceImageUpload(${service.id}, event)">
+                      onchange="handleServiceImageUpload(${serviceKeyArg}, event)">
                   </label>
                 </div>
-                ${service.images && service.images.length > 0 ? `
+                ${galleryImages.length > 0 ? `
                   <div class="image-grid">
-                    ${service.images.map((img, idx) => `
+                    ${galleryImages.map((img, idx) => `
                       <div class="image-item">
                         <img src="${img.url || img}" alt="">
                         <div class="image-item-order">#${idx + 1}</div>
                         <div class="image-item-actions">
-                          <button class="btn btn-icon btn-sm" onclick="moveServiceImage(${service.id}, ${idx}, -1)" ${idx === 0 ? 'disabled' : ''}>↑</button>
-                          <button class="btn btn-icon btn-sm" onclick="moveServiceImage(${service.id}, ${idx}, 1)" ${idx === service.images.length - 1 ? 'disabled' : ''}>↓</button>
-                          <button class="btn btn-gold btn-sm" onclick="openCropper('service', event, '${service.id}-${idx}')">✂️</button>
-                          <button class="btn btn-danger btn-sm" onclick="deleteServiceImage(${service.id}, ${idx})">🗑️</button>
+                          <button class="btn btn-icon btn-sm" onclick="moveServiceImage(${serviceKeyArg}, ${idx}, -1)" ${idx === 0 ? 'disabled' : ''}>↑</button>
+                          <button class="btn btn-icon btn-sm" onclick="moveServiceImage(${serviceKeyArg}, ${idx}, 1)" ${idx === galleryImages.length - 1 ? 'disabled' : ''}>↓</button>
+                          <button class="btn btn-gold btn-sm" onclick="openCropper('service', event, ${escapeHtml(JSON.stringify(`${service.id}:${idx}`))})">✂️</button>
+                          <button class="btn btn-danger btn-sm" onclick="deleteServiceImage(${serviceKeyArg}, ${idx})">🗑️</button>
                         </div>
                       </div>
                     `).join('')}
@@ -4254,20 +4709,35 @@
               </div>
             </div>
           </div>
-        `).join('');
+        `;
+        }).join('');
       }
       container.innerHTML = html;
     }
 
     function toggleService(id) {
       const card = document.getElementById(`service-${id}`);
-      card.classList.toggle('expanded');
+      if (!card) return;
+      const isExpanded = card.classList.toggle('expanded');
+      const expandButton = card.querySelector('.service-expand-icon');
+      if (expandButton) {
+        expandButton.setAttribute('aria-expanded', String(isExpanded));
+        expandButton.title = isExpanded ? 'Collapse service' : 'Expand service';
+      }
     }
 
-    function addService() {
+    function findServiceById(id) {
+      return (config.services || []).find(s => String(s.id) === String(id));
+    }
+
+    function addServiceToCategory(categoryId) {
+      addService(categoryId);
+    }
+
+    function addService(preselectedCategory = '') {
       // Show modal to let user pick category first
-      const categories = getCategories();
-      const categoryOptions = categories.map(cat => `<option value="${cat.id}">${cat.label}</option>`).join('');
+      const selectedCategory = typeof preselectedCategory === 'string' ? preselectedCategory : '';
+      const categoryOptions = categoryOptionsHtml(selectedCategory || getPrimaryCategoryId());
       
       const modal = document.createElement('div');
       modal.id = 'addServiceModal';
@@ -4303,13 +4773,15 @@
       const name = document.getElementById('newServiceName').value.trim() || 'New Service';
       const category = document.getElementById('newServiceCategory').value || 'sign-boards';
       
-      const newId = Math.max(...config.services.map(s => s.id), 0) + 1;
+      if (!Array.isArray(config.services)) config.services = [];
+      const newId = Math.max(0, ...config.services.map(s => Number(s.id) || 0)) + 1;
       config.services.push({
         id: newId,
         name: name,
         desc: "",
         badge: "",
         category: category,
+        categoryId: category,
         images: [],
         heroImage: null,
         portfolioImages: []
@@ -4332,7 +4804,7 @@
         confirmText: 'Delete Service',
         confirmClass: 'btn-danger',
         onConfirm: () => {
-          config.services = config.services.filter(s => s.id !== id);
+          config.services = config.services.filter(s => String(s.id) !== String(id));
           renderServices();
           updateSaveIndicator(false);
           showToast('Service deleted', 'success');
@@ -4341,11 +4813,18 @@
     }
 
     function updateService(id, field, value) {
-      const service = config.services.find(s => s.id === id);
+      const service = findServiceById(id);
       if (service) {
         service[field] = value;
-        if (field === 'name' || field === 'desc' || field === 'badge') {
-          // Refresh only if needed
+        if (field === 'category' || field === 'categoryId') {
+          service.categoryId = value;
+          service.category = value;
+          renderServices();
+        } else if (field === 'desc' || field === 'description') {
+          service.desc = value;
+          service.description = value;
+        } else if (field === 'name' || field === 'badge') {
+          renderServices();
         }
         updateSaveIndicator(false);
       }
@@ -4356,19 +4835,24 @@
       if (!file) return;
 
       try {
-        showToast('Uploading image...', 'info');
-        const imageUrl = await uploadFileToServer(file);
+        const dataUrl = await fileToDataUrl(file);
+        const webpUrl = await convertToWebP(dataUrl, 0.9);
 
-        const service = config.services.find(s => s.id === serviceId);
+        const service = findServiceById(serviceId);
         if (service) {
-          if (!service.images) service.images = [];
-          service.images.push({ url: imageUrl, label: file.name.replace(/\\.[^.]+$/, "") });
+          const galleryImages = serviceGalleryImages(service);
+          galleryImages.push({ url: webpUrl, label: file.name.replace(/\.[^.]+$/, "") });
+          service.galleryImages = galleryImages;
+          service.images = galleryImages;
+          if (!imageUrlFrom(service.heroImage)) {
+            service.heroImage = galleryImages[0];
+          }
           renderServices();
           updateSaveIndicator(false);
           showToast('Image added to gallery', 'success');
         }
       } catch (err) {
-        showToast('Upload failed: ' + err.message, 'error');
+        showToast('Failed to process image', 'error');
       }
     }
 
@@ -4380,18 +4864,18 @@
       if (!file) return;
 
       try {
-        showToast('Uploading image...', 'info');
-        const imageUrl = await uploadFileToServer(file);
+        const dataUrl = await fileToDataUrl(file);
+        const webpUrl = await convertToWebP(dataUrl, 0.9);
 
-        const service = config.services.find(s => s.id === serviceId);
+        const service = findServiceById(serviceId);
         if (service) {
-          service.heroImage = imageUrl;
+          service.heroImage = webpUrl;
           renderServices();
           updateSaveIndicator(false);
           showToast('Hero image updated', 'success');
         }
       } catch (err) {
-        showToast('Upload failed: ' + err.message, 'error');
+        showToast('Failed to process hero image', 'error');
       }
     }
 
@@ -4404,9 +4888,10 @@
         confirmText: 'Delete',
         confirmClass: 'btn-danger',
         onConfirm: () => {
-          const service = config.services.find(s => s.id === serviceId);
+          const service = findServiceById(serviceId);
           if (service) {
-            service.heroImage = null;
+            const galleryImages = serviceGalleryImages(service);
+            service.heroImage = imageUrlFrom(galleryImages[0]) ? galleryImages[0] : null;
             renderServices();
             updateSaveIndicator(false);
             showToast('Hero image deleted', 'success');
@@ -4423,26 +4908,24 @@
       if (!file) return;
 
       try {
-        showToast('Uploading portfolio image...', 'info');
-        
-        // Upload to server instead of base64
-        const imageUrl = await uploadFileToServer(file);
+        const dataUrl = await fileToDataUrl(file);
+        const webpUrl = await convertToWebP(dataUrl, 0.9);
 
-        const service = config.services.find(s => s.id === serviceId);
+        const service = findServiceById(serviceId);
         if (service) {
           if (!service.portfolioImages) service.portfolioImages = [];
-          service.portfolioImages.push({ url: imageUrl, label: file.name.replace(/\.[^.]+$/, "") });
+          service.portfolioImages.push({ url: webpUrl, label: file.name.replace(/\.[^.]+$/, "") });
           renderServices();
           updateSaveIndicator(false);
           showToast('Portfolio image added', 'success');
         }
       } catch (err) {
-        showToast('Failed to upload portfolio image: ' + err.message, 'error');
+        showToast('Failed to process portfolio image', 'error');
       }
     }
 
     function moveServicePortfolioImage(serviceId, idx, direction) {
-      const service = config.services.find(s => s.id === serviceId);
+      const service = findServiceById(serviceId);
       if (!service || !service.portfolioImages) return;
 
       const newIdx = idx + direction;
@@ -4462,7 +4945,7 @@
         confirmText: 'Delete',
         confirmClass: 'btn-danger',
         onConfirm: () => {
-          const service = config.services.find(s => s.id === serviceId);
+          const service = findServiceById(serviceId);
           if (service && service.portfolioImages) {
             service.portfolioImages.splice(idx, 1);
             renderServices();
@@ -4476,7 +4959,7 @@
     function editServicePortfolioLabel(serviceId, idx, currentLabel) {
       const newLabel = prompt('Enter portfolio image label:', currentLabel);
       if (newLabel !== null) {
-        const service = config.services.find(s => s.id === serviceId);
+        const service = findServiceById(serviceId);
         if (service && service.portfolioImages && service.portfolioImages[idx]) {
           service.portfolioImages[idx].label = newLabel;
           renderServices();
@@ -4487,13 +4970,16 @@
     }
 
     function moveServiceImage(serviceId, idx, direction) {
-      const service = config.services.find(s => s.id === serviceId);
-      if (!service || !service.images) return;
+      const service = findServiceById(serviceId);
+      if (!service) return;
+      const galleryImages = serviceGalleryImages(service);
 
       const newIdx = idx + direction;
-      if (newIdx < 0 || newIdx >= service.images.length) return;
+      if (newIdx < 0 || newIdx >= galleryImages.length) return;
 
-      [service.images[idx], service.images[newIdx]] = [service.images[newIdx], service.images[idx]];
+      [galleryImages[idx], galleryImages[newIdx]] = [galleryImages[newIdx], galleryImages[idx]];
+      service.galleryImages = galleryImages;
+      service.images = galleryImages;
       renderServices();
       updateSaveIndicator(false);
     }
@@ -4507,9 +4993,16 @@
         confirmText: 'Delete',
         confirmClass: 'btn-danger',
         onConfirm: () => {
-          const service = config.services.find(s => s.id === serviceId);
-          if (service && service.images) {
-            service.images.splice(idx, 1);
+          const service = findServiceById(serviceId);
+          if (service) {
+            const galleryImages = serviceGalleryImages(service);
+            const removedImageUrl = imageUrlFrom(galleryImages[idx]);
+            galleryImages.splice(idx, 1);
+            service.galleryImages = galleryImages;
+            service.images = galleryImages;
+            if (imageUrlFrom(service.heroImage) === removedImageUrl) {
+              service.heroImage = imageUrlFrom(galleryImages[0]) ? galleryImages[0] : null;
+            }
             renderServices();
             updateSaveIndicator(false);
             showToast('Image deleted', 'success');
@@ -4540,14 +5033,27 @@
       return config.serviceCategories;
     }
 
+    function getPrimaryCategoryId() {
+      return getCategories()[0]?.id || 'sign-boards';
+    }
+
+    function categoryOptionsHtml(selectedCategory = '') {
+      const selected = String(selectedCategory || getPrimaryCategoryId());
+      return getCategories().map(cat => `
+        <option value="${escapeHtml(cat.id)}" ${cat.id === selected ? 'selected' : ''}>${escapeHtml(cat.label)}</option>
+      `).join('');
+    }
+
     function renderCategories() {
       const container = document.getElementById('categoriesList');
       if (!container) return;
 
+      normalizeServices(config);
       const categories = getCategories();
       
       let html = '';
       categories.forEach((cat, index) => {
+        const serviceCount = (config.services || []).filter(s => s.categoryId === cat.id).length;
         html += `
           <div class="category-header" style="margin-bottom: 12px;">
             <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
@@ -4555,10 +5061,12 @@
               <div>
                 <div style="font-weight: 600; color: var(--gold);">${cat.label}</div>
                 <div style="font-size: 12px; color: var(--text-muted);">${cat.description || ''}</div>
-                <div style="font-size: 11px; color: var(--text-muted); opacity: 0.7;">ID: ${cat.id}</div>
+                <div style="font-size: 11px; color: var(--text-muted); opacity: 0.7;">ID: ${cat.id} · ${serviceCount} service${serviceCount !== 1 ? 's' : ''}</div>
               </div>
             </div>
             <div style="display: flex; gap: 8px;">
+              <button class="btn btn-outline btn-sm" onclick="moveCategory(${index}, -1)" ${index === 0 ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : ''}>↑</button>
+              <button class="btn btn-outline btn-sm" onclick="moveCategory(${index}, 1)" ${index === categories.length - 1 ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : ''}>↓</button>
               <button class="btn btn-outline btn-sm" onclick="editCategory(${index})">✏️ Edit</button>
               <button class="btn btn-danger btn-sm" onclick="deleteCategory(${index})">🗑️</button>
             </div>
@@ -4570,10 +5078,10 @@
         <div style="margin-top: 16px; padding: 16px; background: var(--bg-tertiary); border-radius: var(--radius-md);">
           <h4 style="margin-bottom: 12px; font-size: 14px; color: var(--text-secondary);">How categories work:</h4>
           <ul style="font-size: 13px; color: var(--text-muted); padding-left: 20px; line-height: 1.8;">
-            <li>Categories appear in the main navigation dropdown</li>
-            <li>Services are grouped under their category in the Arsenal section</li>
+            <li>Categories appear in the main navigation dropdown and Arsenal tabs</li>
+            <li>Services are grouped under their assigned category everywhere</li>
             <li>The category ID is used in URLs and should be lowercase with dashes</li>
-            <li>Changes are automatically reflected on the website</li>
+            <li>Empty categories are visible with an empty state until services are added</li>
           </ul>
         </div>
       `;
@@ -4595,7 +5103,7 @@
       const cat = categories[index];
       
       // Check if any services use this category
-      const servicesInCategory = config.services.filter(s => s.category === cat.id);
+      const servicesInCategory = config.services.filter(s => s.categoryId === cat.id);
       
       let message = `Delete category "${cat.label}"?`;
       if (servicesInCategory.length > 0) {
@@ -4610,8 +5118,14 @@
         confirmText: 'Delete',
         confirmClass: 'btn-danger',
         onConfirm: () => {
+          if (servicesInCategory.length > 0 && !categories.some(c => c.id === 'other')) {
+            categories.push({ id: 'other', label: 'Other', icon: '📦', description: 'Services waiting for a category assignment' });
+          }
           // Move services to 'other' category
-          servicesInCategory.forEach(s => s.category = 'other');
+          servicesInCategory.forEach(s => {
+            s.category = 'other';
+            s.categoryId = 'other';
+          });
           
           categories.splice(index, 1);
           renderCategories();
@@ -4620,6 +5134,17 @@
           showToast('Category deleted', 'success');
         }
       });
+    }
+
+    function moveCategory(index, direction) {
+      const categories = getCategories();
+      const newIndex = index + direction;
+      if (newIndex < 0 || newIndex >= categories.length) return;
+      [categories[index], categories[newIndex]] = [categories[newIndex], categories[index]];
+      renderCategories();
+      renderServices();
+      updateSaveIndicator(false);
+      showToast(`Category moved ${direction > 0 ? 'down' : 'up'}`, 'success');
     }
 
     function showCategoryModal(category = null, editIndex = null) {
@@ -4697,7 +5222,10 @@
         categories[editIndex] = newCategory;
         // Update services that use old category ID
         config.services.forEach(s => {
-          if (s.category === oldId) s.category = id;
+          if (s.category === oldId || s.categoryId === oldId) {
+            s.category = id;
+            s.categoryId = id;
+          }
         });
       } else {
         categories.push(newCategory);
@@ -4813,17 +5341,7 @@
               placeholder="Project label" style="margin-bottom: 8px;"
               onchange="updatePortfolio(${item.id}, 'label', this.value)">
             <select class="portfolio-category" onchange="updatePortfolio(${item.id}, 'category', this.value)">
-              <option value="led" ${item.category === 'led' ? 'selected' : ''}>LED Signs</option>
-              <option value="glow" ${item.category === 'glow' ? 'selected' : ''}>Glow Signs</option>
-              <option value="acrylic" ${item.category === 'acrylic' ? 'selected' : ''}>Acrylic</option>
-              <option value="wall" ${item.category === 'wall' ? 'selected' : ''}>Wall Branding</option>
-              <option value="vehicle" ${item.category === 'vehicle' ? 'selected' : ''}>Vehicle Wraps</option>
-              <option value="pvc" ${item.category === 'pvc' ? 'selected' : ''}>PVC & Flex</option>
-              <option value="outdoor" ${item.category === 'outdoor' ? 'selected' : ''}>Outdoor</option>
-              <option value="graphics" ${item.category === 'graphics' ? 'selected' : ''}>Graphics</option>
-              <option value="promotional" ${item.category === 'promotional' ? 'selected' : ''}>Promotional</option>
-              <option value="print" ${item.category === 'print' ? 'selected' : ''}>Digital Prints</option>
-              <option value="apparel" ${item.category === 'apparel' ? 'selected' : ''}>Apparel</option>
+              ${categoryOptionsHtml(item.category)}
             </select>
           </div>
           <div class="portfolio-actions">
@@ -4843,12 +5361,13 @@
     }
 
     function addPortfolioItem() {
-      const newId = Math.max(...config.portfolio.map(p => p.id), 0) + 1;
+      if (!Array.isArray(config.portfolio)) config.portfolio = [];
+      const newId = Math.max(0, ...config.portfolio.map(p => Number(p.id) || 0)) + 1;
       config.portfolio.push({
         id: newId,
         url: "",
         label: "New Project",
-        category: "led",
+        category: getPrimaryCategoryId(),
         featured: false
       });
       renderPortfolio();
@@ -4916,27 +5435,35 @@
       if (!file) return;
 
       try {
-        showToast('Uploading image...', 'info');
-        const imageUrl = await uploadFileToServer(file);
+        const dataUrl = await fileToDataUrl(file);
+        const webpUrl = await convertToWebP(dataUrl, 0.9);
 
         const item = config.portfolio.find(p => p.id === id);
         if (item) {
-          item.url = imageUrl;
+          item.url = webpUrl;
           renderPortfolio();
           updateSaveIndicator(false);
           showToast('Image uploaded', 'success');
         }
       } catch (err) {
-        showToast('Upload failed: ' + err.message, 'error');
+        showToast('Failed to process image', 'error');
       }
     }
 
     // ================================================
     // PORTFOLIO ADD MODAL FUNCTIONS
     // ================================================
-    let pendingPortfolioCategory = 'led';
+    let pendingPortfolioCategory = '';
 
     function showAddPortfolioModal() {
+      const select = document.getElementById('portfolioNewCategory');
+      if (select) {
+        pendingPortfolioCategory = pendingPortfolioCategory || getPrimaryCategoryId();
+        select.innerHTML = categoryOptionsHtml(pendingPortfolioCategory);
+        select.onchange = (event) => {
+          pendingPortfolioCategory = event.target.value || getPrimaryCategoryId();
+        };
+      }
       document.getElementById('portfolioAddModal').classList.add('visible');
     }
 
@@ -4953,15 +5480,17 @@
       if (!file) return;
 
       try {
-        showToast('Uploading image...', 'info');
-        const imageUrl = await uploadFileToServer(file);
+        const dataUrl = await fileToDataUrl(file);
+        const webpUrl = await convertToWebP(dataUrl, 0.9);
 
-        const newId = Math.max(...config.portfolio.map(p => p.id), 0) + 1;
+        if (!Array.isArray(config.portfolio)) config.portfolio = [];
+        const newId = Math.max(0, ...config.portfolio.map(p => Number(p.id) || 0)) + 1;
+        const selectedCategory = document.getElementById('portfolioNewCategory')?.value || pendingPortfolioCategory || getPrimaryCategoryId();
         config.portfolio.push({
           id: newId,
-          url: imageUrl,
-          label: file.name.replace(/\\.[^.]+$/, ""),
-          category: pendingPortfolioCategory,
+          url: webpUrl,
+          label: file.name.replace(/\.[^.]+$/, ""),
+          category: selectedCategory,
           featured: false
         });
 
@@ -4970,7 +5499,7 @@
         closePortfolioAddModal();
         showToast('New portfolio item added', 'success');
       } catch (err) {
-        showToast('Upload failed: ' + err.message, 'error');
+        showToast('Failed to process image', 'error');
       }
     }
 
@@ -4981,12 +5510,13 @@
       // Build list of all service images
       let serviceImages = [];
       config.services.forEach(service => {
-        if (service.images && service.images.length > 0) {
-          service.images.forEach((img, idx) => {
+        const galleryImages = serviceGalleryImages(service);
+        if (galleryImages.length > 0) {
+          galleryImages.forEach((img, idx) => {
             serviceImages.push({
               url: img.url || img,
               label: img.label || `${service.name} ${idx + 1}`,
-              category: service.category || getCategoryFromServiceName(service.name)
+              category: service.categoryId || getCategoryFromServiceName(service.name)
             });
           });
         }
@@ -5004,7 +5534,7 @@
         container.innerHTML = `
           <div class="image-grid" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));">
             ${serviceImages.map((img, idx) => `
-              <div class="image-item" style="cursor: pointer;" onclick="addServiceImageToPortfolio('${escapeHtml(img.url)}', '${img.category || 'led'}')">
+              <div class="image-item" style="cursor: pointer;" onclick="addServiceImageToPortfolio('${escapeHtml(img.url)}', '${escapeHtml(img.category || getPrimaryCategoryId())}')">
                 <img src="${img.url}" alt="${escapeHtml(img.label)}" style="width: 100%; height: 100%; object-fit: cover;">
                 <div class="image-item-order" style="position: absolute; bottom: 8px; left: 8px; top: auto; right: auto;">
                   ${escapeHtml(img.label)}
@@ -5023,12 +5553,13 @@
     }
 
     function addServiceImageToPortfolio(url, category) {
-      const newId = Math.max(...config.portfolio.map(p => p.id), 0) + 1;
+      if (!Array.isArray(config.portfolio)) config.portfolio = [];
+      const newId = Math.max(0, ...config.portfolio.map(p => Number(p.id) || 0)) + 1;
       config.portfolio.push({
         id: newId,
         url: url,
         label: "From Services",
-        category: category || 'led',
+        category: category || getPrimaryCategoryId(),
         featured: false
       });
 
@@ -5133,7 +5664,8 @@
 
     function addTestimonial() {
       if (!config.testimonials) config.testimonials = [];
-      const newId = Math.max(...config.testimonials.map(t => t.id), 0) + 1;
+      if (!Array.isArray(config.testimonials)) config.testimonials = [];
+      const newId = Math.max(0, ...config.testimonials.map(t => Number(t.id) || 0)) + 1;
       config.testimonials.push({
         id: newId,
         name: "New Customer",
@@ -5254,16 +5786,16 @@
       if (!file) return;
 
       try {
-        showToast('Uploading image...', 'info');
-        const imageUrl = await uploadFileToServer(file);
+        const dataUrl = await fileToDataUrl(file);
+        const webpUrl = await convertToWebP(dataUrl, 0.9);
 
         if (!config.about.images) config.about.images = [];
-        config.about.images[idx] = { url: imageUrl, label: file.name.replace(/\\.[^.]+$/, "") };
+        config.about.images[idx] = { url: webpUrl, label: file.name.replace(/\.[^.]+$/, "") };
         renderAboutImages();
         updateSaveIndicator(false);
         showToast('About image updated', 'success');
       } catch (err) {
-        showToast('Upload failed: ' + err.message, 'error');
+        showToast('Failed to process image', 'error');
       }
     }
 
@@ -5322,42 +5854,37 @@
     }
 
     // ================================================
-    // ADVANTAGE IMAGES
+    // ADVANTAGE PHOTO GRID
     // ================================================
     function renderAdvantageImages() {
       const container = document.getElementById('advantageImagesGrid');
       if (!container) return;
 
-      // Ensure advantage.images array exists
-      if (!config.advantage.images) {
-        config.advantage.images = JSON.parse(JSON.stringify(DEFAULT_CONFIG.advantage.images));
-      }
+      normalizeAdvantageGrid(config);
 
-      container.innerHTML = config.advantage.images.map((img, idx) => `
+      container.innerHTML = config.advantage.gridImages.map((img, idx) => `
         <div class="portfolio-card">
-          <div class="portfolio-image" style="aspect-ratio: 1;">
+          <div class="portfolio-image" style="aspect-ratio: 4 / 3;">
             ${img.url
-              ? `<img src="${img.url}" alt="${escapeHtml(img.label)}" style="width: 100%; height: 100%; object-fit: cover;">`
-              : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:48px; background: var(--bg-tertiary);">🏆</div>`
-            }
+              ? `<img src="${img.url}" alt="${escapeHtml(img.label || `Advantage photo ${idx + 1}`)}">`
+              : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:44px;">Photo ${idx + 1}</div>`}
             <div class="portfolio-overlay">
-              <button class="btn btn-gold btn-sm" onclick="triggerAdvantageImageUpload(${idx})">📁 Change</button>
-              <button class="btn btn-cyan btn-sm" onclick="pickIconForAdvantage(${idx})">🎨 Icon</button>
+              <button class="btn btn-gold btn-sm" onclick="event.stopPropagation(); triggerAdvantageImageUpload(${idx})">Change</button>
+              <input type="file" id="advantageFile-${idx}" accept="image/*" style="display:none" onchange="handleAdvantageImageUpload(${idx}, event)">
             </div>
           </div>
           <div class="portfolio-content">
             <div class="field-group" style="margin-bottom: 0;">
               <input type="text" class="field-input" value="${escapeHtml(img.label)}"
-                placeholder="Benefit label"
+                placeholder="Image label"
                 onchange="updateAdvantageLabel(${idx}, this.value)">
             </div>
           </div>
           <div class="portfolio-actions">
             <button class="btn btn-cyan btn-sm" onclick="moveAdvantageImage(${idx}, -1)" ${idx === 0 ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : ''}>⬆️ Up</button>
-            <button class="btn btn-cyan btn-sm" onclick="moveAdvantageImage(${idx}, 1)" ${idx === config.advantage.images.length - 1 ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : ''}>⬇️ Down</button>
+            <button class="btn btn-cyan btn-sm" onclick="moveAdvantageImage(${idx}, 1)" ${idx === config.advantage.gridImages.length - 1 ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : ''}>⬇️ Down</button>
             <button class="btn btn-danger btn-sm" onclick="removeAdvantageImage(${idx})">🗑️ Remove</button>
           </div>
-          <input type="file" id="advantageFile-${idx}" accept="image/*" style="display:none" onchange="handleAdvantageImageUpload(${idx}, event)">
         </div>
       `).join('');
     }
@@ -5371,64 +5898,45 @@
       if (!file) return;
 
       try {
-        showToast('Uploading image...', 'info');
-        const imageUrl = await uploadFileToServer(file);
+        const dataUrl = await fileToDataUrl(file);
+        const webpUrl = await convertToWebP(dataUrl, 0.9, 400);
 
-        if (!config.advantage.images) config.advantage.images = [];
-        config.advantage.images[idx] = { ...config.advantage.images[idx], url: imageUrl };
+        normalizeAdvantageGrid(config);
+        config.advantage.gridImages[idx] = { ...config.advantage.gridImages[idx], url: webpUrl, label: file.name.replace(/\.[^.]+$/, "") };
         renderAdvantageImages();
         updateSaveIndicator(false);
         showToast('Advantage image updated', 'success');
       } catch (err) {
-        showToast('Upload failed: ' + err.message, 'error');
+        showToast('Failed to process image', 'error');
       }
     }
 
     function updateAdvantageLabel(idx, value) {
-      if (!config.advantage.images) return;
-      config.advantage.images[idx].label = value;
+      normalizeAdvantageGrid(config);
+      config.advantage.gridImages[idx].label = value;
       updateSaveIndicator(false);
     }
 
     function removeAdvantageImage(idx) {
-      if (!config.advantage.images) return;
-      const defaultLabels = [
-        "Premium Quality Materials",
-        "Rapid Turnaround Times",
-        "Expert Installation Team",
-        "End-to-End Service",
-        "Competitive Pricing",
-        "Bangalore-Based Manufacturing"
-      ];
-      config.advantage.images[idx] = { url: "", label: defaultLabels[idx] || `Benefit ${idx + 1}` };
+      normalizeAdvantageGrid(config);
+      config.advantage.gridImages[idx] = { url: "", label: defaultAdvantageGridImages()[idx]?.label || `Advantage photo ${idx + 1}` };
       renderAdvantageImages();
       updateSaveIndicator(false);
       showToast('Image removed', 'success');
     }
 
     function moveAdvantageImage(idx, direction) {
-      if (!config.advantage.images) return;
+      normalizeAdvantageGrid(config);
       const newIdx = idx + direction;
-      if (newIdx < 0 || newIdx >= config.advantage.images.length) return;
+      if (newIdx < 0 || newIdx >= config.advantage.gridImages.length) return;
       
-      // Swap items
-      const temp = config.advantage.images[idx];
-      config.advantage.images[idx] = config.advantage.images[newIdx];
-      config.advantage.images[newIdx] = temp;
+      const temp = config.advantage.gridImages[idx];
+      config.advantage.gridImages[idx] = config.advantage.gridImages[newIdx];
+      config.advantage.gridImages[newIdx] = temp;
       
       renderAdvantageImages();
       updateSaveIndicator(false);
       showToast(`Advantage moved ${direction > 0 ? 'down' : 'up'}`, 'success');
-    }
-
-    function pickIconForAdvantage(idx) {
-      // Simple icon picker - could be expanded with an icon library
-      const icons = ['🏆', '⚡', '👥', '🔄', '💰', '🏭', '✅', '🎯', '⭐', '🔧', '💡', '🚀'];
-      const icon = prompt(`Choose an icon for "${config.advantage.images[idx].label}":\n\nAvailable: ${icons.join(' ')}\n\nEnter icon emoji:`, icons[idx] || '✅');
-      if (icon) {
-        // Store the icon preference in a data attribute or separate field if needed
-        showToast('Icon preference saved (icons are cosmetic only)', 'success');
-      }
     }
 
     // ================================================
@@ -5550,13 +6058,13 @@
         return;
       }
       try {
-        showToast('Uploading image...', 'info');
-        config.settings.logoUrl = await uploadFileToServer(file);
+        const dataUrl = await fileToDataUrl(file);
+        config.settings.logoUrl = await convertToWebP(dataUrl, 0.9, 400);
         renderLogoPreview();
         updateSaveIndicator(false);
         showToast('Logo uploaded', 'success');
       } catch (err) {
-        showToast('Upload failed: ' + err.message, 'error');
+        showToast('Failed to process logo', 'error');
       }
     }
 
@@ -5592,6 +6100,12 @@
     // PUBLISH CONFIG - Generate config.json for sharing
     // ================================================
     async function publishConfig() {
+      const validationErrors = validateConfigForPublish();
+      if (validationErrors.length > 0) {
+        showToast(`Fix before publishing: ${validationErrors[0]}`, 'error', 10000);
+        return false;
+      }
+
       const payload = {
         contact: config.contact,
         testimonials: config.testimonials,
@@ -5600,8 +6114,9 @@
         hero: config.hero,
         about: config.about,
         aboutImages: config.about?.images || [],
-        advantage: config.advantage || { images: config.advantageImages || [] },
-        advantageImages: config.advantage?.images || config.advantageImages || [],
+        advantage: config.advantage || { gridImages: config.advantageGridImages || [] },
+        advantageImages: config.advantage?.gridImages || config.advantageImages || [],
+        advantageGridImages: config.advantage?.gridImages || config.advantageGridImages || [],
         serviceCategories: config.serviceCategories,
         settings: config.settings,
         footer: config.footer,
@@ -5615,30 +6130,49 @@
         const isLocal = /^(localhost|127\.0\.0\.1|0\.0\.0\.0|::1|\[::1\])$/.test(host);
         // Try publish API on port 9998 first, fall back to server's /api/publish
         const candidates = isLocal
-          ? [`http://localhost:9998/publish`, `http://${host}:8888/api/publish`]
-          : [`http://${host}:9998/publish`, `/.netlify/functions/publish`, `/api/publish`];
+          ? [`http://localhost:9998/publish`, `http://${host}:8888/api/publish`, `/api/publish`]
+          : [`/.netlify/functions/publish`, `/api/publish`];
+        const adminSession = sessionStorage.getItem(ADMIN_SESSION_KEY) || '';
+        const legacyPublishToken = sessionStorage.getItem(LEGACY_PUBLISH_TOKEN_KEY) || '';
+        if (!isLocal && !adminSession && !legacyPublishToken) {
+          localStorage.removeItem('primesign-auth');
+          throw new Error('Admin publish session expired. Log in again, then save.');
+        }
         let lastError = null;
         for (const publishUrl of candidates) {
           try {
+            const headers = { "Content-Type": "application/json" };
+            if (adminSession) headers["x-admin-session"] = adminSession;
+            if (legacyPublishToken) headers["x-admin-token"] = legacyPublishToken;
             const resp = await fetch(publishUrl, {
               method: "POST",
-              headers: { "Content-Type": "application/json" },
+              headers,
               body: JSON.stringify(payload)
             });
             if (resp.ok) {
               const result = await resp.json();
               showToast(`🌍 Published! ${result.services} services updated.`, 'success', 6000);
-              return;
+              return true;
             }
             const errBody = await resp.json().catch(() => ({}));
-            lastError = new Error(errBody.error || `HTTP ${resp.status}`);
+            const error = errBody.error || `HTTP ${resp.status}`;
+            if (error.includes('SUPABASE_URL') || error.includes('SUPABASE_SERVICE_ROLE_KEY')) {
+              lastError = new Error('Netlify publish is not configured. Add SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, and ADMIN_PUBLISH_TOKEN in Netlify environment variables.');
+            } else if (error.includes('missing ADMIN_PUBLISH_TOKEN')) {
+              lastError = new Error('Netlify publish is not configured. Add ADMIN_PUBLISH_TOKEN in Netlify environment variables.');
+            } else if (error.includes('GITHUB_TOKEN')) {
+              lastError = new Error('Netlify publish needs Supabase env vars or a GitHub token fallback.');
+            } else {
+              lastError = new Error(error);
+            }
           } catch (e) {
             lastError = e;
           }
         }
         throw lastError || new Error('No publish endpoint available');
       } catch(e) {
-        showToast(`❌ Publish failed: ${e.message}. Ensure the publish API is running.`, 'error', 10000);
+        showToast(`❌ Publish failed: ${e.message}`, 'error', 12000);
+        return false;
       }
     }
 
@@ -5659,9 +6193,9 @@
       }
     }
 
-    function resetToDefaults() {
+    async function resetToDefaults() {
       const pw = prompt("Enter admin password to reset:");
-      if (pw !== "PRIMESIGNBangalore@2026*#@!2112") {
+      if (!await isAllowedAdminPassword(pw)) {
         showToast("Wrong password! Reset cancelled.", "error");
         return;
       }
@@ -5758,6 +6292,7 @@
 
     function showSaveProgress(state) {
       const progress = document.getElementById('saveProgress');
+      if (!progress) return;
       progress.classList.remove('saving', 'saved');
       if (state === 'saving') {
         progress.classList.add('saving');
@@ -5864,21 +6399,8 @@
 
     // Expose functions to window
     window.addService = addService;
+    window.addServiceToCategory = addServiceToCategory;
     window.addCategory = addCategory;
-    window.handleHeroUpload = handleHeroUpload;
-    window.handleLogoUpload = handleLogoUpload;
-    window.handleServiceHeroUpload = handleServiceHeroUpload;
-    window.handleServicePortfolioUpload = handleServicePortfolioUpload;
-    window.handlePortfolioUpload = handlePortfolioUpload;
-    window.handlePortfolioNewUpload = handlePortfolioNewUpload;
-    window.handleAboutImageUpload = handleAboutImageUpload;
-    window.handleAdvantageImageUpload = handleAdvantageImageUpload;
-    window.uploadFileToServer = uploadFileToServer;
-    window.toggleService = toggleService;
-    window.saveConfig = saveConfig;
-    window.publishConfig = publishConfig;
-    window.doLogin = doLogin;
-    window.doLogout = doLogout;
     
     // Add event listeners for buttons (more reliable than onclick)
     document.addEventListener('DOMContentLoaded', function() {
@@ -5895,8 +6417,13 @@
     // ASYNC INITIALIZATION - Loads config.json as PRIMARY source
     // ================================================
     (async function initAdmin() {
-      await loadConfig();
+      await ensureConfigLoaded();
       if (localStorage.getItem('primesign-auth') === 'true') {
+        if (!isLocalAdminHost() && !sessionStorage.getItem(ADMIN_SESSION_KEY)) {
+          localStorage.removeItem('primesign-auth');
+          showToast('Please log in again to refresh your publish session.', 'info', 6000);
+          return;
+        }
         showDashboard();
       }
     })().catch(e => console.error('Admin init error:', e));

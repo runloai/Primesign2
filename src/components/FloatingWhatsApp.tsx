@@ -1,18 +1,14 @@
 import { SiWhatsapp } from "react-icons/si";
-import { useState, useEffect } from "react";
+import { useMemo } from "react";
+import { useSiteConfig } from "@/hooks/use-site-config";
 
 export default function FloatingWhatsApp() {
-  const [waNumber, setWaNumber] = useState("6366525253");
-  const [waMessage, setWaMessage] = useState("Hello PrimeSign, I'd like to know more about your signage services.");
-
-  useEffect(() => {
-    fetch("/config.json?t=" + Date.now()).then(r => r.json()).then(c => {
-      // Try settings.whatsappNumber first, then fall back to contact.phones[0], then contact.whatsapp
-      const phoneNumber = c.settings?.whatsappNumber || c.contact?.phones?.[0] || c.contact?.whatsapp || "6366525253";
-      setWaNumber(phoneNumber.replace(/[^\d]/g, ''));
-      if (c.settings?.whatsappMessage) setWaMessage(c.settings.whatsappMessage);
-    }).catch(() => {});
-  }, []);
+  const { data: siteConfig } = useSiteConfig();
+  const waNumber = useMemo(() => {
+    const phoneNumber = siteConfig?.settings?.whatsappNumber || siteConfig?.contact?.phones?.[0] || siteConfig?.contact?.whatsapp || "6366525253";
+    return phoneNumber.replace(/[^\d]/g, '');
+  }, [siteConfig]);
+  const waMessage = siteConfig?.settings?.whatsappMessage || "Hello PrimeSign, I'd like to know more about your signage services.";
 
   const presetMessage = encodeURIComponent(waMessage);
   const whatsappUrl = `https://wa.me/${waNumber}?text=${presetMessage}`;

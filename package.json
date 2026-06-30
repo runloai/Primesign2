@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@11.7.0",
   "scripts": {
     "dev": "vite",
     "build": "vite build && cp -f public/config.json dist/config.json && cp -f public/admin.html dist/admin.html",
